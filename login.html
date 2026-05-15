@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso — Huapango Xalapa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --verde-oscuro:  #1B4332;
+      --verde-medio:   #2D6A4F;
+      --verde-claro:   #40916C;
+      --dorado:        #D4A017;
+      --dorado-claro:  #F4C430;
+      --crema:         #FFF8E7;
+      --blanco:        #FFFFFF;
+      --texto:         #1A1A1A;
+      --texto-suave:   #5A6A5A;
+      --gris-borde:    #D8E0D8;
+      --error:         #C0392B;
+      --exito:         #27AE60;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--verde-oscuro);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background-image:
+        radial-gradient(ellipse 100% 80% at 50% -10%, rgba(45,106,79,0.8) 0%, transparent 60%),
+        repeating-linear-gradient(
+          60deg, transparent 0px, transparent 80px,
+          rgba(255,255,255,0.012) 80px, rgba(255,255,255,0.012) 81px
+        );
+    }
+
+    .login-wrap { width: 100%; max-width: 420px; }
+
+    /* ===== ENCABEZADO ===== */
+    .encabezado { text-align: center; margin-bottom: 2rem; }
+    .ornamento  { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+    .titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+      color: var(--dorado);
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+    }
+    .subtitulo { font-size: 0.85rem; color: rgba(255,255,255,0.5); font-style: italic; }
+
+    /* ===== TARJETA ===== */
+    .tarjeta {
+      background: var(--crema);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid rgba(212,160,23,0.3);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    /* ===== SELECTOR DE ROL ===== */
+    .rol-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .rol-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.75rem 0.5rem;
+      border-radius: 12px;
+      border: 2px solid var(--gris-borde);
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .rol-btn:hover { border-color: var(--verde-claro); }
+    .rol-btn.activo { border-color: var(--verde-claro); background: #EBF5EF; }
+    .rol-btn .rol-icono  { font-size: 1.5rem; }
+    .rol-btn .rol-nombre { font-size: 0.72rem; font-weight: 700; color: var(--texto-suave); text-align: center; line-height: 1.2; }
+    .rol-btn.activo .rol-nombre { color: var(--verde-oscuro); }
+
+    /* ===== CAMPOS ===== */
+    .grupo { margin-bottom: 1.1rem; }
+    .grupo label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--texto-suave);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+    .grupo input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--texto);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .grupo input:focus {
+      border-color: var(--verde-claro);
+      box-shadow: 0 0 0 3px rgba(64,145,108,0.15);
+    }
+
+    /* Hint para parejas */
+    .hint {
+      font-size: 0.75rem;
+      color: var(--texto-suave);
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    /* ===== BOTÓN ENTRAR ===== */
+    .btn-entrar {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--verde-claro);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+    .btn-entrar:hover    { background: var(--verde-medio); }
+    .btn-entrar:active   { transform: scale(0.99); }
+    .btn-entrar:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ===== MENSAJES ===== */
+    .msg-error {
+      display: none;
+      background: #FDEDEC;
+      border: 1px solid #F5B7B1;
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      color: var(--error);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .msg-exito {
+      display: none;
+      background: #D4EDDA;
+      border: 1px solid #C3E6CB;
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      color: #155724;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* ===== SPINNER ===== */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: girar 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.4rem;
+    }
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* ===== LINK RECOVERY ===== */
+    .link-recovery {
+      display: none;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--texto-suave);
+      margin-top: 1rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .link-recovery:hover { color: var(--verde-oscuro); }
+
+    /* ===== PANEL DE RECOVERY ===== */
+    .panel-recovery { display: none; }
+    .panel-recovery.visible { display: block; }
+
+    .btn-volver {
+      background: none; border: none;
+      color: var(--texto-suave); font-size: 0.82rem;
+      cursor: pointer; padding: 0; margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.3rem;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-volver:hover { color: var(--verde-oscuro); }
+
+    footer {
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.75rem;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+
+  <div class="encabezado">
+    <span class="ornamento">🎶</span>
+    <h1 class="titulo">1er Concurso Nacional<br>de Huapango de Xalapa</h1>
+    <p class="subtitulo">Acceso al sistema de concurso</p>
+  </div>
+
+  <div class="tarjeta">
+
+    <!-- ====================================================
+         PANEL PRINCIPAL DE LOGIN
+    ==================================================== -->
+    <div id="panel-login">
+
+      <!-- Selector de rol -->
+      <div class="rol-selector">
+        <button class="rol-btn activo" onclick="seleccionarRol('pareja', this)">
+          <span class="rol-icono">💃</span>
+          <span class="rol-nombre">Soy<br>pareja</span>
+        </button>
+        <button class="rol-btn" onclick="seleccionarRol('staff', this)">
+          <span class="rol-icono">🎵</span>
+          <span class="rol-nombre">Encargado<br>/ Juez</span>
+        </button>
+        <button class="rol-btn" onclick="seleccionarRol('admin', this)">
+          <span class="rol-icono">⚙️</span>
+          <span class="rol-nombre">Admin</span>
+        </button>
+      </div>
+
+      <!-- Mensaje de error -->
+      <div class="msg-error" id="msg-error"></div>
+
+      <!-- Campos -->
+      <div class="grupo">
+        <label id="label-correo">Correo electrónico</label>
+        <input type="email" id="correo" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
+      </div>
+
+      <div class="grupo">
+        <label id="label-password">Contraseña (tu número de pareja)</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Ej: 177"
+          autocomplete="current-password"
+          onkeydown="if(event.key==='Enter') entrar()"
+        />
+        <!-- Hint visible para parejas -->
+        <p class="hint" id="hint-password" style="display:block;">
+          💡 Tu contraseña es tu <strong>número de pareja</strong> (ej. 177).
+          Lo recibiste por correo al registrarte.
+        </p>
+      </div>
+
+      <button class="btn-entrar" id="btn-entrar" onclick="entrar()">
+        Entrar →
+      </button>
+
+      <!-- Solo visible para staff y admin -->
+      <span class="link-recovery" id="link-recovery" onclick="mostrarRecovery()">
+        ¿Olvidaste tu contraseña?
+      </span>
+
+    </div><!-- fin panel-login -->
+
+
+    <!-- ====================================================
+         PANEL DE RECUPERACIÓN DE CONTRASEÑA
+    ==================================================== -->
+    <div class="panel-recovery" id="panel-recovery">
+
+      <button class="btn-volver" onclick="volverLogin()">← Volver</button>
+
+      <h3 style="font-family:'Playfair Display',serif;color:var(--verde-oscuro);margin-bottom:0.5rem;font-size:1rem;">
+        Restablecer contraseña
+      </h3>
+      <p style="font-size:0.85rem;color:var(--texto-suave);margin-bottom:1.25rem;">
+        Te enviaremos un correo con un enlace para crear una nueva contraseña.
+      </p>
+
+      <div class="msg-exito" id="msg-recovery-exito">
+        ✅ Correo enviado. Revisa tu bandeja de entrada (incluyendo spam).
+      </div>
+
+      <div class="grupo">
+        <label>Correo electrónico</label>
+        <input type="email" id="recovery-correo" placeholder="tucorreo@ejemplo.com" />
+      </div>
+
+      <button class="btn-entrar" onclick="enviarRecovery()">
+        Enviar correo de recuperación
+      </button>
+
+    </div><!-- fin panel-recovery -->
+
+  </div><!-- fin tarjeta -->
+
+  <footer>Huapango Xalapa 2025 · Sistema de concurso</footer>
+
+</div><!-- fin login-wrap -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// =========================================================
+//  CONFIGURACIÓN DE SUPABASE
+// =========================================================
+const SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+// =========================================================
+//  ESTADO GLOBAL
+// =========================================================
+let rolSeleccionado = 'pareja';
+
+// -------------------------------------------------------
+//  RUTAS A CADA PANEL
+//  Cuando subas a Vercel, estos nombres se quedan igual
+//  siempre y cuando todos los archivos estén en la misma carpeta
+// -------------------------------------------------------
+const RUTAS = {
+  admin:     'panel-admin.html',
+  encargado: 'panel-encargado.html',
+  juez:      'panel-juez.html',
+  pareja:    'panel-pareja.html',
+};
+
+
+// =========================================================
+//  INICIALIZACIÓN
+//  Si ya hay sesión activa, redirigir directo al panel
+// =========================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    await redirigirSegunRol(session.user);
+  }
+});
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: seleccionarRol(rol, boton)
+//  Cambia la UI según el rol elegido
+// ---------------------------------------------------------
+function seleccionarRol(rol, boton) {
+  rolSeleccionado = rol;
+
+  // Marcar botón activo
+  document.querySelectorAll('.rol-btn').forEach(b => b.classList.remove('activo'));
+  boton.classList.add('activo');
+
+  const hint     = document.getElementById('hint-password');
+  const labelPwd = document.getElementById('label-password');
+  const recovery = document.getElementById('link-recovery');
+  const error    = document.getElementById('msg-error');
+
+  // Limpiar error al cambiar de rol
+  error.style.display = 'none';
+
+  if (rol === 'pareja') {
+    // Las parejas usan su número de pareja como contraseña
+    labelPwd.textContent  = 'Contraseña (tu número de pareja)';
+    hint.style.display    = 'block';
+    recovery.style.display = 'none';
+    document.getElementById('password').placeholder = 'Ej: 177';
+  } else {
+    labelPwd.textContent  = 'Contraseña';
+    hint.style.display    = 'none';
+    recovery.style.display = 'block';
+    document.getElementById('password').placeholder = '••••••••';
+  }
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: entrar()
+//  Inicia sesión con Supabase Auth y redirige al panel
+// ---------------------------------------------------------
+async function entrar() {
+  const correo   = document.getElementById('correo').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const btn      = document.getElementById('btn-entrar');
+
+  if (!correo || !password) {
+    mostrarError('Escribe tu correo y contraseña.');
+    return;
+  }
+
+  // Mostrar spinner
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spinner"></span> Entrando...';
+  document.getElementById('msg-error').style.display = 'none';
+
+  try {
+    // -------------------------------------------------------
+    //  LOGIN CON SUPABASE AUTH
+    //  Funciona igual para todos los roles.
+    //  La diferencia está en la contraseña:
+    //    - Parejas: número de pareja (ej. "177")
+    //    - Staff/Admin: contraseña normal creada por la admin
+    // -------------------------------------------------------
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email:    correo,
+      password: password,
+    });
+
+    if (error) {
+      mostrarError('Correo o contraseña incorrectos. Intenta de nuevo.');
+      return;
+    }
+
+    // Redirigir según el rol del usuario
+    await redirigirSegunRol(data.user);
+
+  } catch (err) {
+    console.error(err);
+    mostrarError('Error de conexión. Verifica tu internet e intenta de nuevo.');
+  } finally {
+    btn.disabled  = false;
+    btn.innerHTML = 'Entrar →';
+  }
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: redirigirSegunRol(user)
+//  Lee el rol desde la tabla "usuarios" y redirige
+// ---------------------------------------------------------
+async function redirigirSegunRol(user) {
+  // 1. Buscar en tabla "usuarios" (staff y admin)
+  const { data: usuarioData } = await supabase
+    .from('usuarios')
+    .select('rol')
+    .eq('correo', user.email)
+    .maybeSingle(); // maybeSingle() no lanza error si no encuentra nada
+
+  if (usuarioData?.rol) {
+    // Es staff o admin — redirigir a su panel
+    const destinos = {
+      admin:     RUTAS.admin,
+      encargado: RUTAS.encargado,
+      juez:      RUTAS.juez,
+    };
+    window.location.href = destinos[usuarioData.rol] || RUTAS.admin;
+    return;
+  }
+
+  // 2. Si no está en "usuarios", verificar si es una pareja
+  const { data: parejaData } = await supabase
+    .from('parejas')
+    .select('numero')
+    .eq('correo', user.email)
+    .maybeSingle();
+
+  if (parejaData) {
+    // Es una pareja — llevar a su panel de resultados
+    window.location.href = RUTAS.pareja;
+    return;
+  }
+
+  // 3. Usuario sin rol asignado — cerrar sesión y mostrar error
+  await supabase.auth.signOut();
+  mostrarError('Tu cuenta no tiene un rol asignado. Contacta al administrador.');
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: mostrarError(mensaje)
+// ---------------------------------------------------------
+function mostrarError(mensaje) {
+  const el = document.getElementById('msg-error');
+  el.textContent   = mensaje;
+  el.style.display = 'block';
+  const btn = document.getElementById('btn-entrar');
+  btn.disabled  = false;
+  btn.innerHTML = 'Entrar →';
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: mostrarRecovery / volverLogin
+// ---------------------------------------------------------
+function mostrarRecovery() {
+  document.getElementById('panel-login').style.display = 'none';
+  document.getElementById('panel-recovery').classList.add('visible');
+}
+
+function volverLogin() {
+  document.getElementById('panel-recovery').classList.remove('visible');
+  document.getElementById('panel-login').style.display = 'block';
+  document.getElementById('msg-recovery-exito').style.display = 'none';
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: enviarRecovery()
+//  Manda el correo de restablecimiento de contraseña
+// ---------------------------------------------------------
+async function enviarRecovery() {
+  const correo = document.getElementById('recovery-correo').value.trim();
+  if (!correo) return;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(correo, {
+    // Cuando subas a Vercel cambia esto por tu URL real
+    // Ej: 'https://huapangoxalapa.vercel.app/login.html'
+    redirectTo: window.location.origin + '/login.html',
+  });
+
+  if (error) {
+    alert('Error al enviar el correo. Verifica la dirección e intenta de nuevo.');
+    return;
+  }
+
+  document.getElementById('msg-recovery-exito').style.display = 'block';
+}
+</script>
+</body>
+</html>

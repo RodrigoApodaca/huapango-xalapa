@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Encargado — Huapango Xalapa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== VARIABLES =====
+       Misma paleta que el pre-registro para consistencia visual */
+    :root {
+      --verde-oscuro:  #1B4332;
+      --verde-medio:   #2D6A4F;
+      --verde-claro:   #40916C;
+      --dorado:        #D4A017;
+      --crema:         #FFF8E7;
+      --blanco:        #FFFFFF;
+      --gris-fondo:    #F4F6F4;
+      --gris-borde:    #D8E0D8;
+      --texto:         #1A1A1A;
+      --texto-suave:   #5A6A5A;
+      --exito:         #27AE60;
+      --error:         #C0392B;
+      --advertencia:   #E67E22;
+      --azul-info:     #2980B9;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gris-fondo);
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    /* ===== BARRA SUPERIOR ===== */
+    .topbar {
+      background: var(--verde-oscuro);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--dorado);
+    }
+    .topbar-titulo {
+      font-family: 'Playfair Display', serif;
+      color: var(--dorado);
+      font-size: 1rem;
+    }
+    .topbar-badge {
+      background: var(--verde-medio);
+      color: var(--crema);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--dorado);
+    }
+
+    /* ===== LAYOUT PRINCIPAL =====
+       Sidebar izquierdo + contenido derecho en desktop
+       En celular se apilan */
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+    @media (max-width: 800px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* ===== PANEL IZQUIERDO: BÚSQUEDA ===== */
+    .sidebar {
+      background: var(--blanco);
+      border-right: 1px solid var(--gris-borde);
+      padding: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .seccion-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      margin-bottom: 0.6rem;
+    }
+
+    /* Campo de búsqueda */
+    .buscador {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .buscador input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      background: var(--gris-fondo);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .buscador input:focus { border-color: var(--verde-claro); }
+    .buscador .icono-buscar {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--texto-suave);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    /* Lista de parejas encontradas */
+    .lista-parejas {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* Tarjeta chica de cada pareja en la lista */
+    .pareja-item {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--gris-borde);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--blanco);
+    }
+    .pareja-item:hover  { border-color: var(--verde-claro); background: #F0F8F4; }
+    .pareja-item.activa { border-color: var(--verde-claro); background: #E8F5EE; }
+
+    .pareja-item-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--verde-oscuro);
+      font-weight: 700;
+    }
+    .pareja-item-nombre {
+      font-size: 0.82rem;
+      color: var(--texto-suave);
+      margin-top: 2px;
+    }
+    /* Badge de estado: pendiente / confirmado */
+    .estado-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-top: 4px;
+    }
+    .estado-pendiente  { background: #FEF3CD; color: #856404; }
+    .estado-confirmado { background: #D4EDDA; color: #155724; }
+
+    /* ===== PANEL DERECHO: DETALLE DE PAREJA ===== */
+    .contenido {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    /* Placeholder cuando no hay pareja seleccionada */
+    .placeholder-vacio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 60vh;
+      color: var(--texto-suave);
+      text-align: center;
+      gap: 0.75rem;
+    }
+    .placeholder-vacio .icono { font-size: 3rem; }
+
+    /* Tarjeta de detalle de la pareja seleccionada */
+    .tarjeta-detalle {
+      background: var(--blanco);
+      border-radius: 14px;
+      border: 1px solid var(--gris-borde);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Encabezado de la tarjeta con el número de pareja */
+    .tarjeta-header {
+      background: var(--verde-oscuro);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tarjeta-header-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--dorado);
+    }
+    .tarjeta-header-cat {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+    }
+    .tarjeta-header-estilo {
+      background: var(--verde-medio);
+      border: 1px solid var(--dorado);
+      color: var(--crema);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+    }
+
+    /* Cuerpo de la tarjeta con los datos */
+    .tarjeta-body { padding: 1.5rem; }
+
+    /* Grid de datos de la pareja */
+    .datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    @media (max-width: 600px) {
+      .datos-grid { grid-template-columns: 1fr; }
+    }
+
+    .dato-item label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    /* Valor del dato en modo lectura */
+    .dato-valor {
+      font-size: 0.95rem;
+      color: var(--texto);
+      font-weight: 500;
+    }
+    /* Input de edición (oculto por defecto) */
+    .dato-input {
+      display: none;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1.5px solid var(--verde-claro);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      background: #F0F8F4;
+    }
+
+    /* Divisor entre secciones */
+    .divisor {
+      height: 1px;
+      background: var(--gris-borde);
+      margin: 1.25rem 0;
+    }
+
+    /* ===== BOTONES ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-confirmar {
+      background: var(--exito);
+      color: #fff;
+      width: 100%;
+      justify-content: center;
+      padding: 0.85rem;
+      font-size: 0.95rem;
+    }
+    .btn-confirmar:hover { background: #219A52; }
+    .btn-confirmar:disabled { background: #aaa; cursor: not-allowed; transform: none; }
+
+    .btn-editar {
+      background: var(--gris-fondo);
+      color: var(--verde-oscuro);
+      border: 1.5px solid var(--gris-borde);
+    }
+    .btn-editar:hover { border-color: var(--verde-claro); }
+
+    .btn-guardar {
+      background: var(--verde-claro);
+      color: #fff;
+    }
+    .btn-guardar:hover { background: var(--verde-medio); }
+
+    .btn-cancelar {
+      background: var(--gris-fondo);
+      color: var(--texto-suave);
+      border: 1.5px solid var(--gris-borde);
+    }
+
+    .btn-bloque {
+      background: var(--dorado);
+      color: var(--verde-oscuro);
+      width: 100%;
+      justify-content: center;
+      padding: 0.85rem;
+      font-size: 0.95rem;
+    }
+    .btn-bloque:hover { background: #C49010; }
+
+    .acciones-fila {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    /* ===== SECCIÓN DE BLOQUES =====
+       El encargado activa el bloque desde aquí */
+    .tarjeta-bloques {
+      background: var(--blanco);
+      border-radius: 14px;
+      border: 1px solid var(--gris-borde);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .bloque-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--verde-oscuro);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Lista de bloques */
+    .bloques-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .bloque-fila {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--gris-borde);
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    /* Colores de estado del bloque */
+    .bloque-fila.en-curso  { border-color: var(--dorado); background: #FFFBEF; }
+    .bloque-fila.terminado { border-color: var(--gris-borde); background: var(--gris-fondo); opacity: 0.7; }
+    .bloque-fila.pendiente { border-color: var(--gris-borde); }
+
+    .bloque-info { flex: 1; }
+    .bloque-nombre {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--texto);
+    }
+    .bloque-parejas-lista {
+      font-size: 0.78rem;
+      color: var(--texto-suave);
+      margin-top: 3px;
+    }
+
+    /* Chip de estado del bloque */
+    .chip {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+    }
+    .chip-curso     { background: #FFF3CD; color: #856404; }
+    .chip-terminado { background: #D4EDDA; color: #155724; }
+    .chip-pendiente { background: #E2E8E2; color: #4A5A4A; }
+
+    /* Botón pequeño para activar bloque */
+    .btn-activar {
+      background: var(--verde-claro);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-activar:hover { background: var(--verde-medio); }
+
+    /* ===== TOAST / NOTIFICACIÓN =====
+       Aparece brevemente para confirmar acciones */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--verde-oscuro);
+      color: var(--crema);
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: 1px solid var(--dorado);
+      z-index: 999;
+      transition: transform 0.3s;
+      white-space: nowrap;
+    }
+    .toast.visible { transform: translateX(-50%) translateY(0); }
+
+    /* ===== ESTADÍSTICAS RÁPIDAS ===== */
+    .stats-fila {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .stat-card {
+      background: var(--blanco);
+      border-radius: 10px;
+      border: 1px solid var(--gris-borde);
+      padding: 0.85rem 1rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--verde-oscuro);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--texto-suave);
+      margin-top: 4px;
+    }
+
+    /* ===== MODAL DE CONFIRMACIÓN ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.abierto { display: flex; }
+    .modal {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      border: 2px solid var(--dorado);
+    }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--verde-oscuro);
+      margin-bottom: 0.75rem;
+    }
+    .modal p { font-size: 0.9rem; color: var(--texto-suave); margin-bottom: 1.25rem; }
+    .modal-botones { display: flex; gap: 0.75rem; justify-content: center; }
+
+  </style>
+</head>
+<body>
+
+<!-- ===== BARRA SUPERIOR ===== -->
+<header class="topbar">
+  <span class="topbar-titulo">Panel Encargado — Huapango Xalapa</span>
+  <span class="topbar-badge" id="badge-encargado">Cargando...</span>
+  <button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(212,160,23,0.4);border-radius:6px;padding:0.3rem 0.75rem;color:rgba(255,255,255,0.6);font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">
+    Salir
+  </button>
+</header>
+
+<div class="layout">
+
+  <!-- =============================================
+       SIDEBAR IZQUIERDO: búsqueda de parejas
+  ============================================= -->
+  <aside class="sidebar">
+    <p class="seccion-label">Buscar pareja</p>
+
+    <div class="buscador">
+      <span class="icono-buscar">🔍</span>
+      <!-- oninput filtra en tiempo real -->
+      <input
+        type="text"
+        id="input-buscar"
+        placeholder="Número o nombre..."
+        oninput="filtrarParejas(this.value)"
+      />
+    </div>
+
+    <!-- Conteo de resultados -->
+    <p style="font-size:0.78rem; color:var(--texto-suave); margin-bottom:0.75rem;" id="conteo-resultados">
+      Mostrando todas las parejas
+    </p>
+
+    <!-- Lista de parejas (se genera con JavaScript) -->
+    <div class="lista-parejas" id="lista-parejas"></div>
+  </aside>
+
+
+  <!-- =============================================
+       CONTENIDO DERECHO: detalle + bloques
+  ============================================= -->
+  <main class="contenido">
+
+    <!-- Estadísticas rápidas arriba -->
+    <div class="stats-fila">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Parejas registradas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-confirmadas" style="color:var(--exito)">0</div>
+        <div class="stat-label">Confirmadas hoy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-pendientes" style="color:var(--advertencia)">0</div>
+        <div class="stat-label">Por confirmar</div>
+      </div>
+    </div>
+
+
+    <!-- Placeholder cuando no hay pareja seleccionada -->
+    <div class="placeholder-vacio" id="placeholder-vacio">
+      <div class="icono">💃</div>
+      <p style="font-size:1rem; font-weight:700; color:var(--verde-oscuro);">
+        Selecciona una pareja
+      </p>
+      <p style="font-size:0.85rem;">
+        Busca por número o nombre en el panel izquierdo
+      </p>
+    </div>
+
+
+    <!-- =============================================
+         TARJETA DE DETALLE DE LA PAREJA SELECCIONADA
+         Oculta por defecto, JS la muestra
+    ============================================= -->
+    <div id="detalle-pareja" style="display:none;">
+
+      <!-- Header con número y estilo -->
+      <div class="tarjeta-detalle">
+        <div class="tarjeta-header">
+          <div>
+            <div class="tarjeta-header-num" id="d-numero">#177</div>
+            <div class="tarjeta-header-cat" id="d-categoria">Pequeños Guapangueritos</div>
+          </div>
+          <div class="tarjeta-header-estilo" id="d-estilo">Veracruzano</div>
+        </div>
+
+        <div class="tarjeta-body">
+
+          <!-- Botones de acción -->
+          <div class="acciones-fila" id="acciones-fila">
+            <!-- Se actualizan dependiendo del estado de la pareja -->
+          </div>
+
+          <!-- Grid de datos -->
+          <div class="datos-grid">
+
+            <!-- Integrante 1 -->
+            <div class="dato-item">
+              <label>Integrante 1</label>
+              <span class="dato-valor" id="d-nombre1">—</span>
+              <input class="dato-input" id="e-nombre1" type="text" placeholder="Nombre completo" />
+            </div>
+
+            <!-- Integrante 2 -->
+            <div class="dato-item">
+              <label>Integrante 2</label>
+              <span class="dato-valor" id="d-nombre2">—</span>
+              <input class="dato-input" id="e-nombre2" type="text" placeholder="Nombre completo" />
+            </div>
+
+            <!-- Edades -->
+            <div class="dato-item">
+              <label>Edades</label>
+              <span class="dato-valor" id="d-edades">—</span>
+            </div>
+
+            <!-- Géneros -->
+            <div class="dato-item">
+              <label>Géneros</label>
+              <span class="dato-valor" id="d-generos">—</span>
+            </div>
+
+            <!-- Correo -->
+            <div class="dato-item">
+              <label>Correo</label>
+              <span class="dato-valor" id="d-correo">—</span>
+              <input class="dato-input" id="e-correo" type="email" placeholder="correo@ejemplo.com" />
+            </div>
+
+            <!-- Teléfono -->
+            <div class="dato-item">
+              <label>Teléfono / WhatsApp</label>
+              <span class="dato-valor" id="d-telefono">—</span>
+              <input class="dato-input" id="e-telefono" type="tel" placeholder="10 dígitos" />
+            </div>
+
+            <!-- Maestro/grupo -->
+            <div class="dato-item">
+              <label>Maestro / Grupo</label>
+              <span class="dato-valor" id="d-maestro">—</span>
+              <input class="dato-input" id="e-maestro" type="text" placeholder="Nombre del maestro o grupo" />
+            </div>
+
+            <!-- Fecha de registro -->
+            <div class="dato-item">
+              <label>Fecha de registro</label>
+              <span class="dato-valor" id="d-fecha">—</span>
+            </div>
+
+          </div><!-- fin datos-grid -->
+
+          <!-- Nota adicional del encargado (siempre editable) -->
+          <div class="divisor"></div>
+          <div class="dato-item">
+            <label>Nota del encargado (opcional)</label>
+            <textarea
+              id="d-nota"
+              placeholder="Agrega aquí cualquier observación sobre la pareja..."
+              style="width:100%; padding:0.6rem 0.75rem; border:1.5px solid var(--gris-borde);
+                     border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.88rem;
+                     resize:vertical; min-height:70px; outline:none;"
+            ></textarea>
+          </div>
+
+        </div><!-- fin tarjeta-body -->
+      </div><!-- fin tarjeta-detalle -->
+
+    </div><!-- fin #detalle-pareja -->
+
+
+    <!-- =============================================
+         SECCIÓN DE BLOQUES
+         El encargado activa el bloque desde aquí
+    ============================================= -->
+    <div class="tarjeta-bloques" id="seccion-bloques">
+      <div class="bloque-titulo">🎵 Control de bloques</div>
+
+      <!-- Lista de bloques generada por JavaScript -->
+      <div class="bloques-lista" id="bloques-lista"></div>
+    </div>
+
+  </main>
+</div><!-- fin layout -->
+
+
+<!-- ===== MODAL DE CONFIRMACIÓN DE BLOQUE ===== -->
+<div class="modal-overlay" id="modal-bloque">
+  <div class="modal">
+    <h3>¿Activar bloque?</h3>
+    <p id="modal-bloque-texto">Se notificará a los jueces que el bloque está en curso.</p>
+    <div class="modal-botones">
+      <button class="btn btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-bloque" onclick="confirmarActivarBloque()" style="width:auto; padding:0.65rem 1.2rem;">
+        ✓ Activar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">✓ Acción realizada</div>
+
+<!-- ========================================
+     LIBRERÍA DE SUPABASE
+======================================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// =========================================================
+//  CONFIGURACIÓN DE SUPABASE
+// =========================================================
+var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// =========================================================
+//  ESTADO GLOBAL — arrays vacíos, se llenan desde Supabase
+// =========================================================
+let parejaActiva   = null;
+let modoEdicion    = false;
+let bloqueAActivar = null;
+
+var parejas = [];
+var bloques = [];
+
+
+// =========================================================
+//  GUARD DE SESIÓN
+// =========================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('badge-encargado').textContent = 'Encargado: Prueba';
+  await cargarParejas();
+  await cargarBloques();
+  actualizarStats();
+});
+
+async function cerrarSesion() {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: cargarParejas()
+//  Lee todas las parejas de Supabase y las muestra en el sidebar
+// ---------------------------------------------------------
+async function cargarParejas() {
+  const { data, error } = await supabase
+    .from('parejas')
+    .select('*')
+    .order('numero', { ascending: true });
+
+  if (error) {
+    console.error('Error cargando parejas:', error);
+    mostrarToast('⚠ Error al cargar parejas');
+    return;
+  }
+
+  // Mapear los campos de Supabase al formato que usa la UI
+  parejas = data.map(p => ({
+    id:         p.id,
+    numero:     p.numero,
+    categoria:  p.categoria_nombre,
+    estilo:     p.estilo,
+    nombre1:    p.nombre1,
+    nombre2:    p.nombre2,
+    edad1:      p.edad1,
+    edad2:      p.edad2,
+    genero1:    p.genero1,
+    genero2:    p.genero2,
+    correo:     p.correo,
+    telefono:   p.telefono,
+    maestro:    p.maestro || '',
+    confirmado: p.confirmado,
+    nota:       p.nota_encargado || '',
+    fecha:      p.creado_en?.slice(0, 10) || '—',
+  }));
+
+  renderizarLista(parejas);
+  actualizarStats();
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: cargarBloques()
+//  Lee los bloques de Supabase con sus parejas asignadas
+// ---------------------------------------------------------
+async function cargarBloques() {
+  // Traer bloques ordenados por su campo "orden"
+  const { data: dataBloques, error } = await supabase
+    .from('bloques')
+    .select(`
+      id, nombre, categoria, estilo, ronda, estado, orden,
+      bloque_parejas ( pareja_num )
+    `)
+    .order('orden', { ascending: true });
+
+  if (error) {
+    console.error('Error cargando bloques:', error);
+    return;
+  }
+
+  // Mapear al formato de la UI
+  bloques = dataBloques.map(b => ({
+    id:      b.id,
+    nombre:  `${b.nombre} — ${b.categoria} / ${b.estilo}`,
+    parejas: b.bloque_parejas.map(bp => bp.pareja_num),
+    estado:  b.estado,
+  }));
+
+  renderizarBloques();
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: actualizarStats()
+//  Actualiza los 3 contadores en la parte superior
+// ---------------------------------------------------------
+function actualizarStats() {
+  const confirmadas = parejas.filter(p => p.confirmado).length;
+  document.getElementById('stat-total').textContent      = parejas.length;
+  document.getElementById('stat-confirmadas').textContent = confirmadas;
+  document.getElementById('stat-pendientes').textContent  = parejas.length - confirmadas;
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: renderizarLista(lista)
+//  Dibuja las tarjetas chicas de parejas en el sidebar
+// ---------------------------------------------------------
+function renderizarLista(lista) {
+  const contenedor = document.getElementById('lista-parejas');
+  const conteo     = document.getElementById('conteo-resultados');
+
+  conteo.textContent = lista.length === parejas.length
+    ? `Mostrando todas las parejas (${parejas.length})`
+    : `${lista.length} resultado${lista.length !== 1 ? 's' : ''}`;
+
+  if (lista.length === 0) {
+    contenedor.innerHTML = `<p style="font-size:0.85rem;color:var(--texto-suave);text-align:center;padding:1rem 0;">
+      No se encontraron parejas
+    </p>`;
+    return;
+  }
+
+  contenedor.innerHTML = lista.map(p => `
+    <div
+      class="pareja-item ${parejaActiva?.id === p.id ? 'activa' : ''}"
+      onclick="seleccionarPareja('${p.id}')"
+    >
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <span class="pareja-item-num">#${p.numero}</span>
+        <span class="estado-badge ${p.confirmado ? 'estado-confirmado' : 'estado-pendiente'}">
+          ${p.confirmado ? '✓ Confirmada' : 'Pendiente'}
+        </span>
+      </div>
+      <div class="pareja-item-nombre">${p.nombre1} &amp; ${p.nombre2}</div>
+      <div style="font-size:0.75rem;color:var(--texto-suave);margin-top:3px;">
+        ${p.categoria} · ${p.estilo}
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: filtrarParejas(texto)
+//  Filtra la lista por número o nombre en tiempo real
+// ---------------------------------------------------------
+function filtrarParejas(texto) {
+  const q = texto.toLowerCase().trim();
+  const filtradas = q
+    ? parejas.filter(p =>
+        p.numero.includes(q) ||
+        p.nombre1.toLowerCase().includes(q) ||
+        p.nombre2.toLowerCase().includes(q)
+      )
+    : parejas;
+  renderizarLista(filtradas);
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: seleccionarPareja(id)
+//  Muestra el detalle completo de la pareja seleccionada
+// ---------------------------------------------------------
+function seleccionarPareja(id) {
+  parejaActiva = parejas.find(p => p.id === id);
+  if (!parejaActiva) return;
+
+  modoEdicion = false; // siempre empieza en modo lectura
+
+  // Ocultar placeholder y mostrar detalle
+  document.getElementById('placeholder-vacio').style.display = 'none';
+  document.getElementById('detalle-pareja').style.display    = 'block';
+
+  // Llenar los datos en la tarjeta
+  document.getElementById('d-numero').textContent    = `#${parejaActiva.numero}`;
+  document.getElementById('d-categoria').textContent = parejaActiva.categoria;
+  document.getElementById('d-estilo').textContent    = parejaActiva.estilo;
+  document.getElementById('d-nombre1').textContent   = parejaActiva.nombre1;
+  document.getElementById('d-nombre2').textContent   = parejaActiva.nombre2;
+  document.getElementById('d-edades').textContent    = `${parejaActiva.edad1} y ${parejaActiva.edad2} años`;
+  document.getElementById('d-generos').textContent   = `${parejaActiva.genero1} / ${parejaActiva.genero2}`;
+  document.getElementById('d-correo').textContent    = parejaActiva.correo;
+  document.getElementById('d-telefono').textContent  = parejaActiva.telefono;
+  document.getElementById('d-maestro').textContent   = parejaActiva.maestro || 'Sin maestro o grupo';
+  document.getElementById('d-fecha').textContent     = parejaActiva.fecha;
+  document.getElementById('d-nota').value            = parejaActiva.nota || '';
+
+  // Rellenar los inputs de edición con los valores actuales
+  document.getElementById('e-nombre1').value  = parejaActiva.nombre1;
+  document.getElementById('e-nombre2').value  = parejaActiva.nombre2;
+  document.getElementById('e-correo').value   = parejaActiva.correo;
+  document.getElementById('e-telefono').value = parejaActiva.telefono;
+  document.getElementById('e-maestro').value  = parejaActiva.maestro;
+
+  // Actualizar botones de acción según el estado
+  actualizarAcciones();
+
+  // Marcar como activa en la lista del sidebar
+  renderizarLista(
+    document.getElementById('input-buscar').value
+      ? parejas.filter(p =>
+          p.numero.includes(document.getElementById('input-buscar').value) ||
+          p.nombre1.toLowerCase().includes(document.getElementById('input-buscar').value.toLowerCase()) ||
+          p.nombre2.toLowerCase().includes(document.getElementById('input-buscar').value.toLowerCase())
+        )
+      : parejas
+  );
+
+  // En celular, hacer scroll al detalle
+  document.getElementById('detalle-pareja').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: actualizarAcciones()
+//  Genera los botones correctos según el estado de la pareja
+// ---------------------------------------------------------
+function actualizarAcciones() {
+  const fila = document.getElementById('acciones-fila');
+
+  if (!modoEdicion) {
+    // Modo lectura: botón de confirmar + botón de editar
+    fila.innerHTML = `
+      <button
+        class="btn btn-confirmar"
+        onclick="confirmarPresencia()"
+        ${parejaActiva.confirmado ? 'disabled' : ''}
+      >
+        ${parejaActiva.confirmado ? '✓ Pareja confirmada' : '✓ Confirmar presencia'}
+      </button>
+      <button class="btn btn-editar" onclick="activarEdicion()">
+        ✏️ Editar datos
+      </button>
+    `;
+  } else {
+    // Modo edición: botón de guardar + cancelar
+    fila.innerHTML = `
+      <button class="btn btn-guardar" onclick="guardarEdicion()">💾 Guardar cambios</button>
+      <button class="btn btn-cancelar" onclick="cancelarEdicion()">✕ Cancelar</button>
+    `;
+  }
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: confirmarPresencia()
+//  Marca la pareja como presente y lo guarda en Supabase
+// ---------------------------------------------------------
+async function confirmarPresencia() {
+  if (!parejaActiva) return;
+
+  const { error } = await supabase
+    .from('parejas')
+    .update({ confirmado: true })
+    .eq('id', parejaActiva.id);
+
+  if (error) {
+    mostrarToast('⚠ Error al confirmar, intenta de nuevo');
+    console.error(error);
+    return;
+  }
+
+  parejaActiva.confirmado = true;
+  actualizarAcciones();
+  actualizarStats();
+  renderizarLista(parejas);
+  mostrarToast(`✓ Pareja #${parejaActiva.numero} confirmada`);
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: activarEdicion()
+//  Pasa los campos de texto de modo lectura a modo edición
+// ---------------------------------------------------------
+function activarEdicion() {
+  modoEdicion = true;
+
+  // Ocultar valores y mostrar inputs para los campos editables
+  const campos = ['nombre1', 'nombre2', 'correo', 'telefono', 'maestro'];
+  campos.forEach(campo => {
+    document.getElementById(`d-${campo}`).style.display = 'none';
+    document.getElementById(`e-${campo}`).style.display = 'block';
+  });
+
+  actualizarAcciones();
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: cancelarEdicion()
+//  Vuelve al modo lectura sin guardar cambios
+// ---------------------------------------------------------
+function cancelarEdicion() {
+  modoEdicion = false;
+
+  // Restaurar valores originales en los inputs (por si el usuario cambió algo)
+  document.getElementById('e-nombre1').value  = parejaActiva.nombre1;
+  document.getElementById('e-nombre2').value  = parejaActiva.nombre2;
+  document.getElementById('e-correo').value   = parejaActiva.correo;
+  document.getElementById('e-telefono').value = parejaActiva.telefono;
+  document.getElementById('e-maestro').value  = parejaActiva.maestro;
+
+  // Ocultar inputs y volver a mostrar valores
+  const campos = ['nombre1', 'nombre2', 'correo', 'telefono', 'maestro'];
+  campos.forEach(campo => {
+    document.getElementById(`d-${campo}`).style.display = '';
+    document.getElementById(`e-${campo}`).style.display = 'none';
+  });
+
+  actualizarAcciones();
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: guardarEdicion()
+//  Guarda los datos editados en Supabase
+// ---------------------------------------------------------
+async function guardarEdicion() {
+  const nuevo = {
+    nombre1:          document.getElementById('e-nombre1').value.trim(),
+    nombre2:          document.getElementById('e-nombre2').value.trim(),
+    correo:           document.getElementById('e-correo').value.trim(),
+    telefono:         document.getElementById('e-telefono').value.trim(),
+    maestro:          document.getElementById('e-maestro').value.trim() || null,
+    nota_encargado:   document.getElementById('d-nota').value.trim(),
+  };
+
+  if (!nuevo.nombre1 || !nuevo.nombre2) {
+    mostrarToast('⚠ Los nombres no pueden estar vacíos');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('parejas')
+    .update(nuevo)
+    .eq('id', parejaActiva.id);
+
+  if (error) {
+    mostrarToast('⚠ Error al guardar, intenta de nuevo');
+    console.error(error);
+    return;
+  }
+
+  // Actualizar objeto local también
+  Object.assign(parejaActiva, {
+    nombre1:  nuevo.nombre1,
+    nombre2:  nuevo.nombre2,
+    correo:   nuevo.correo,
+    telefono: nuevo.telefono,
+    maestro:  nuevo.maestro || '',
+    nota:     nuevo.nota_encargado,
+  });
+
+  cancelarEdicion();
+  seleccionarPareja(parejaActiva.id);
+  mostrarToast('💾 Datos guardados correctamente');
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: renderizarBloques()
+//  Dibuja la lista de bloques con su estado actual
+// ---------------------------------------------------------
+function renderizarBloques() {
+  const lista = document.getElementById('bloques-lista');
+
+  lista.innerHTML = bloques.map(b => `
+    <div class="bloque-fila ${b.estado}">
+      <div class="bloque-info">
+        <div class="bloque-nombre">${b.nombre}</div>
+        <div class="bloque-parejas-lista">Parejas: ${b.parejas.map(n => `#${n}`).join(', ')}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+        <span class="chip chip-${b.estado}">
+          ${{ 'en-curso': '🟡 En curso', 'terminado': '✅ Terminado', 'pendiente': '⏳ Pendiente' }[b.estado]}
+        </span>
+        ${b.estado === 'pendiente'
+          ? `<button class="btn-activar" onclick="abrirModalBloque('${b.id}')">Activar →</button>`
+          : ''
+        }
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: abrirModalBloque(bloqueId)
+//  Abre el modal de confirmación antes de activar un bloque
+// ---------------------------------------------------------
+function abrirModalBloque(bloqueId) {
+  bloqueAActivar = bloqueId;
+  const bloque = bloques.find(b => b.id === bloqueId);
+  document.getElementById('modal-bloque-texto').textContent =
+    `Vas a activar "${bloque.nombre}". Los jueces recibirán la señal para calificar.`;
+  document.getElementById('modal-bloque').classList.add('abierto');
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: cerrarModal()
+//  Cierra el modal sin hacer nada
+// ---------------------------------------------------------
+function cerrarModal() {
+  document.getElementById('modal-bloque').classList.remove('abierto');
+  bloqueAActivar = null;
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: confirmarActivarBloque()
+//  Cambia el estado del bloque en Supabase
+//  La pantalla pública se actualiza sola via Realtime
+// ---------------------------------------------------------
+async function confirmarActivarBloque() {
+  if (!bloqueAActivar) return;
+
+  // Poner el bloque anterior como terminado
+  const anterior = bloques.find(b => b.estado === 'en-curso');
+  if (anterior) {
+    await supabase
+      .from('bloques')
+      .update({ estado: 'terminado' })
+      .eq('id', anterior.id);
+    anterior.estado = 'terminado';
+  }
+
+  // Activar el nuevo bloque
+  const { error } = await supabase
+    .from('bloques')
+    .update({ estado: 'en_curso' })
+    .eq('id', bloqueAActivar);
+
+  if (error) {
+    mostrarToast('⚠ Error al activar bloque');
+    console.error(error);
+    cerrarModal();
+    return;
+  }
+
+  const nuevo = bloques.find(b => b.id === bloqueAActivar);
+  if (nuevo) nuevo.estado = 'en-curso';
+
+  cerrarModal();
+  renderizarBloques();
+  mostrarToast('🟡 Bloque activado — los jueces ya pueden calificar');
+  bloqueAActivar = null;
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: mostrarToast(mensaje)
+//  Muestra una notificación temporal en la parte inferior
+// ---------------------------------------------------------
+function mostrarToast(mensaje) {
+  const toast = document.getElementById('toast');
+  toast.textContent = mensaje;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 2800);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Esto hace que la página se vea bien en celular, tablet y compu -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1er Concurso Nacional de Huapango de Xalapa — Pre-registro</title>
+
+  <!-- ===== FUENTES DE GOOGLE ===== -->
+  <!-- Playfair Display = para títulos elegantes -->
+  <!-- Lato = para texto del formulario, muy legible -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== VARIABLES DE COLOR =====
+       Si quieres cambiar la paleta, solo modifica aquí y cambia todo */
+    :root {
+      --verde-oscuro:   #1B4332;   /* fondo principal */
+      --verde-medio:    #2D6A4F;   /* bordes y secciones */
+      --verde-claro:    #40916C;   /* botones, acentos */
+      --dorado:         #D4A017;   /* detalles dorados, títulos */
+      --dorado-claro:   #F4C430;   /* hover de botones */
+      --crema:          #FFF8E7;   /* fondo de tarjetas */
+      --texto-oscuro:   #1A1A1A;   /* texto principal */
+      --texto-gris:     #555555;   /* texto secundario */
+      --borde:          #C8A96E;   /* borde de inputs */
+      --error:          #C0392B;   /* mensajes de error */
+      --exito:          #27AE60;   /* mensajes de éxito */
+    }
+
+    /* ===== RESET BÁSICO =====
+       Quita márgenes y padding por defecto del navegador */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: var(--verde-oscuro);
+      /* Fondo con textura de líneas diagonales sutiles */
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.015) 40px,
+        rgba(255,255,255,0.015) 41px
+      );
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      color: var(--texto-oscuro);
+    }
+
+    /* ===== CONTENEDOR PRINCIPAL =====
+       max-width limita el ancho en pantallas grandes
+       margin: auto lo centra */
+    .contenedor {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ===== ENCABEZADO =====
+       La sección de título con el nombre del concurso */
+    .encabezado {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 2.5rem 2rem;
+      background: linear-gradient(160deg, var(--verde-medio), var(--verde-oscuro));
+      border-radius: 16px;
+      border: 1px solid var(--dorado);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decoración de esquinas del encabezado */
+    .encabezado::before,
+    .encabezado::after {
+      content: '✦';
+      position: absolute;
+      color: var(--dorado);
+      opacity: 0.3;
+      font-size: 5rem;
+    }
+    .encabezado::before { top: -1rem; left: -1rem; }
+    .encabezado::after  { bottom: -1rem; right: -1rem; }
+
+    /* Línea decorativa arriba del título */
+    .linea-decorativa {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .linea-decorativa span {
+      height: 1px;
+      width: 60px;
+      background: var(--dorado);
+    }
+    .linea-decorativa i {
+      color: var(--dorado);
+      font-size: 1rem;
+    }
+
+    /* Título principal del concurso */
+    .titulo-concurso {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4vw, 2rem); /* clamp = responsivo automático */
+      font-weight: 900;
+      color: var(--dorado);
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    /* Frase de bienvenida */
+    .subtitulo {
+      font-family: 'Lato', sans-serif;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      color: var(--crema);
+      font-style: italic;
+      opacity: 0.9;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ===== TARJETA DEL FORMULARIO ===== */
+    .tarjeta {
+      background: var(--crema);
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid var(--borde);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Título de cada sección del formulario */
+    .seccion-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--verde-oscuro);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--dorado);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .seccion-titulo span {
+      font-size: 1.3rem;
+    }
+
+    /* ===== GRUPOS DE CAMPOS =====
+       Agrupa label + input juntos */
+    .grupo {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--verde-oscuro);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* Asterisco rojo para campos obligatorios */
+    .req {
+      color: var(--error);
+      margin-left: 2px;
+    }
+
+    /* ===== INPUTS, SELECTS Y TEXTAREAS ===== */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      color: var(--texto-oscuro);
+      background: #fff;
+      border: 1.5px solid var(--borde);
+      border-radius: 8px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      appearance: none; /* quita estilos nativos del navegador */
+    }
+
+    /* Efecto cuando el usuario da clic en un campo */
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--verde-claro);
+      box-shadow: 0 0 0 3px rgba(64,145,108,0.15);
+    }
+
+    /* Efecto de error en campos inválidos */
+    input.error,
+    select.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+    }
+
+    textarea {
+      resize: vertical; /* el usuario puede redimensionar solo verticalmente */
+      min-height: 80px;
+    }
+
+    /* Texto de ayuda debajo de algunos campos */
+    .ayuda {
+      font-size: 0.78rem;
+      color: var(--texto-gris);
+      margin-top: 0.3rem;
+    }
+
+    /* Mensaje de error individual por campo */
+    .msg-error {
+      font-size: 0.78rem;
+      color: var(--error);
+      margin-top: 0.3rem;
+      display: none; /* oculto por defecto, JS lo muestra */
+    }
+
+    /* ===== LAYOUT DE DOS COLUMNAS =====
+       En pantallas grandes, dos campos lado a lado
+       En celular se apilan uno abajo del otro */
+    .fila-doble {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 560px) {
+      .fila-doble { grid-template-columns: 1fr; }
+    }
+
+    /* ===== BADGE DE CATEGORÍA =====
+       Aparece automáticamente cuando se ingresa la edad */
+    .badge-categoria {
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 0.5rem;
+      transition: all 0.3s;
+    }
+    /* Colores por categoría — cambiar aquí si cambian los colores del concurso */
+    .cat-1 { background: #FFF3CD; color: #856404; border: 1px solid #FFDA6A; }
+    .cat-2 { background: #D1ECF1; color: #0C5460; border: 1px solid #BEE5EB; }
+    .cat-3 { background: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+    .cat-4 { background: #F8D7DA; color: #721C24; border: 1px solid #F5C6CB; }
+
+    /* ===== RADIO BUTTONS ESTILIZADOS =====
+       Para "¿Participas con grupo o maestro?" */
+    .radio-grupo {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .radio-opcion {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.92rem;
+      color: var(--texto-oscuro);
+    }
+    .radio-opcion input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--verde-claro); /* color del radio seleccionado */
+    }
+
+    /* Campo de maestro/grupo — oculto hasta que el usuario diga "Sí" */
+    #bloque-maestro {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    /* ===== AVISO PARA MENORES =====
+       Se muestra automáticamente si algún integrante es menor de edad */
+    .aviso-menor {
+      background: #FFF3CD;
+      border: 1px solid #FFDA6A;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: #856404;
+      display: none; /* oculto por defecto */
+      margin-top: 0.5rem;
+    }
+
+    /* ===== BOTÓN PRINCIPAL DE ENVÍO ===== */
+    .btn-enviar {
+      width: 100%;
+      padding: 1rem;
+      background: var(--verde-claro);
+      color: #fff;
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+    .btn-enviar:hover  { background: var(--dorado); color: var(--verde-oscuro); }
+    .btn-enviar:active { transform: scale(0.99); }
+    .btn-enviar:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ===== PANTALLA DE ÉXITO =====
+       Se muestra cuando el formulario se envía correctamente */
+    #pantalla-exito {
+      display: none; /* oculta hasta que JS la muestre */
+      text-align: center;
+    }
+
+    /* Número de pareja grande */
+    .numero-pareja-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--dorado);
+      line-height: 1;
+      margin: 1rem 0;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Sección de la tarjeta compartible (para Instagram/WhatsApp) */
+    .share-card-wrapper {
+      margin: 1.5rem 0;
+    }
+
+    /* La tarjeta visual que se descarga */
+    #share-card {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-medio));
+      border: 3px solid var(--dorado);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--crema);
+    }
+    #share-card .sc-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--dorado);
+      margin-bottom: 0.5rem;
+    }
+    #share-card .sc-numero {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--dorado);
+      line-height: 1;
+    }
+    #share-card .sc-nombre {
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      font-weight: 700;
+    }
+    #share-card .sc-cat {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-top: 0.25rem;
+    }
+    #share-card .sc-hashtag {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      opacity: 0.6;
+    }
+
+    /* Botón de descarga de imagen */
+    .btn-descargar {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background: var(--dorado);
+      color: var(--verde-oscuro);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-descargar:hover { background: var(--dorado-claro); }
+
+    /* Nota de confirmación por correo/WhatsApp */
+    .nota-confirmacion {
+      background: #D4EDDA;
+      border: 1px solid #C3E6CB;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      color: #155724;
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.78rem;
+      margin-top: 2rem;
+      padding-bottom: 1rem;
+    }
+
+    /* ===== ANIMACIÓN DE ENTRADA =====
+       Tarjetas entran suavemente desde abajo */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .tarjeta {
+      animation: slideUp 0.4s ease both;
+    }
+    /* Pequeño retraso para cada tarjeta sucesiva */
+    .tarjeta:nth-child(2) { animation-delay: 0.05s; }
+    .tarjeta:nth-child(3) { animation-delay: 0.10s; }
+    .tarjeta:nth-child(4) { animation-delay: 0.15s; }
+    .tarjeta:nth-child(5) { animation-delay: 0.20s; }
+
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <!-- ========================================
+       ENCABEZADO DEL CONCURSO
+       Cambia los textos aquí si cambia el nombre del evento
+  ======================================== -->
+  <header class="encabezado">
+    <div class="linea-decorativa">
+      <span></span>
+      <i>✦</i>
+      <span></span>
+    </div>
+    <h1 class="titulo-concurso">
+      1er Concurso Nacional<br>de Huapango de Xalapa
+    </h1>
+    <p class="subtitulo">
+      ¡BIENVENIDO! Este es el primer paso para convertirte en el
+      <strong>1er Campeón de Campeones</strong> en la ciudad de las flores.
+    </p>
+  </header>
+
+
+  <!-- ========================================
+       FORMULARIO DE PRE-REGISTRO
+       id="form-preregistro" lo usa JavaScript para validar
+  ======================================== -->
+  <form id="form-preregistro" novalidate>
+
+    <!-- ---- SECCIÓN 1: DATOS DE LA PAREJA ---- -->
+    <div class="tarjeta">
+      <h2 class="seccion-titulo"><span>💃</span> Datos de la pareja</h2>
+
+      <!-- Fila: Nombre Bailarín 1 / Nombre Bailarín 2 -->
+      <div class="fila-doble">
+        <div class="grupo">
+          <label for="nombre1">Nombre completo (integrante 1) <span class="req">*</span></label>
+          <input type="text" id="nombre1" name="nombre1" placeholder="Nombre y apellidos" />
+          <span class="msg-error" id="err-nombre1">Por favor escribe el nombre completo.</span>
+        </div>
+        <div class="grupo">
+          <label for="nombre2">Nombre completo (integrante 2) <span class="req">*</span></label>
+          <input type="text" id="nombre2" name="nombre2" placeholder="Nombre y apellidos" />
+          <span class="msg-error" id="err-nombre2">Por favor escribe el nombre completo.</span>
+        </div>
+      </div>
+
+      <!-- Fila: Edad Bailarín 1 / Edad Bailarín 2 -->
+      <div class="fila-doble">
+        <div class="grupo">
+          <label for="edad1">Edad (integrante 1) <span class="req">*</span></label>
+          <input type="number" id="edad1" name="edad1" min="0" max="99" placeholder="Años" />
+          <span class="msg-error" id="err-edad1">Ingresa una edad válida (0-99).</span>
+        </div>
+        <div class="grupo">
+          <label for="edad2">Edad (integrante 2) <span class="req">*</span></label>
+          <input type="number" id="edad2" name="edad2" min="0" max="99" placeholder="Años" />
+          <span class="msg-error" id="err-edad2">Ingresa una edad válida (0-99).</span>
+        </div>
+      </div>
+
+      <!-- Categoría asignada automáticamente -->
+      <div class="grupo">
+        <label>Categoría asignada</label>
+        <div id="badge-cat" style="min-height: 36px;">
+          <span style="color: var(--texto-gris); font-size: 0.85rem;">
+            Ingresa las edades para ver la categoría
+          </span>
+        </div>
+        <p class="ayuda">
+          Se asigna por la edad del integrante mayor de la pareja:
+          0-6 = Pequeños Guapangueritos · 7-12 = Infantil · 13-17 = Juvenil · 18+ = Adulto
+        </p>
+      </div>
+
+      <!-- Fila: Género Bailarín 1 / Género Bailarín 2 -->
+      <div class="fila-doble">
+        <div class="grupo">
+          <label for="genero1">Género (integrante 1) <span class="req">*</span></label>
+          <select id="genero1" name="genero1">
+            <option value="">— Selecciona —</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+            <option value="otro">Prefiero no decir</option>
+          </select>
+          <span class="msg-error" id="err-genero1">Selecciona una opción.</span>
+        </div>
+        <div class="grupo">
+          <label for="genero2">Género (integrante 2) <span class="req">*</span></label>
+          <select id="genero2" name="genero2">
+            <option value="">— Selecciona —</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+            <option value="otro">Prefiero no decir</option>
+          </select>
+          <span class="msg-error" id="err-genero2">Selecciona una opción.</span>
+        </div>
+      </div>
+
+      <!-- Estilo de baile -->
+      <div class="grupo">
+        <label for="estilo">Estilo <span class="req">*</span></label>
+        <!-- Si se agregan más estilos, agrega <option> aquí -->
+        <select id="estilo" name="estilo">
+          <option value="">— Selecciona el estilo —</option>
+          <option value="veracruzano">Veracruzano</option>
+          <option value="poblano">Poblano</option>
+          <option value="hidalguense">Hidalguense</option>
+          <option value="potosino">Potosino</option>
+          <option value="tamaulipeco">Tamaulipeco</option>
+          <option value="queretano">Queretano</option>
+        </select>
+        <span class="msg-error" id="err-estilo">Por favor selecciona el estilo.</span>
+      </div>
+    </div>
+
+
+    <!-- ---- SECCIÓN 2: CONTACTO ---- -->
+    <div class="tarjeta">
+      <h2 class="seccion-titulo"><span>📱</span> Datos de contacto</h2>
+
+      <p style="font-size:0.85rem; color:var(--texto-gris); margin-bottom:1rem;">
+        Si alguno de los integrantes es menor de edad, proporciona los datos de contacto de un adulto responsable.
+      </p>
+
+      <!-- Aviso automático cuando se detecta menor de edad -->
+      <div class="aviso-menor" id="aviso-menor">
+        ⚠️ <strong>Menores de edad detectados.</strong>
+        Es obligatorio proporcionar el correo y teléfono de un adulto responsable.
+      </div>
+
+      <div class="fila-doble">
+        <div class="grupo">
+          <label for="correo">Correo electrónico <span class="req">*</span></label>
+          <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" />
+          <span class="msg-error" id="err-correo">Escribe un correo válido.</span>
+        </div>
+        <div class="grupo">
+          <label for="telefono">Teléfono / WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="telefono" name="telefono" placeholder="10 dígitos" maxlength="10" />
+          <span class="msg-error" id="err-telefono">Escribe un número de 10 dígitos.</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ---- SECCIÓN 3: GRUPO O MAESTRO ---- -->
+    <div class="tarjeta">
+      <h2 class="seccion-titulo"><span>🎶</span> Grupo o maestro (opcional)</h2>
+
+      <div class="grupo">
+        <label>¿Participas con algún grupo o maestro?</label>
+        <div class="radio-grupo">
+          <!-- onchange llama a la función toggleMaestro() en JavaScript -->
+          <label class="radio-opcion">
+            <input type="radio" name="tiene_maestro" value="si" onchange="toggleMaestro(this)" />
+            Sí
+          </label>
+          <label class="radio-opcion">
+            <input type="radio" name="tiene_maestro" value="no" onchange="toggleMaestro(this)" checked />
+            No
+          </label>
+        </div>
+      </div>
+
+      <!-- Este bloque aparece solo si el usuario selecciona "Sí" -->
+      <div id="bloque-maestro">
+        <div class="grupo">
+          <label for="maestro">Nombre del maestro o grupo <span class="req">*</span></label>
+          <input type="text" id="maestro" name="maestro" placeholder="Nombre del maestro o grupo" />
+          <span class="msg-error" id="err-maestro">Por favor escribe el nombre del maestro o grupo.</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ---- BOTÓN DE ENVÍO ---- -->
+    <div class="tarjeta">
+      <p style="font-size:0.82rem; color:var(--texto-gris); margin-bottom:1rem; text-align:center;">
+        Al enviar confirmas que los datos son correctos. Recibirás tu número de pareja
+        por correo electrónico y WhatsApp.
+      </p>
+      <button type="submit" class="btn-enviar" id="btn-enviar">
+        Completar pre-registro →
+      </button>
+    </div>
+
+  </form>
+
+
+  <!-- ========================================
+       PANTALLA DE ÉXITO
+       Aparece cuando el formulario es válido y enviado
+       Está oculta por defecto (display:none en CSS)
+  ======================================== -->
+  <div id="pantalla-exito" class="tarjeta" style="text-align:center;">
+    <p style="font-size:2rem;">🎉</p>
+    <h2 style="font-family:'Playfair Display',serif; color:var(--verde-oscuro); margin:0.5rem 0;">
+      ¡Pre-registro completado!
+    </h2>
+    <p style="color:var(--texto-gris); font-size:0.9rem;">Tu número de pareja es:</p>
+
+    <!-- El número grande se rellena por JavaScript -->
+    <div class="numero-pareja-display" id="num-pareja-display">---</div>
+
+    <p style="color:var(--texto-gris); font-size:0.85rem; margin-bottom:1rem;">
+      Guarda este número, lo necesitarás el día del concurso.
+    </p>
+
+    <!-- ---- TARJETA COMPARTIBLE (para Instagram/WhatsApp) ---- -->
+    <div class="share-card-wrapper">
+      <p style="font-weight:700; color:var(--verde-oscuro); margin-bottom:0.75rem;">
+        Descarga tu tarjeta y compártela 📸
+      </p>
+
+      <!-- Esta es la tarjeta visual que se convierte en imagen -->
+      <div id="share-card">
+        <p class="sc-titulo">1er Concurso Nacional de Huapango · Xalapa</p>
+        <p style="font-size:0.75rem; color:var(--crema); opacity:0.7; margin-bottom:0.5rem;">¡Ya estoy inscrito!</p>
+        <p class="sc-numero" id="sc-num">---</p>
+        <p class="sc-nombre" id="sc-nombre">---</p>
+        <p class="sc-cat"   id="sc-cat">---</p>
+        <p class="sc-hashtag">#HuapangoXalapa #ConciertoCampeones</p>
+      </div>
+
+      <!-- Botón que activa la descarga de la tarjeta como imagen -->
+      <button class="btn-descargar" onclick="descargarTarjeta()">
+        📥 Descargar imagen para compartir
+      </button>
+    </div>
+
+    <!-- Confirmación de envío -->
+    <div class="nota-confirmacion">
+      ✅ Recibirás un correo y un WhatsApp con la confirmación de tus datos y tu número de pareja.
+      Si no llega en los próximos 10 minutos, revisa tu carpeta de spam.
+    </div>
+  </div>
+
+
+  <footer>
+    1er Concurso Nacional de Huapango de Xalapa · Todos los derechos reservados
+  </footer>
+</div><!-- fin .contenedor -->
+
+
+<!-- ========================================
+     LIBRERÍA html2canvas
+     Convierte el div #share-card en una imagen PNG descargable
+     Se carga desde CDN, no necesitas instalar nada
+======================================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- ========================================
+     LIBRERÍA DE SUPABASE
+     Permite conectarse a la base de datos desde el navegador
+======================================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// =========================================================
+//  CONFIGURACIÓN DE SUPABASE
+//  Usando var para evitar error si el script se ejecuta dos veces
+// =========================================================
+var SUPABASE_URL  = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+
+// Crear el cliente de Supabase
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// =========================================================
+//  LÓGICA JAVASCRIPT DEL PRE-REGISTRO
+//  Todas las funciones están comentadas para que puedas
+//  entender qué hace cada parte
+// =========================================================
+
+
+// ---------------------------------------------------------
+//  CATEGORÍAS DEL CONCURSO
+//  Si cambian los rangos de edad o nombres, modifica aquí
+// ---------------------------------------------------------
+const CATEGORIAS = [
+  { id: 1, nombre: 'Pequeños Guapangueritos', edadMin: 0,  edadMax: 6,  css: 'cat-1' },
+  { id: 2, nombre: 'Infantil',                edadMin: 7,  edadMax: 12, css: 'cat-2' },
+  { id: 3, nombre: 'Juvenil',                 edadMin: 13, edadMax: 17, css: 'cat-3' },
+  { id: 4, nombre: 'Adulto',                  edadMin: 18, edadMax: 99, css: 'cat-4' },
+];
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: obtenerCategoria(edad)
+//  Recibe una edad y devuelve el objeto de categoría
+// ---------------------------------------------------------
+function obtenerCategoria(edad) {
+  return CATEGORIAS.find(c => edad >= c.edadMin && edad <= c.edadMax) || null;
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: actualizarCategoria()
+//  Lee las dos edades y muestra el badge de categoría.
+//  La categoría se asigna por el integrante de MAYOR edad.
+// ---------------------------------------------------------
+function actualizarCategoria() {
+  const edad1 = parseInt(document.getElementById('edad1').value);
+  const edad2 = parseInt(document.getElementById('edad2').value);
+  const badge  = document.getElementById('badge-cat');
+  const aviso  = document.getElementById('aviso-menor');
+
+  // Si no hay edades válidas, limpiamos el badge
+  if (isNaN(edad1) && isNaN(edad2)) {
+    badge.innerHTML = '<span style="color:var(--texto-gris);font-size:0.85rem;">Ingresa las edades para ver la categoría</span>';
+    aviso.style.display = 'none';
+    return;
+  }
+
+  // Categoría basada en la edad mayor de los dos integrantes
+  const edadMayor = Math.max(
+    isNaN(edad1) ? 0 : edad1,
+    isNaN(edad2) ? 0 : edad2
+  );
+  const cat = obtenerCategoria(edadMayor);
+
+  if (cat) {
+    badge.innerHTML = `<span class="badge-categoria ${cat.css}">🏆 Categoría ${cat.id}: ${cat.nombre}</span>`;
+  } else {
+    badge.innerHTML = '<span style="color:var(--error);">Edad fuera de rango permitido</span>';
+  }
+
+  // Mostrar aviso si alguno es menor de edad
+  const hayMenor = (!isNaN(edad1) && edad1 < 18) || (!isNaN(edad2) && edad2 < 18);
+  aviso.style.display = hayMenor ? 'block' : 'none';
+}
+
+// ---------------------------------------------------------
+//  FUNCIÓN: toggleMaestro(radio)
+//  Muestra u oculta el campo de maestro/grupo
+// ---------------------------------------------------------
+function toggleMaestro(radio) {
+  const bloque = document.getElementById('bloque-maestro');
+  bloque.style.display = (radio.value === 'si') ? 'block' : 'none';
+
+  // Si ocultan el campo, limpiamos el valor para no enviar datos fantasmas
+  if (radio.value === 'no') {
+    document.getElementById('maestro').value = '';
+  }
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: mostrarError(id, visible)
+//  Muestra o esconde el mensaje de error de un campo
+// ---------------------------------------------------------
+function mostrarError(idMsg, visible) {
+  const el = document.getElementById(idMsg);
+  if (el) el.style.display = visible ? 'block' : 'none';
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: validarFormulario()
+//  Revisa que todos los campos obligatorios estén llenos
+//  Devuelve true si todo está bien, false si hay errores
+// ---------------------------------------------------------
+function validarFormulario() {
+  let valido = true;
+
+  // Helper: valida que un input de texto no esté vacío
+  function validarTexto(id, errId) {
+    const val = document.getElementById(id).value.trim();
+    if (!val) {
+      document.getElementById(id).classList.add('error');
+      mostrarError(errId, true);
+      valido = false;
+    } else {
+      document.getElementById(id).classList.remove('error');
+      mostrarError(errId, false);
+    }
+  }
+
+  // Helper: valida que un select tenga una opción seleccionada
+  function validarSelect(id, errId) {
+    const val = document.getElementById(id).value;
+    if (!val) {
+      document.getElementById(id).classList.add('error');
+      mostrarError(errId, true);
+      valido = false;
+    } else {
+      document.getElementById(id).classList.remove('error');
+      mostrarError(errId, false);
+    }
+  }
+
+  // Validar todos los campos del formulario
+  validarTexto('nombre1', 'err-nombre1');
+  validarTexto('nombre2', 'err-nombre2');
+  validarSelect('genero1', 'err-genero1');
+  validarSelect('genero2', 'err-genero2');
+  validarSelect('estilo',  'err-estilo');
+
+  // Validar edades
+  const edad1 = parseInt(document.getElementById('edad1').value);
+  const edad2 = parseInt(document.getElementById('edad2').value);
+  if (isNaN(edad1) || edad1 < 0 || edad1 > 99) {
+    document.getElementById('edad1').classList.add('error');
+    mostrarError('err-edad1', true);
+    valido = false;
+  } else {
+    document.getElementById('edad1').classList.remove('error');
+    mostrarError('err-edad1', false);
+  }
+  if (isNaN(edad2) || edad2 < 0 || edad2 > 99) {
+    document.getElementById('edad2').classList.add('error');
+    mostrarError('err-edad2', true);
+    valido = false;
+  } else {
+    document.getElementById('edad2').classList.remove('error');
+    mostrarError('err-edad2', false);
+  }
+
+  // Validar correo (formato básico)
+  const correo = document.getElementById('correo').value.trim();
+  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regexEmail.test(correo)) {
+    document.getElementById('correo').classList.add('error');
+    mostrarError('err-correo', true);
+    valido = false;
+  } else {
+    document.getElementById('correo').classList.remove('error');
+    mostrarError('err-correo', false);
+  }
+
+  // Validar teléfono (exactamente 10 dígitos)
+  const tel = document.getElementById('telefono').value.trim();
+  if (!/^\d{10}$/.test(tel)) {
+    document.getElementById('telefono').classList.add('error');
+    mostrarError('err-telefono', true);
+    valido = false;
+  } else {
+    document.getElementById('telefono').classList.remove('error');
+    mostrarError('err-telefono', false);
+  }
+
+  // Validar maestro si dijeron "Sí"
+  const tieneMaestro = document.querySelector('input[name="tiene_maestro"]:checked')?.value;
+  if (tieneMaestro === 'si') {
+    validarTexto('maestro', 'err-maestro');
+  }
+
+  return valido;
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: generarNumeroPareja(categoriaId)
+//  Consulta Supabase para saber cuántas parejas de esa
+//  categoría ya existen, y genera el siguiente número.
+//  Ejemplo: si ya hay 2 parejas de categoría 1 → devuelve "103"
+// ---------------------------------------------------------
+async function generarNumeroPareja(categoriaId) {
+  // Contar cuántas parejas de esta categoría ya están registradas
+  const { count, error } = await supabase
+    .from('parejas')
+    .select('*', { count: 'exact', head: true })
+    .eq('categoria_id', categoriaId);
+
+  if (error) {
+    console.error('Error contando parejas:', error);
+    // Si falla la consulta usamos fallback aleatorio
+    const fallback = Math.floor(Math.random() * 89) + 10;
+    return `${categoriaId}${fallback.toString().padStart(2, '0')}`;
+  }
+
+  // El siguiente número secuencial es count + 1
+  const secuencial = (count + 1).toString().padStart(2, '0');
+  return `${categoriaId}${secuencial}`;
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: mostrarPantallaExito(datos)
+//  Oculta el formulario y muestra la pantalla de éxito
+// ---------------------------------------------------------
+function mostrarPantallaExito(datos) {
+  document.getElementById('form-preregistro').style.display = 'none';
+  document.getElementById('pantalla-exito').style.display   = 'block';
+  document.getElementById('num-pareja-display').textContent = `#${datos.numeroPareja}`;
+  document.getElementById('sc-num').textContent    = `#${datos.numeroPareja}`;
+  document.getElementById('sc-nombre').textContent = `${datos.nombre1} & ${datos.nombre2}`;
+  document.getElementById('sc-cat').textContent    = `${datos.categoria.nombre} · ${datos.estilo}`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+// ---------------------------------------------------------
+//  FUNCIÓN: descargarTarjeta()
+//  Convierte #share-card en imagen PNG y la descarga
+// ---------------------------------------------------------
+function descargarTarjeta() {
+  const tarjeta = document.getElementById('share-card');
+  html2canvas(tarjeta, { scale: 2, useCORS: true, backgroundColor: null })
+    .then(canvas => {
+      const enlace = document.createElement('a');
+      enlace.download = 'mi-preregistro-huapango.png';
+      enlace.href = canvas.toDataURL('image/png');
+      enlace.click();
+    });
+}
+
+
+// ---------------------------------------------------------
+//  EVENTO: submit del formulario
+//  Ahora es async porque espera la respuesta de Supabase
+// ---------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Escucha cambios en los campos de edad para mostrar la categoría
+  document.getElementById('edad1').addEventListener('input', actualizarCategoria);
+  document.getElementById('edad2').addEventListener('input', actualizarCategoria);
+
+  // -------------------------------------------------------
+  //  EVENTO SUBMIT — intercepta el envío del formulario
+  //  preventDefault() evita que la página se recargue
+  // -------------------------------------------------------
+  document.getElementById('form-preregistro').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Validar antes de proceder
+    if (!validarFormulario()) {
+      const primerError = document.querySelector('.error');
+      if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Deshabilitar botón para evitar doble envío
+    const btn = document.getElementById('btn-enviar');
+    btn.disabled    = true;
+    btn.textContent = 'Registrando...';
+
+    try {
+      // Calcular categoría
+      const edad1     = parseInt(document.getElementById('edad1').value);
+      const edad2     = parseInt(document.getElementById('edad2').value);
+      const edadMayor = Math.max(edad1, edad2);
+      const categoria = obtenerCategoria(edadMayor);
+
+      // Generar número de pareja consultando Supabase
+      const numeroPareja = await generarNumeroPareja(categoria.id);
+
+      // Armar el objeto que se guarda en la base de datos
+      const registro = {
+        numero:           numeroPareja,
+        nombre1:          document.getElementById('nombre1').value.trim(),
+        nombre2:          document.getElementById('nombre2').value.trim(),
+        edad1,
+        edad2,
+        genero1:          document.getElementById('genero1').value,
+        genero2:          document.getElementById('genero2').value,
+        categoria_id:     categoria.id,
+        categoria_nombre: categoria.nombre,
+        estilo:           document.getElementById('estilo').value,
+        correo:           document.getElementById('correo').value.trim(),
+        telefono:         document.getElementById('telefono').value.trim(),
+        tiene_maestro:    document.querySelector('input[name="tiene_maestro"]:checked')?.value === 'si',
+        maestro:          document.getElementById('maestro').value.trim() || null,
+      };
+
+      // Guardar en Supabase
+      const { data, error } = await supabase
+        .from('parejas')
+        .insert([registro])
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === '23505') {
+          registro.numero = await generarNumeroPareja(categoria.id);
+          const reintento = await supabase.from('parejas').insert([registro]).select().single();
+          if (reintento.error) throw reintento.error;
+        } else {
+          throw error;
+        }
+      }
+
+      // Mostrar pantalla de éxito
+      mostrarPantallaExito({ ...registro, numeroPareja, categoria });
+
+    } catch (err) {
+      console.error('Error al registrar:', err);
+      alert('Hubo un error al guardar tu registro. Por favor intenta de nuevo.');
+      btn.disabled    = false;
+      btn.textContent = 'Completar pre-registro →';
+    }
+  });
+
+}); // fin DOMContentLoaded
+</script>
+
+</body>
+</html>
