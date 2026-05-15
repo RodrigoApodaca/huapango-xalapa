@@ -327,22 +327,16 @@
 // =========================================================
 //  CONFIGURACIÓN DE SUPABASE
 // =========================================================
-const SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =========================================================
 //  ESTADO GLOBAL
 // =========================================================
-let rolSeleccionado = 'pareja';
+var rolSeleccionado = 'pareja';
 
-// -------------------------------------------------------
-//  RUTAS A CADA PANEL
-//  Cuando subas a Vercel, estos nombres se quedan igual
-//  siempre y cuando todos los archivos estén en la misma carpeta
-// -------------------------------------------------------
-const RUTAS = {
+var RUTAS = {
   admin:     'panel-admin.html',
   encargado: 'panel-encargado.html',
   juez:      'panel-juez.html',
