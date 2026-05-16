@@ -6,626 +6,140 @@
   <title>Panel Admin — Huapango Xalapa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-
   <style>
     :root {
-      --verde-oscuro:  #1B4332;
-      --verde-medio:   #2D6A4F;
-      --verde-claro:   #40916C;
-      --dorado:        #D4A017;
-      --dorado-claro:  #F4C430;
-      --crema:         #FFF8E7;
-      --blanco:        #FFFFFF;
-      --gris-fondo:    #F0F2F0;
-      --gris-borde:    #D8E0D8;
-      --gris-card:     #F8FAF8;
-      --texto:         #1A1A1A;
-      --texto-suave:   #5A6A5A;
-      --exito:         #27AE60;
-      --error:         #C0392B;
-      --advertencia:   #E67E22;
-      --info:          #2980B9;
-      --sidebar-w:     240px;
+      --verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#40916C;
+      --dorado:#D4A017;--dorado-claro:#F4C430;--crema:#FFF8E7;
+      --blanco:#FFFFFF;--gris-fondo:#F0F2F0;--gris-borde:#D8E0D8;
+      --texto:#1A1A1A;--texto-suave:#5A6A5A;--exito:#27AE60;
+      --error:#C0392B;--advertencia:#E67E22;--info:#2980B9;--sidebar-w:240px;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--gris-fondo);
-      color: var(--texto);
-      min-height: 100vh;
-      display: flex;
-    }
-
-    /* ===== SIDEBAR DE NAVEGACIÓN ===== */
-    .sidebar-nav {
-      width: var(--sidebar-w);
-      background: var(--verde-oscuro);
-      min-height: 100vh;
-      position: fixed;
-      top: 0; left: 0;
-      display: flex;
-      flex-direction: column;
-      z-index: 50;
-      border-right: 2px solid var(--dorado);
-    }
-
-    /* Logo en el sidebar */
-    .sidebar-logo {
-      padding: 1.5rem 1.25rem 1rem;
-      border-bottom: 1px solid rgba(212,160,23,0.25);
-    }
-    .sidebar-logo-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--dorado);
-      line-height: 1.3;
-      margin-bottom: 0.25rem;
-    }
-    .sidebar-logo-sub {
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.4);
-    }
-
-    /* Ítems de navegación del sidebar */
-    .nav-lista {
-      list-style: none;
-      padding: 1rem 0;
-      flex: 1;
-    }
-    .nav-item {
-      padding: 0 0.75rem;
-      margin-bottom: 0.2rem;
-    }
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.7rem 0.85rem;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.65);
-      cursor: pointer;
-      transition: all 0.15s;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-    }
-    .nav-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
-    /* Ítem activo del sidebar */
-    .nav-link.activo {
-      background: rgba(212,160,23,0.15);
-      color: var(--dorado);
-      font-weight: 700;
-    }
-    .nav-link .icono { font-size: 1.1rem; width: 22px; text-align: center; }
-
-    /* Usuario en la parte inferior del sidebar */
-    .sidebar-usuario {
-      padding: 1rem 1.25rem;
-      border-top: 1px solid rgba(212,160,23,0.2);
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.5);
-    }
-    .sidebar-usuario strong { color: var(--crema); display: block; margin-bottom: 2px; }
-
-    /* ===== CONTENIDO PRINCIPAL ===== */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    /* Topbar del contenido */
-    .main-topbar {
-      background: var(--blanco);
-      border-bottom: 1px solid var(--gris-borde);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
-    .main-topbar-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.25rem;
-      color: var(--verde-oscuro);
-    }
-    .main-topbar-fecha {
-      font-size: 0.82rem;
-      color: var(--texto-suave);
-    }
-
-    /* Área de contenido con padding */
-    .main-contenido {
-      padding: 1.75rem 2rem;
-      flex: 1;
-    }
-
-    /* ===== VISTAS (secciones) =====
-       Solo una es visible a la vez, JS las alterna */
-    .vista { display: none; }
-    .vista.activa { display: block; }
-
-    /* ===== TARJETAS DE ESTADÍSTICA ===== */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.75rem;
-    }
-    .stat-card {
-      background: var(--blanco);
-      border-radius: 12px;
-      border: 1px solid var(--gris-borde);
-      padding: 1.1rem 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-    /* Barra de color en la parte izquierda */
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 4px;
-      border-radius: 4px 0 0 4px;
-    }
-    .stat-card.verde::before  { background: var(--verde-claro); }
-    .stat-card.dorado::before { background: var(--dorado); }
-    .stat-card.azul::before   { background: var(--info); }
-    .stat-card.naranja::before{ background: var(--advertencia); }
-    .stat-card.rojo::before   { background: var(--error); }
-
-    .stat-label { font-size: 0.75rem; color: var(--texto-suave); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.4rem; text-transform: uppercase; }
-    .stat-num   { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--verde-oscuro); line-height: 1; }
-    .stat-sub   { font-size: 0.75rem; color: var(--texto-suave); margin-top: 0.25rem; }
-
-    /* ===== ENCABEZADO DE SECCIÓN ===== */
-    .seccion-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.1rem;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .seccion-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--verde-oscuro);
-    }
-
-    /* ===== BOTONES ===== */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.6rem 1.1rem;
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--verde-claro); color: #fff; }
-    .btn-primary:hover { background: var(--verde-medio); }
-    .btn-dorado  { background: var(--dorado); color: var(--verde-oscuro); }
-    .btn-dorado:hover  { background: var(--dorado-claro); }
-    .btn-danger  { background: var(--error); color: #fff; }
-    .btn-danger:hover  { background: #A93226; }
-    .btn-ghost   { background: var(--gris-fondo); color: var(--texto); border: 1px solid var(--gris-borde); }
-    .btn-ghost:hover   { border-color: var(--verde-claro); }
-    .btn-sm      { padding: 0.4rem 0.8rem; font-size: 0.78rem; }
-
-    /* ===== TABLA GENÉRICA ===== */
-    .tabla-wrap {
-      background: var(--blanco);
-      border-radius: 12px;
-      border: 1px solid var(--gris-borde);
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-    thead th {
-      background: var(--gris-fondo);
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--texto-suave);
-      border-bottom: 1px solid var(--gris-borde);
-    }
-    tbody td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--gris-fondo);
-      vertical-align: middle;
-    }
-    tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover { background: #F8FAF8; }
-
-    /* ===== BADGES / CHIPS ===== */
-    .badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
-    }
-    .badge-verde    { background: #D4EDDA; color: #155724; }
-    .badge-amarillo { background: #FFF3CD; color: #856404; }
-    .badge-rojo     { background: #F8D7DA; color: #721C24; }
-    .badge-azul     { background: #D1ECF1; color: #0C5460; }
-    .badge-gris     { background: #E2E8E2; color: #4A5A4A; }
-
-    /* Número de pareja grande */
-    .num-pareja {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--verde-oscuro);
-      font-weight: 700;
-    }
-
-    /* ===== BUSCADOR ===== */
-    .buscador-wrap {
-      position: relative;
-      max-width: 280px;
-    }
-    .buscador-wrap input {
-      width: 100%;
-      padding: 0.6rem 1rem 0.6rem 2.2rem;
-      border: 1.5px solid var(--gris-borde);
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem;
-      outline: none;
-      background: var(--gris-fondo);
-      transition: border-color 0.2s;
-    }
-    .buscador-wrap input:focus { border-color: var(--verde-claro); }
-    .buscador-wrap .ico-buscar {
-      position: absolute;
-      left: 0.65rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--texto-suave);
-      font-size: 0.9rem;
-    }
-
-    /* ===== FORMULARIO DE BLOQUE ===== */
-    .form-card {
-      background: var(--blanco);
-      border-radius: 12px;
-      border: 1px solid var(--gris-borde);
-      padding: 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-
-    .campo-grupo { margin-bottom: 1rem; }
-    .campo-grupo label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--texto-suave);
-      margin-bottom: 0.35rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .campo-grupo input,
-    .campo-grupo select {
-      width: 100%;
-      padding: 0.65rem 0.9rem;
-      border: 1.5px solid var(--gris-borde);
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem;
-      outline: none;
-      background: var(--gris-fondo);
-      transition: border-color 0.2s;
-    }
-    .campo-grupo input:focus,
-    .campo-grupo select:focus { border-color: var(--verde-claro); }
-
-    /* ===== TABLA DE RESULTADOS ===== */
-    .posicion-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem;
-      color: var(--texto-suave);
-    }
-    .posicion-num.oro   { color: #DAA520; }
-    .posicion-num.plata { color: #A8A9AD; }
-    .posicion-num.bronce{ color: #CD7F32; }
-
-    /* Barra de puntuación en la tabla */
-    .barra-pts-wrap {
-      background: var(--gris-borde);
-      border-radius: 999px;
-      height: 6px;
-      width: 100px;
-      display: inline-block;
-      vertical-align: middle;
-      margin-left: 0.5rem;
-    }
-    .barra-pts {
-      height: 100%;
-      border-radius: 999px;
-      background: var(--verde-claro);
-    }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.abierto { display: flex; }
-    .modal {
-      background: var(--blanco);
-      border-radius: 16px;
-      padding: 2rem;
-      max-width: 420px;
-      width: 90%;
-      border: 2px solid var(--gris-borde);
-    }
-    .modal h3 {
-      font-family: 'Playfair Display', serif;
-      color: var(--verde-oscuro);
-      margin-bottom: 0.5rem;
-      font-size: 1.1rem;
-    }
-    .modal p { font-size: 0.88rem; color: var(--texto-suave); margin-bottom: 1.25rem; }
-    .modal-botones { display: flex; gap: 0.75rem; }
-
-    /* ===== TOAST ===== */
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--verde-oscuro);
-      color: var(--crema);
-      padding: 0.75rem 1.5rem;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      border: 1px solid var(--dorado);
-      z-index: 999;
-      transition: transform 0.3s;
-      white-space: nowrap;
-    }
-    .toast.visible { transform: translateX(-50%) translateY(0); }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .sidebar-nav { width: 100%; height: auto; min-height: unset; position: relative; flex-direction: row; flex-wrap: wrap; }
-      .main { margin-left: 0; }
-      .nav-lista { display: flex; flex-direction: row; padding: 0.5rem; flex-wrap: wrap; }
-      .nav-item { padding: 0.15rem; }
-      .nav-link { padding: 0.5rem 0.75rem; font-size: 0.78rem; }
-      .sidebar-usuario { display: none; }
-      .sidebar-logo { width: 100%; padding: 1rem; }
-    }
-
-    /* ===== ASIGNACIÓN DE JUECES ===== */
-    .juez-card {
-      background: var(--blanco);
-      border: 1px solid var(--gris-borde);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-    .juez-nombre { font-weight: 700; color: var(--verde-oscuro); }
-    .juez-cats   { font-size: 0.82rem; color: var(--texto-suave); }
-
-    .select-cat {
-      padding: 0.45rem 0.75rem;
-      border: 1.5px solid var(--gris-borde);
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem;
-      outline: none;
-      cursor: pointer;
-    }
-    .select-cat:focus { border-color: var(--verde-claro); }
-
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--gris-fondo);color:var(--texto);min-height:100vh;display:flex;}
+    .sidebar-nav{width:var(--sidebar-w);background:var(--verde-oscuro);min-height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:50;border-right:2px solid var(--dorado);}
+    .sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(212,160,23,0.25);}
+    .sidebar-logo-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--dorado);line-height:1.3;margin-bottom:0.25rem;}
+    .sidebar-logo-sub{font-size:0.72rem;color:rgba(255,255,255,0.4);}
+    .nav-lista{list-style:none;padding:1rem 0;flex:1;}
+    .nav-item{padding:0 0.75rem;margin-bottom:0.2rem;}
+    .nav-link{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 0.85rem;border-radius:10px;font-size:0.88rem;font-weight:500;color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;}
+    .nav-link:hover{background:rgba(255,255,255,0.07);color:#fff;}
+    .nav-link.activo{background:rgba(212,160,23,0.15);color:var(--dorado);font-weight:700;}
+    .nav-link .icono{font-size:1.1rem;width:22px;text-align:center;}
+    .sidebar-usuario{padding:1rem 1.25rem;border-top:1px solid rgba(212,160,23,0.2);font-size:0.8rem;color:rgba(255,255,255,0.5);}
+    .sidebar-usuario strong{color:var(--crema);display:block;margin-bottom:2px;}
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    .main-topbar{background:var(--blanco);border-bottom:1px solid var(--gris-borde);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;}
+    .main-topbar-titulo{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--verde-oscuro);}
+    .main-contenido{padding:1.75rem 2rem;flex:1;}
+    .vista{display:none;}.vista.activa{display:block;}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.75rem;}
+    .stat-card{background:var(--blanco);border-radius:12px;border:1px solid var(--gris-borde);padding:1.1rem 1.25rem;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;}
+    .stat-card.verde::before{background:var(--verde-claro);}
+    .stat-card.dorado::before{background:var(--dorado);}
+    .stat-card.azul::before{background:var(--info);}
+    .stat-card.naranja::before{background:var(--advertencia);}
+    .stat-label{font-size:0.75rem;color:var(--texto-suave);font-weight:700;letter-spacing:0.04em;margin-bottom:0.4rem;text-transform:uppercase;}
+    .stat-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--verde-oscuro);line-height:1;}
+    .stat-sub{font-size:0.75rem;color:var(--texto-suave);margin-top:0.25rem;}
+    .seccion-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:0.75rem;}
+    .seccion-titulo{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--verde-oscuro);}
+    .btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.1rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;transition:all 0.15s;}
+    .btn:active{transform:scale(0.98);}
+    .btn-primary{background:var(--verde-claro);color:#fff;}.btn-primary:hover{background:var(--verde-medio);}
+    .btn-dorado{background:var(--dorado);color:var(--verde-oscuro);}.btn-dorado:hover{background:var(--dorado-claro);}
+    .btn-danger{background:var(--error);color:#fff;}.btn-danger:hover{background:#A93226;}
+    .btn-ghost{background:var(--gris-fondo);color:var(--texto);border:1px solid var(--gris-borde);}.btn-ghost:hover{border-color:var(--verde-claro);}
+    .btn-sm{padding:0.4rem 0.8rem;font-size:0.78rem;}
+    .tabla-wrap{background:var(--blanco);border-radius:12px;border:1px solid var(--gris-borde);overflow:hidden;margin-bottom:1.5rem;overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+    thead th{background:var(--gris-fondo);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--texto-suave);border-bottom:1px solid var(--gris-borde);}
+    tbody td{padding:0.75rem 1rem;border-bottom:1px solid var(--gris-fondo);vertical-align:middle;}
+    tbody tr:last-child td{border-bottom:none;}tbody tr:hover{background:#F8FAF8;}
+    .badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:0.2rem 0.65rem;border-radius:999px;}
+    .badge-verde{background:#D4EDDA;color:#155724;}.badge-amarillo{background:#FFF3CD;color:#856404;}
+    .badge-rojo{background:#F8D7DA;color:#721C24;}.badge-azul{background:#D1ECF1;color:#0C5460;}
+    .badge-gris{background:#E2E8E2;color:#4A5A4A;}
+    .num-pareja{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--verde-oscuro);font-weight:700;}
+    .buscador-wrap{position:relative;max-width:280px;}
+    .buscador-wrap input{width:100%;padding:0.6rem 1rem 0.6rem 2.2rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;background:var(--gris-fondo);}
+    .buscador-wrap input:focus{border-color:var(--verde-claro);}
+    .buscador-wrap .ico-buscar{position:absolute;left:0.65rem;top:50%;transform:translateY(-50%);color:var(--texto-suave);}
+    .form-card{background:var(--blanco);border-radius:12px;border:1px solid var(--gris-borde);padding:1.5rem;margin-bottom:1.25rem;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    @media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+    .campo-grupo{margin-bottom:1rem;}
+    .campo-grupo label{display:block;font-size:0.78rem;font-weight:700;color:var(--texto-suave);margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;}
+    .campo-grupo input,.campo-grupo select{width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;background:var(--gris-fondo);}
+    .campo-grupo input:focus,.campo-grupo select:focus{border-color:var(--verde-claro);}
+    .posicion-num{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--texto-suave);}
+    .posicion-num.oro{color:#DAA520;}.posicion-num.plata{color:#A8A9AD;}.posicion-num.bronce{color:#CD7F32;}
+    .barra-pts-wrap{background:var(--gris-borde);border-radius:999px;height:6px;width:100px;display:inline-block;vertical-align:middle;margin-left:0.5rem;}
+    .barra-pts{height:100%;border-radius:999px;background:var(--verde-claro);}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;}
+    .modal-overlay.abierto{display:flex;}
+    .modal{background:var(--blanco);border-radius:16px;padding:2rem;max-width:420px;width:90%;border:2px solid var(--gris-borde);}
+    .modal h3{font-family:'Playfair Display',serif;color:var(--verde-oscuro);margin-bottom:0.5rem;font-size:1.1rem;}
+    .modal p{font-size:0.88rem;color:var(--texto-suave);margin-bottom:1.25rem;}
+    .modal-botones{display:flex;gap:0.75rem;}
+    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--verde-oscuro);color:var(--crema);padding:0.75rem 1.5rem;border-radius:999px;font-size:0.88rem;font-weight:700;border:1px solid var(--dorado);z-index:999;transition:transform 0.3s;white-space:nowrap;}
+    .toast.visible{transform:translateX(-50%) translateY(0);}
+    @media(max-width:768px){.sidebar-nav{width:100%;height:auto;min-height:unset;position:relative;flex-direction:row;flex-wrap:wrap;}.main{margin-left:0;}.nav-lista{display:flex;flex-direction:row;padding:0.5rem;flex-wrap:wrap;}.nav-item{padding:0.15rem;}.nav-link{padding:0.5rem 0.75rem;font-size:0.78rem;}.sidebar-usuario{display:none;}.sidebar-logo{width:100%;padding:1rem;}}
+    .juez-card{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem;}
+    .juez-nombre{font-weight:700;color:var(--verde-oscuro);}.juez-cats{font-size:0.82rem;color:var(--texto-suave);}
+    .select-cat{padding:0.45rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;cursor:pointer;}
   </style>
 </head>
 <body>
 
-<!-- ===== SIDEBAR DE NAVEGACIÓN ===== -->
 <nav class="sidebar-nav">
   <div class="sidebar-logo">
     <div class="sidebar-logo-titulo">Panel Admin</div>
     <div class="sidebar-logo-sub">Huapango Xalapa 2025</div>
   </div>
-
   <ul class="nav-lista">
-    <!-- Cada ítem llama a mostrarVista('nombre') -->
-    <li class="nav-item">
-      <button class="nav-link activo" onclick="mostrarVista('resumen')">
-        <span class="icono">📊</span> Resumen
-      </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="mostrarVista('parejas')">
-        <span class="icono">💃</span> Parejas
-      </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="mostrarVista('bloques')">
-        <span class="icono">🎵</span> Bloques
-      </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="mostrarVista('resultados')">
-        <span class="icono">🏆</span> Resultados
-      </button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" onclick="mostrarVista('jueces')">
-        <span class="icono">⚖️</span> Jueces
-      </button>
-    </li>
+    <li class="nav-item"><button class="nav-link activo" onclick="mostrarVista('resumen',this)"><span class="icono">📊</span> Resumen</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="mostrarVista('parejas',this)"><span class="icono">💃</span> Parejas</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="mostrarVista('bloques',this)"><span class="icono">🎵</span> Bloques</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="mostrarVista('resultados',this)"><span class="icono">🏆</span> Resultados</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="mostrarVista('jueces',this)"><span class="icono">⚖️</span> Jueces</button></li>
   </ul>
-
   <div class="sidebar-usuario">
-    <strong>Administradora</strong>
+    <strong id="nombre-admin">Admin</strong>
     Panel de control general
   </div>
 </nav>
 
-
-<!-- ===== CONTENIDO PRINCIPAL ===== -->
 <div class="main">
-
-  <!-- Topbar -->
   <div class="main-topbar">
     <div class="main-topbar-titulo" id="titulo-vista">Resumen del evento</div>
     <div style="display:flex;align-items:center;gap:1rem;">
-    <div class="main-topbar-fecha" id="fecha-topbar"></div>
-    <button onclick="cerrarSesion()" style="padding:0.4rem 0.9rem;background:none;border:1px solid var(--gris-borde);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;color:var(--texto-suave);">
-      Cerrar sesión
-    </button>
-  </div>
+      <div style="font-size:0.82rem;color:var(--texto-suave);" id="fecha-topbar"></div>
+      <button onclick="cerrarSesion()" style="padding:0.4rem 0.9rem;background:none;border:1px solid var(--gris-borde);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;color:var(--texto-suave);">Cerrar sesión</button>
+    </div>
   </div>
 
   <div class="main-contenido">
 
-
-    <!-- ============================================================
-         VISTA 1: RESUMEN GENERAL
-    ============================================================ -->
+    <!-- VISTA 1: RESUMEN -->
     <div class="vista activa" id="vista-resumen">
-
-      <!-- Estadísticas generales -->
       <div class="stats-grid">
-        <div class="stat-card verde">
-          <div class="stat-label">Parejas registradas</div>
-          <div class="stat-num">8</div>
-          <div class="stat-sub">Pre-registro completado</div>
-        </div>
-        <div class="stat-card dorado">
-          <div class="stat-label">Confirmadas hoy</div>
-          <div class="stat-num">5</div>
-          <div class="stat-sub">62% de asistencia</div>
-        </div>
-        <div class="stat-card naranja">
-          <div class="stat-label">Por confirmar</div>
-          <div class="stat-num">3</div>
-          <div class="stat-sub">Sin verificar</div>
-        </div>
-        <div class="stat-card azul">
-          <div class="stat-label">Bloques totales</div>
-          <div class="stat-num">4</div>
-          <div class="stat-sub">2 terminados · 1 en curso</div>
-        </div>
-        <div class="stat-card verde">
-          <div class="stat-label">Jueces activos</div>
-          <div class="stat-num">3</div>
-          <div class="stat-sub">Todos conectados</div>
-        </div>
+        <div class="stat-card verde"><div class="stat-label">Parejas registradas</div><div class="stat-num" id="stat-total">—</div></div>
+        <div class="stat-card dorado"><div class="stat-label">Confirmadas hoy</div><div class="stat-num" id="stat-confirmadas">—</div></div>
+        <div class="stat-card naranja"><div class="stat-label">Por confirmar</div><div class="stat-num" id="stat-pendientes">—</div></div>
+        <div class="stat-card azul"><div class="stat-label">Bloques totales</div><div class="stat-num" id="stat-bloques">—</div></div>
       </div>
-
-      <!-- Bloque actual -->
-      <div class="seccion-header">
-        <div class="seccion-titulo">Estado actual del evento</div>
+      <div class="seccion-header"><div class="seccion-titulo">Bloque en curso</div></div>
+      <div class="form-card" style="border-left:4px solid var(--dorado);" id="card-bloque-actual">
+        <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:0.4rem;">Bloque activo</p>
+        <p style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--verde-oscuro);margin-bottom:0.5rem;" id="nombre-bloque-actual">Sin bloque activo</p>
+        <div id="badges-bloque-actual"></div>
       </div>
-      <div class="form-card" style="border-left: 4px solid var(--dorado);">
-        <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:0.4rem;">
-          Bloque en curso
-        </p>
-        <p style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--verde-oscuro);margin-bottom:0.5rem;">
-          Bloque 2 — Infantil / Hidalguense
-        </p>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <span class="badge badge-amarillo">⏳ En curso</span>
-          <span class="badge badge-azul">3 parejas</span>
-          <span class="badge badge-verde">3 jueces calificando</span>
-        </div>
-      </div>
+    </div>
 
-      <!-- Progreso por categoría -->
-      <div class="seccion-header">
-        <div class="seccion-titulo">Progreso por categoría</div>
-      </div>
-      <div class="tabla-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Categoría</th>
-              <th>Parejas</th>
-              <th>Confirmadas</th>
-              <th>Bloques completados</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Pequeños Guapangueritos</strong></td>
-              <td>2</td>
-              <td>2</td>
-              <td>1 / 1</td>
-              <td><span class="badge badge-verde">✓ Ronda 1 lista</span></td>
-            </tr>
-            <tr>
-              <td><strong>Infantil</strong></td>
-              <td>3</td>
-              <td>2</td>
-              <td>0 / 1</td>
-              <td><span class="badge badge-amarillo">⏳ En curso</span></td>
-            </tr>
-            <tr>
-              <td><strong>Juvenil</strong></td>
-              <td>2</td>
-              <td>1</td>
-              <td>0 / 1</td>
-              <td><span class="badge badge-gris">Pendiente</span></td>
-            </tr>
-            <tr>
-              <td><strong>Adulto</strong></td>
-              <td>3</td>
-              <td>2</td>
-              <td>0 / 1</td>
-              <td><span class="badge badge-gris">Pendiente</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div><!-- fin vista-resumen -->
-
-
-    <!-- ============================================================
-         VISTA 2: PAREJAS
-    ============================================================ -->
+    <!-- VISTA 2: PAREJAS -->
     <div class="vista" id="vista-parejas">
-
       <div class="seccion-header">
         <div class="seccion-titulo">Gestión de parejas</div>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
@@ -633,189 +147,91 @@
             <span class="ico-buscar">🔍</span>
             <input type="text" placeholder="Buscar..." oninput="filtrarTabla(this.value)" />
           </div>
-          <!-- Botón de exportar CSV -->
-          <button class="btn btn-dorado" onclick="exportarCSV()">
-            ⬇ Exportar CSV
-          </button>
+          <button class="btn btn-dorado" onclick="exportarCSV()">⬇ Exportar CSV</button>
         </div>
       </div>
-
       <div class="tabla-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Integrantes</th>
-              <th>Categoría</th>
-              <th>Estilo</th>
-              <th>Contacto</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-parejas-body">
-            <!-- Se genera con JavaScript -->
-          </tbody>
+          <thead><tr><th>#</th><th>Integrantes</th><th>Categoría</th><th>Estilo</th><th>Contacto</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tabla-parejas-body"><tr><td colspan="7" style="text-align:center;color:var(--texto-suave);padding:2rem;">Cargando...</td></tr></tbody>
         </table>
       </div>
+    </div>
 
-    </div><!-- fin vista-parejas -->
-
-
-    <!-- ============================================================
-         VISTA 3: BLOQUES
-    ============================================================ -->
+    <!-- VISTA 3: BLOQUES -->
     <div class="vista" id="vista-bloques">
-
-      <!-- Crear nuevo bloque -->
-      <div class="seccion-header">
-        <div class="seccion-titulo">Crear nuevo bloque</div>
-      </div>
+      <div class="seccion-header"><div class="seccion-titulo">Crear nuevo bloque</div></div>
       <div class="form-card">
         <div class="form-grid">
-          <div class="campo-grupo">
-            <label>Categoría</label>
+          <div class="campo-grupo"><label>Categoría</label>
             <select id="nuevo-cat">
               <option value="">— Selecciona —</option>
-              <option>Pequeños Guapangueritos</option>
-              <option>Infantil</option>
-              <option>Juvenil</option>
-              <option>Adulto</option>
+              <option>Pequeños Guapangueritos</option><option>Infantil</option><option>Juvenil</option><option>Adulto</option>
             </select>
           </div>
-          <div class="campo-grupo">
-            <label>Estilo</label>
+          <div class="campo-grupo"><label>Estilo</label>
             <select id="nuevo-estilo">
               <option value="">— Selecciona —</option>
-              <option>Veracruzano</option>
-              <option>Poblano</option>
-              <option>Hidalguense</option>
-              <option>Potosino</option>
-              <option>Tamaulipeco</option>
-              <option>Queretano</option>
+              <option>Veracruzano</option><option>Poblano</option><option>Hidalguense</option><option>Potosino</option><option>Tamaulipeco</option><option>Queretano</option>
             </select>
           </div>
-          <div class="campo-grupo">
-            <label>Ronda</label>
+          <div class="campo-grupo"><label>Ronda</label>
             <select id="nuevo-ronda">
-              <option>Primera ronda</option>
-              <option>Semifinal</option>
-              <option>Final</option>
-              <option>Campeón de campeones</option>
+              <option value="primera_ronda">Primera ronda</option><option value="semifinal">Semifinal</option><option value="final">Final</option><option value="campeon_de_campeones">Campeón de campeones</option>
             </select>
           </div>
-          <div class="campo-grupo">
-            <label>Números de pareja (separados por coma)</label>
+          <div class="campo-grupo"><label>Números de pareja (separados por coma)</label>
             <input type="text" id="nuevo-parejas" placeholder="234, 245, 256" />
           </div>
         </div>
-        <button class="btn btn-primary" onclick="crearBloque()">
-          + Crear bloque
-        </button>
+        <button class="btn btn-primary" onclick="crearBloque()">+ Crear bloque</button>
       </div>
-
-      <!-- Lista de bloques existentes -->
-      <div class="seccion-header">
-        <div class="seccion-titulo">Bloques del concurso</div>
-      </div>
+      <div class="seccion-header"><div class="seccion-titulo">Bloques del concurso</div></div>
       <div class="tabla-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Bloque</th>
-              <th>Categoría / Estilo</th>
-              <th>Ronda</th>
-              <th>Parejas</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-bloques-body">
-            <!-- Se genera con JavaScript -->
-          </tbody>
+          <thead><tr><th>Bloque</th><th>Categoría / Estilo</th><th>Ronda</th><th>Parejas</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tabla-bloques-body"><tr><td colspan="6" style="text-align:center;color:var(--texto-suave);padding:2rem;">Cargando...</td></tr></tbody>
         </table>
       </div>
+    </div>
 
-    </div><!-- fin vista-bloques -->
-
-
-    <!-- ============================================================
-         VISTA 4: RESULTADOS
-    ============================================================ -->
+    <!-- VISTA 4: RESULTADOS -->
     <div class="vista" id="vista-resultados">
-
       <div class="seccion-header">
         <div class="seccion-titulo">Tabla de resultados en tiempo real</div>
         <div style="display:flex;gap:0.75rem;">
-          <!-- Filtro por categoría -->
-          <select id="filtro-cat-resultados" onchange="filtrarResultados(this.value)"
-            style="padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
+          <select id="filtro-cat-resultados" onchange="filtrarResultados(this.value)" style="padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
             <option value="">Todas las categorías</option>
-            <option>Pequeños Guapangueritos</option>
-            <option>Infantil</option>
-            <option>Juvenil</option>
-            <option>Adulto</option>
+            <option>Pequeños Guapangueritos</option><option>Infantil</option><option>Juvenil</option><option>Adulto</option>
           </select>
-          <button class="btn btn-dorado" onclick="exportarResultados()">
-            ⬇ Exportar resultados
-          </button>
+          <button class="btn btn-dorado" onclick="exportarResultados()">⬇ Exportar</button>
         </div>
       </div>
-
       <div class="tabla-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Pos.</th>
-              <th>#Pareja</th>
-              <th>Categoría</th>
-              <th>Estilo</th>
-              <th>Vestuario</th>
-              <th>Estilo</th>
-              <th>Creatividad</th>
-              <th>Limpieza</th>
-              <th>Porte</th>
-              <th>Total</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-resultados-body">
-            <!-- Se genera con JavaScript -->
-          </tbody>
+          <thead><tr><th>Pos.</th><th>#Pareja</th><th>Categoría</th><th>Estilo</th><th>Vestuario</th><th>Estilo</th><th>Creatividad</th><th>Limpieza</th><th>Porte</th><th>Total</th></tr></thead>
+          <tbody id="tabla-resultados-body"><tr><td colspan="10" style="text-align:center;color:var(--texto-suave);padding:2rem;">Sin calificaciones aún</td></tr></tbody>
         </table>
       </div>
+    </div>
 
-    </div><!-- fin vista-resultados -->
-
-
-    <!-- ============================================================
-         VISTA 5: JUECES
-    ============================================================ -->
+    <!-- VISTA 5: JUECES -->
     <div class="vista" id="vista-jueces">
-
       <div class="seccion-header">
-        <div class="seccion-titulo">Asignación de jueces</div>
-        <button class="btn btn-primary" onclick="abrirModalJuez()">
-          + Agregar juez
-        </button>
+        <div class="seccion-titulo">Gestión de jueces y encargados</div>
+        <button class="btn btn-primary" onclick="abrirModalUsuario()">+ Agregar usuario</button>
       </div>
+      <div id="lista-jueces"><p style="color:var(--texto-suave);">Cargando...</p></div>
+    </div>
 
-      <div id="lista-jueces">
-        <!-- Se genera con JavaScript -->
-      </div>
+  </div>
+</div>
 
-    </div><!-- fin vista-jueces -->
-
-
-  </div><!-- fin main-contenido -->
-</div><!-- fin main -->
-
-
-<!-- ===== MODAL: ELIMINAR PAREJA ===== -->
+<!-- MODAL: ELIMINAR PAREJA -->
 <div class="modal-overlay" id="modal-eliminar">
   <div class="modal">
     <h3>⚠️ Eliminar pareja</h3>
-    <p id="modal-eliminar-texto">¿Seguro que deseas eliminar esta pareja? Esta acción no se puede deshacer.</p>
+    <p id="modal-eliminar-texto">¿Seguro que deseas eliminar esta pareja?</p>
     <div class="modal-botones">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-eliminar')">Cancelar</button>
       <button class="btn btn-danger" onclick="confirmarEliminar()">Sí, eliminar</button>
@@ -823,654 +239,414 @@
   </div>
 </div>
 
-<!-- ===== MODAL: AGREGAR JUEZ ===== -->
-<div class="modal-overlay" id="modal-juez">
+<!-- MODAL: AGREGAR USUARIO (juez o encargado) -->
+<div class="modal-overlay" id="modal-usuario">
   <div class="modal">
-    <h3>Agregar juez</h3>
+    <h3>Agregar juez o encargado</h3>
     <div class="campo-grupo" style="margin-top:1rem;">
       <label>Nombre completo</label>
-      <input type="text" id="nuevo-juez-nombre" placeholder="Nombre del juez" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
+      <input type="text" id="nuevo-usuario-nombre" placeholder="Nombre completo" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
     </div>
     <div class="campo-grupo">
-      <label>Categoría asignada</label>
-      <select id="nuevo-juez-cat" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;">
-        <option value="">Todas las categorías</option>
-        <option>Pequeños Guapangueritos</option>
-        <option>Infantil</option>
-        <option>Juvenil</option>
-        <option>Adulto</option>
+      <label>Correo electrónico</label>
+      <input type="email" id="nuevo-usuario-correo" placeholder="correo@ejemplo.com" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
+    </div>
+    <div class="campo-grupo">
+      <label>Contraseña temporal</label>
+      <input type="text" id="nuevo-usuario-password" placeholder="Contraseña que usará para entrar" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
+    </div>
+    <div class="campo-grupo">
+      <label>Rol</label>
+      <select id="nuevo-usuario-rol" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;">
+        <option value="juez">Juez</option>
+        <option value="encargado">Encargado</option>
       </select>
     </div>
     <div class="modal-botones">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-juez')">Cancelar</button>
-      <button class="btn btn-primary" onclick="agregarJuez()">Agregar</button>
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-usuario')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-agregar-usuario" onclick="agregarUsuario()">Agregar</button>
     </div>
   </div>
 </div>
 
-
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast">Acción realizada</div>
 
-<!-- ========================================
-     LIBRERÍA DE SUPABASE
-======================================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 // =========================================================
 //  CONFIGURACIÓN DE SUPABASE
 // =========================================================
-const SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-// =========================================================
-//  DATOS DE DEMOSTRACIÓN
-//  En producción vienen de Supabase
-// =========================================================
-
-// Parejas registradas
-let parejas = [
-  { id:1, numero:'101', cat:'Pequeños Guapangueritos', estilo:'Veracruzano', nombre1:'Sofía Ramírez', nombre2:'Diego Hernández', correo:'mama.ramirez@gmail.com', tel:'2281234567', confirmado:true  },
-  { id:2, numero:'112', cat:'Pequeños Guapangueritos', estilo:'Poblano',     nombre1:'Valentina Cruz', nombre2:'Emilio Pérez',  correo:'papa.cruz@hotmail.com', tel:'2289876543', confirmado:true  },
-  { id:3, numero:'234', cat:'Infantil',  estilo:'Hidalguense', nombre1:'Mariana López',  nombre2:'Carlos Fuentes', correo:'lopez@yahoo.com', tel:'2284561230', confirmado:false },
-  { id:4, numero:'245', cat:'Infantil',  estilo:'Potosino',    nombre1:'Isabella Morales',nombre2:'Sebastián Torres', correo:'morales@gmail.com', tel:'2287894561', confirmado:false },
-  { id:5, numero:'356', cat:'Juvenil',   estilo:'Tamaulipeco', nombre1:'Fernanda Gutiérrez',nombre2:'Rodrigo Vega', correo:'fer.gut@gmail.com', tel:'2283217890', confirmado:true  },
-  { id:6, numero:'367', cat:'Juvenil',   estilo:'Queretano',   nombre1:'Camila Reyes',  nombre2:'Andrés Molina',   correo:'reyes@outlook.com', tel:'2286543210', confirmado:false },
-  { id:7, numero:'478', cat:'Adulto',    estilo:'Veracruzano', nombre1:'Lucía Castillo',nombre2:'Miguel Flores',   correo:'lucastillo@gmail.com', tel:'2282345678', confirmado:true  },
-  { id:8, numero:'489', cat:'Adulto',    estilo:'Hidalguense', nombre1:'Patricia Mendoza',nombre2:'Roberto Salinas',correo:'patri@gmail.com', tel:'2289012345', confirmado:false },
-];
-
-// Bloques del concurso
-let bloques = [
-  { id:1, nombre:'Bloque 1', cat:'Pequeños Guapangueritos', estilo:'Veracruzano', ronda:'Primera ronda', parejas:['101','112'], estado:'terminado' },
-  { id:2, nombre:'Bloque 2', cat:'Infantil',  estilo:'Hidalguense', ronda:'Primera ronda', parejas:['234','245'], estado:'en-curso' },
-  { id:3, nombre:'Bloque 3', cat:'Juvenil',   estilo:'Tamaulipeco', ronda:'Primera ronda', parejas:['356','367'], estado:'pendiente' },
-  { id:4, nombre:'Bloque 4', cat:'Adulto',    estilo:'Veracruzano', ronda:'Primera ronda', parejas:['478','489'], estado:'pendiente' },
-];
-
-// Resultados de calificaciones (promedio de todos los jueces)
-let resultados = [
-  { numero:'101', cat:'Pequeños Guapangueritos', estilo:'Veracruzano', vestuario:4.3, estilo_r:4.7, creatividad:4.0, limpieza:4.5, porte:4.2, total:21.7, avanza:true  },
-  { numero:'112', cat:'Pequeños Guapangueritos', estilo:'Poblano',     vestuario:3.7, estilo_r:3.3, creatividad:3.5, limpieza:3.8, porte:3.6, total:17.9, avanza:false },
-  { numero:'234', cat:'Infantil',  estilo:'Hidalguense', vestuario:4.5, estilo_r:4.8, creatividad:4.3, limpieza:4.6, porte:4.7, total:22.9, avanza:true  },
-  { numero:'245', cat:'Infantil',  estilo:'Potosino',    vestuario:3.9, estilo_r:4.0, creatividad:3.8, limpieza:4.1, porte:4.0, total:19.8, avanza:false },
-];
-
-// Jueces registrados
-let jueces = [
-  { id:1, nombre:'Prof. Arturo Vega',    cat:'Todas las categorías' },
-  { id:2, nombre:'Mtra. Carmen Soriano', cat:'Infantil y Juvenil'   },
-  { id:3, nombre:'Lic. Héctor Méndez',   cat:'Adulto'               },
-];
-
-// ID de pareja a eliminar (se guarda cuando el admin hace clic en Eliminar)
-let parejaAEliminar = null;
-
+var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =========================================================
-//  GUARD DE SESIÓN
-//  Si el usuario no está logueado o no es admin, lo manda al login
+//  ESTADO GLOBAL — todos los arrays vacíos, se llenan desde Supabase
 // =========================================================
-window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+var parejas    = [];
+var bloques    = [];
+var resultados = [];
+var usuarios   = [];
+var parejaAEliminar = null;
 
-  if (!session) {
-    window.location.href = 'login.html';
-    return;
-  }
+var titulosVistas = {
+  resumen:'Resumen del evento', parejas:'Gestión de parejas',
+  bloques:'Control de bloques', resultados:'Resultados en tiempo real',
+  jueces:'Gestión de jueces y encargados'
+};
 
-  // Verificar que sea admin
-  const { data: usuario } = await supabase
-    .from('usuarios')
-    .select('rol, nombre')
-    .eq('correo', session.user.email)
-    .maybeSingle();
+// =========================================================
+//  GUARD DE SESIÓN + INICIALIZACIÓN
+// =========================================================
+window.addEventListener('DOMContentLoaded', async function() {
+  var session = (await supabase.auth.getSession()).data.session;
+  if (!session) { window.location.href = 'login.html'; return; }
 
-  if (!usuario || usuario.rol !== 'admin') {
+  var res = await supabase.from('usuarios').select('rol,nombre').eq('correo', session.user.email).maybeSingle();
+  if (!res.data || res.data.rol !== 'admin') {
     await supabase.auth.signOut();
     window.location.href = 'login.html';
     return;
   }
 
-  // Mostrar nombre del admin en el sidebar
-  document.querySelector('.sidebar-usuario strong').textContent = usuario.nombre || 'Admin';
-
-  // Continuar con la carga normal
+  document.getElementById('nombre-admin').textContent = res.data.nombre || 'Admin';
   document.getElementById('fecha-topbar').textContent =
-    new Date().toLocaleDateString('es-MX', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    new Date().toLocaleDateString('es-MX', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
   await cargarTodo();
-  renderizarJueces();
 
-  supabase
-    .channel('admin-realtime')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'calificaciones' }, () => cargarResultados())
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'parejas' }, () => cargarParejas())
+  // Realtime: actualizar automáticamente cuando cambien datos
+  supabase.channel('admin-rt')
+    .on('postgres_changes', {event:'*', schema:'public', table:'parejas'}, cargarParejas)
+    .on('postgres_changes', {event:'*', schema:'public', table:'bloques'}, cargarBloques)
     .subscribe();
 });
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cerrarSesion()
-// ---------------------------------------------------------
 async function cerrarSesion() {
   await supabase.auth.signOut();
   window.location.href = 'login.html';
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarTodo() — carga inicial de todos los datos
-// ---------------------------------------------------------
+// =========================================================
+//  CARGA DE DATOS
+// =========================================================
 async function cargarTodo() {
-  await Promise.all([
-    cargarParejas(),
-    cargarBloques(),
-    cargarResultados(),
-  ]);
+  await Promise.all([cargarParejas(), cargarBloques(), cargarResultados(), cargarUsuarios()]);
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarParejas()
-// ---------------------------------------------------------
 async function cargarParejas() {
-  const { data, error } = await supabase
-    .from('parejas')
-    .select('*')
-    .order('numero');
-
-  if (error) { console.error(error); return; }
-
-  parejas = data.map(p => ({
-    id:         p.id,
-    numero:     p.numero,
-    cat:        p.categoria_nombre,
-    estilo:     p.estilo,
-    nombre1:    p.nombre1,
-    nombre2:    p.nombre2,
-    correo:     p.correo,
-    tel:        p.telefono,
-    confirmado: p.confirmado,
-  }));
-
+  var r = await supabase.from('parejas').select('*').order('numero');
+  if (r.error) { console.error(r.error); return; }
+  parejas = r.data.map(function(p) {
+    return { id:p.id, numero:p.numero, cat:p.categoria_nombre, estilo:p.estilo,
+      nombre1:p.nombre1, nombre2:p.nombre2, correo:p.correo, tel:p.telefono, confirmado:p.confirmado };
+  });
   renderizarTablaParejas(parejas);
-
-  // Actualizar estadísticas del resumen
-  const confirmadas = parejas.filter(p => p.confirmado).length;
-  document.getElementById('stat-total') && (document.querySelector('.stat-card.verde .stat-num').textContent = parejas.length);
+  // Actualizar stats
+  var conf = parejas.filter(function(p){return p.confirmado;}).length;
+  document.getElementById('stat-total').textContent      = parejas.length;
+  document.getElementById('stat-confirmadas').textContent = conf;
+  document.getElementById('stat-pendientes').textContent  = parejas.length - conf;
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarBloques()
-// ---------------------------------------------------------
 async function cargarBloques() {
-  const { data, error } = await supabase
-    .from('bloques')
-    .select(`id, nombre, categoria, estilo, ronda, estado, orden, bloque_parejas(pareja_num)`)
+  var r = await supabase.from('bloques')
+    .select('id,nombre,categoria,estilo,ronda,estado,orden,bloque_parejas(pareja_num)')
     .order('orden');
-
-  if (error) { console.error(error); return; }
-
-  bloques = data.map(b => ({
-    id:      b.id,
-    nombre:  b.nombre,
-    cat:     b.categoria,
-    estilo:  b.estilo,
-    ronda:   b.ronda,
-    parejas: b.bloque_parejas.map(bp => bp.pareja_num),
-    estado:  b.estado,
-  }));
-
+  if (r.error) { console.error(r.error); return; }
+  bloques = r.data.map(function(b) {
+    return { id:b.id, nombre:b.nombre, cat:b.categoria, estilo:b.estilo,
+      ronda:b.ronda, estado:b.estado, parejas:b.bloque_parejas.map(function(bp){return bp.pareja_num;}) };
+  });
   renderizarTablaBloques();
+  // Actualizar stats y bloque actual
+  document.getElementById('stat-bloques').textContent = bloques.length;
+  var activo = bloques.find(function(b){return b.estado==='en_curso';});
+  document.getElementById('nombre-bloque-actual').textContent =
+    activo ? (activo.nombre + ' — ' + activo.cat + ' / ' + activo.estilo) : 'Sin bloque activo';
+  document.getElementById('badges-bloque-actual').innerHTML = activo
+    ? '<span class="badge badge-amarillo">⏳ En curso</span> <span class="badge badge-azul">' + activo.parejas.length + ' parejas</span>'
+    : '';
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarResultados()
-//  Lee la vista resultados_por_pareja que ya promedia todo
-// ---------------------------------------------------------
 async function cargarResultados() {
-  const { data, error } = await supabase
-    .from('resultados_por_pareja')
-    .select('*');
-
-  if (error) { console.error(error); return; }
-
-  resultados = data.map(r => ({
-    numero:      r.pareja_num,
-    cat:         r.categoria,
-    estilo:      r.estilo,
-    vestuario:   parseFloat(r.prom_vestuario),
-    estilo_r:    parseFloat(r.prom_estilo),
-    creatividad: parseFloat(r.prom_creatividad),
-    limpieza:    parseFloat(r.prom_limpieza),
-    porte:       parseFloat(r.prom_porte),
-    total:       parseFloat(r.prom_total),
-    avanza:      false, // por ahora manual, se puede automatizar después
-  }));
-
+  var r = await supabase.from('resultados_por_pareja').select('*');
+  if (r.error) { console.error(r.error); return; }
+  resultados = r.data.map(function(x) {
+    return { numero:x.pareja_num, cat:x.categoria, estilo:x.estilo,
+      vestuario:parseFloat(x.prom_vestuario)||0, estilo_r:parseFloat(x.prom_estilo)||0,
+      creatividad:parseFloat(x.prom_creatividad)||0, limpieza:parseFloat(x.prom_limpieza)||0,
+      porte:parseFloat(x.prom_porte)||0, total:parseFloat(x.prom_total)||0 };
+  });
   renderizarTablaResultados(resultados);
 }
 
+async function cargarUsuarios() {
+  var r = await supabase.from('usuarios').select('*').order('nombre');
+  if (r.error) { console.error(r.error); return; }
+  usuarios = r.data;
+  renderizarUsuarios();
+}
 
-// ---------------------------------------------------------
-//  FUNCIÓN: mostrarVista(nombre)
-//  Alterna entre las secciones del admin
-// ---------------------------------------------------------
-const titulosVistas = {
-  resumen:    'Resumen del evento',
-  parejas:    'Gestión de parejas',
-  bloques:    'Control de bloques',
-  resultados: 'Resultados en tiempo real',
-  jueces:     'Gestión de jueces',
-};
-
-function mostrarVista(nombre) {
-  // Ocultar todas las vistas
-  document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
-  // Mostrar la seleccionada
-  document.getElementById(`vista-${nombre}`).classList.add('activa');
-
-  // Actualizar sidebar
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('activo'));
-  event.currentTarget.classList.add('activo');
-
-  // Actualizar título del topbar
+// =========================================================
+//  NAVEGACIÓN
+// =========================================================
+function mostrarVista(nombre, btn) {
+  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('activa');});
+  document.getElementById('vista-' + nombre).classList.add('activa');
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('activo');});
+  if (btn) btn.classList.add('activo');
   document.getElementById('titulo-vista').textContent = titulosVistas[nombre] || nombre;
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarTablaParejas(lista)
-//  Genera las filas de la tabla de parejas
-// ---------------------------------------------------------
+// =========================================================
+//  TABLA DE PAREJAS
+// =========================================================
 function renderizarTablaParejas(lista) {
-  const tbody = document.getElementById('tabla-parejas-body');
-  tbody.innerHTML = lista.map(p => `
-    <tr>
-      <td><span class="num-pareja">#${p.numero}</span></td>
-      <td>
-        <div style="font-weight:700;font-size:0.88rem;">${p.nombre1}</div>
-        <div style="color:var(--texto-suave);font-size:0.82rem;">${p.nombre2}</div>
-      </td>
-      <td>${p.cat}</td>
-      <td>${p.estilo}</td>
-      <td>
-        <div style="font-size:0.82rem;">${p.correo}</div>
-        <div style="color:var(--texto-suave);font-size:0.8rem;">${p.tel}</div>
-      </td>
-      <td>
-        <span class="badge ${p.confirmado ? 'badge-verde' : 'badge-amarillo'}">
-          ${p.confirmado ? '✓ Confirmada' : 'Pendiente'}
-        </span>
-      </td>
-      <td>
-        <button class="btn btn-danger btn-sm" onclick="pedirEliminar(${p.id})">
-          🗑 Eliminar
-        </button>
-      </td>
-    </tr>
-  `).join('');
+  var tbody = document.getElementById('tabla-parejas-body');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay parejas registradas</td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(function(p) {
+    return '<tr>' +
+      '<td><span class="num-pareja">#' + p.numero + '</span></td>' +
+      '<td><div style="font-weight:700;font-size:0.88rem;">' + p.nombre1 + '</div><div style="color:var(--texto-suave);font-size:0.82rem;">' + p.nombre2 + '</div></td>' +
+      '<td>' + (p.cat||'—') + '</td>' +
+      '<td>' + (p.estilo||'—') + '</td>' +
+      '<td><div style="font-size:0.82rem;">' + p.correo + '</div><div style="color:var(--texto-suave);font-size:0.8rem;">' + p.tel + '</div></td>' +
+      '<td><span class="badge ' + (p.confirmado?'badge-verde':'badge-amarillo') + '">' + (p.confirmado?'✓ Confirmada':'Pendiente') + '</span></td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="pedirEliminar(\'' + p.id + '\')">🗑 Eliminar</button></td>' +
+      '</tr>';
+  }).join('');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: filtrarTabla(texto)
-//  Filtra la tabla de parejas en tiempo real
-// ---------------------------------------------------------
 function filtrarTabla(texto) {
-  const q = texto.toLowerCase();
-  const filtradas = q
-    ? parejas.filter(p =>
-        p.numero.includes(q) ||
-        p.nombre1.toLowerCase().includes(q) ||
-        p.nombre2.toLowerCase().includes(q) ||
-        p.cat.toLowerCase().includes(q) ||
-        p.estilo.toLowerCase().includes(q)
-      )
-    : parejas;
-  renderizarTablaParejas(filtradas);
+  var q = texto.toLowerCase();
+  renderizarTablaParejas(q ? parejas.filter(function(p) {
+    return p.numero.includes(q) || p.nombre1.toLowerCase().includes(q) ||
+           p.nombre2.toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q);
+  }) : parejas);
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: pedirEliminar / confirmarEliminar
-//  Muestra el modal de confirmación antes de eliminar
-// ---------------------------------------------------------
 function pedirEliminar(id) {
   parejaAEliminar = id;
-  const p = parejas.find(x => x.id === id);
+  var p = parejas.find(function(x){return x.id===id;});
   document.getElementById('modal-eliminar-texto').textContent =
-    `¿Seguro que deseas eliminar la pareja #${p.numero} (${p.nombre1} & ${p.nombre2})? Esta acción no se puede deshacer.`;
+    '¿Seguro que deseas eliminar la pareja #' + p.numero + ' (' + p.nombre1 + ' & ' + p.nombre2 + ')? Esta acción no se puede deshacer.';
   document.getElementById('modal-eliminar').classList.add('abierto');
 }
 
 async function confirmarEliminar() {
-  const { error } = await supabase
-    .from('parejas')
-    .delete()
-    .eq('id', parejaAEliminar);
-
-  if (error) {
-    mostrarToast('⚠ Error al eliminar, intenta de nuevo');
-    console.error(error);
-    cerrarModal('modal-eliminar');
-    return;
-  }
-
-  parejas = parejas.filter(p => p.id !== parejaAEliminar);
+  var r = await supabase.from('parejas').delete().eq('id', parejaAEliminar);
+  if (r.error) { mostrarToast('⚠ Error al eliminar'); console.error(r.error); }
+  else { mostrarToast('🗑 Pareja eliminada'); await cargarParejas(); }
   cerrarModal('modal-eliminar');
-  renderizarTablaParejas(parejas);
-  mostrarToast('🗑 Pareja eliminada');
   parejaAEliminar = null;
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarTablaBloques()
-// ---------------------------------------------------------
-function renderizarTablaBloques() {
-  const tbody = document.getElementById('tabla-bloques-body');
-  tbody.innerHTML = bloques.map(b => `
-    <tr>
-      <td style="font-weight:700;">${b.nombre}</td>
-      <td>${b.cat} / ${b.estilo}</td>
-      <td>${b.ronda}</td>
-      <td>${b.parejas.map(n => `<span class="badge badge-gris">#${n}</span>`).join(' ')}</td>
-      <td>
-        <span class="badge ${
-          b.estado === 'terminado' ? 'badge-verde' :
-          b.estado === 'en-curso'  ? 'badge-amarillo' : 'badge-gris'
-        }">
-          ${{ terminado:'✓ Terminado', 'en-curso':'⏳ En curso', pendiente:'Pendiente' }[b.estado]}
-        </span>
-      </td>
-      <td>
-        ${b.estado === 'pendiente'
-          ? `<button class="btn btn-primary btn-sm" onclick="activarBloque(${b.id})">▶ Activar</button>`
-          : `<button class="btn btn-ghost btn-sm" disabled>${b.estado === 'terminado' ? 'Terminado' : 'En curso'}</button>`
-        }
-      </td>
-    </tr>
-  `).join('');
+function exportarCSV() {
+  var enc = ['Número','Integrante 1','Integrante 2','Categoría','Estilo','Correo','Teléfono','Confirmada'];
+  var filas = parejas.map(function(p){
+    return [p.numero, p.nombre1, p.nombre2, p.cat, p.estilo, p.correo, p.tel, p.confirmado?'Sí':'No'];
+  });
+  descargarCSV([enc].concat(filas), 'parejas-huapango-' + new Date().toISOString().slice(0,10) + '.csv');
+  mostrarToast('⬇ CSV descargado');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: crearBloque()
-//  Lee el formulario y agrega un bloque nuevo
-// ---------------------------------------------------------
-function crearBloque() {
-  const cat     = document.getElementById('nuevo-cat').value;
-  const estilo  = document.getElementById('nuevo-estilo').value;
-  const ronda   = document.getElementById('nuevo-ronda').value;
-  const parejas_raw = document.getElementById('nuevo-parejas').value;
-
-  if (!cat || !estilo || !parejas_raw.trim()) {
-    mostrarToast('⚠ Llena todos los campos del bloque');
+// =========================================================
+//  TABLA DE BLOQUES
+// =========================================================
+function renderizarTablaBloques() {
+  var tbody = document.getElementById('tabla-bloques-body');
+  if (!bloques.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay bloques creados</td></tr>';
     return;
   }
+  var estadoLabel = {en_curso:'⏳ En curso', terminado:'✓ Terminado', pendiente:'Pendiente'};
+  var estadoBadge = {en_curso:'badge-amarillo', terminado:'badge-verde', pendiente:'badge-gris'};
+  tbody.innerHTML = bloques.map(function(b) {
+    return '<tr>' +
+      '<td style="font-weight:700;">' + b.nombre + '</td>' +
+      '<td>' + b.cat + ' / ' + b.estilo + '</td>' +
+      '<td>' + (b.ronda||'').replace('_',' ') + '</td>' +
+      '<td>' + b.parejas.map(function(n){return '<span class="badge badge-gris">#'+n+'</span>';}).join(' ') + '</td>' +
+      '<td><span class="badge ' + (estadoBadge[b.estado]||'badge-gris') + '">' + (estadoLabel[b.estado]||b.estado) + '</span></td>' +
+      '<td>' + (b.estado==='pendiente'
+        ? '<button class="btn btn-primary btn-sm" onclick="activarBloque(\'' + b.id + '\')">▶ Activar</button>'
+        : '<button class="btn btn-ghost btn-sm" disabled>' + (b.estado==='terminado'?'Terminado':'En curso') + '</button>') +
+      '</td></tr>';
+  }).join('');
+}
 
-  const nuevasParejas = parejas_raw.split(',').map(s => s.trim()).filter(Boolean);
-  const nuevo = {
-    id:      bloques.length + 1,
-    nombre:  `Bloque ${bloques.length + 1}`,
-    cat, estilo, ronda,
-    parejas: nuevasParejas,
-    estado:  'pendiente',
-  };
+async function crearBloque() {
+  var cat       = document.getElementById('nuevo-cat').value;
+  var estilo    = document.getElementById('nuevo-estilo').value;
+  var ronda     = document.getElementById('nuevo-ronda').value;
+  var parsRaw   = document.getElementById('nuevo-parejas').value;
 
-  bloques.push(nuevo);
+  if (!cat || !estilo || !parsRaw.trim()) { mostrarToast('⚠ Llena todos los campos'); return; }
 
-  // TODO: en Supabase:
-  // await supabase.from('bloques').insert([nuevo])
+  var numParejas = parsRaw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var nombre     = 'Bloque ' + (bloques.length + 1);
+  var orden      = bloques.length + 1;
 
-  renderizarTablaBloques();
-  mostrarToast(`✓ Bloque ${nuevo.nombre} creado`);
+  // Insertar bloque en Supabase
+  var r = await supabase.from('bloques').insert([{nombre:nombre, categoria:cat, estilo:estilo, ronda:ronda, estado:'pendiente', orden:orden}]).select().single();
+  if (r.error) { mostrarToast('⚠ Error al crear bloque'); console.error(r.error); return; }
 
-  // Limpiar formulario
-  document.getElementById('nuevo-cat').value     = '';
-  document.getElementById('nuevo-estilo').value  = '';
+  // Insertar relaciones pareja-bloque
+  var rels = numParejas.map(function(n){return {bloque_id:r.data.id, pareja_num:n};});
+  var r2 = await supabase.from('bloque_parejas').insert(rels);
+  if (r2.error) { mostrarToast('⚠ Error al asignar parejas'); console.error(r2.error); return; }
+
+  await cargarBloques();
+  mostrarToast('✓ ' + nombre + ' creado');
+  document.getElementById('nuevo-cat').value = '';
+  document.getElementById('nuevo-estilo').value = '';
   document.getElementById('nuevo-parejas').value = '';
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: activarBloque(id)
-//  Desde el admin también se puede activar un bloque
-// ---------------------------------------------------------
 async function activarBloque(id) {
-  const anterior = bloques.find(b => b.estado === 'en_curso');
-  if (anterior) {
-    await supabase.from('bloques').update({ estado: 'terminado' }).eq('id', anterior.id);
-  }
-  const { error } = await supabase
-    .from('bloques').update({ estado: 'en_curso' }).eq('id', id);
-
-  if (error) { mostrarToast('⚠ Error al activar bloque'); console.error(error); return; }
-
+  // Terminar el que estaba en curso
+  var anterior = bloques.find(function(b){return b.estado==='en_curso';});
+  if (anterior) await supabase.from('bloques').update({estado:'terminado'}).eq('id', anterior.id);
+  var r = await supabase.from('bloques').update({estado:'en_curso'}).eq('id', id);
+  if (r.error) { mostrarToast('⚠ Error al activar'); return; }
   await cargarBloques();
   mostrarToast('🟡 Bloque activado');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarTablaResultados(lista)
-//  Ordena por puntaje total y dibuja la tabla con posiciones
-// ---------------------------------------------------------
+// =========================================================
+//  TABLA DE RESULTADOS
+// =========================================================
 function renderizarTablaResultados(lista) {
-  // Ordenar de mayor a menor puntaje
-  const ordenados = [...lista].sort((a, b) => b.total - a.total);
-  const maxTotal  = 25; // máximo posible (5 rubros × 5 pts)
-
-  const tbody = document.getElementById('tabla-resultados-body');
-  tbody.innerHTML = ordenados.map((r, i) => {
-    const pos = i + 1;
-    const clasePos = pos === 1 ? 'oro' : pos === 2 ? 'plata' : pos === 3 ? 'bronce' : '';
-    const emojis   = ['🥇','🥈','🥉'];
-
-    return `
-      <tr>
-        <td>
-          <span class="posicion-num ${clasePos}">
-            ${pos <= 3 ? emojis[pos-1] : pos}
-          </span>
-        </td>
-        <td><span class="num-pareja">#${r.numero}</span></td>
-        <td style="font-size:0.82rem;">${r.cat}</td>
-        <td style="font-size:0.82rem;">${r.estilo}</td>
-        <td>${r.vestuario.toFixed(1)}</td>
-        <td>${r.estilo_r.toFixed(1)}</td>
-        <td>${r.creatividad.toFixed(1)}</td>
-        <td>${r.limpieza.toFixed(1)}</td>
-        <td>${r.porte.toFixed(1)}</td>
-        <td>
-          <strong>${r.total.toFixed(1)}</strong>
-          <span class="barra-pts-wrap">
-            <span class="barra-pts" style="width:${(r.total/maxTotal)*100}%"></span>
-          </span>
-        </td>
-        <td>
-          <span class="badge ${r.avanza ? 'badge-verde' : 'badge-rojo'}">
-            ${r.avanza ? '✓ Avanza' : 'Eliminada'}
-          </span>
-        </td>
-      </tr>
-    `;
+  var tbody = document.getElementById('tabla-resultados-body');
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--texto-suave);padding:2rem;">Sin calificaciones aún</td></tr>';
+    return;
+  }
+  var ordenados = lista.slice().sort(function(a,b){return b.total-a.total;});
+  var emojis = ['🥇','🥈','🥉'];
+  tbody.innerHTML = ordenados.map(function(r, i) {
+    var pos = i+1;
+    var cls = pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
+    return '<tr>' +
+      '<td><span class="posicion-num ' + cls + '">' + (pos<=3?emojis[pos-1]:pos) + '</span></td>' +
+      '<td><span class="num-pareja">#' + r.numero + '</span></td>' +
+      '<td style="font-size:0.82rem;">' + r.cat + '</td>' +
+      '<td style="font-size:0.82rem;">' + r.estilo + '</td>' +
+      '<td>' + r.vestuario.toFixed(1) + '</td>' +
+      '<td>' + r.estilo_r.toFixed(1) + '</td>' +
+      '<td>' + r.creatividad.toFixed(1) + '</td>' +
+      '<td>' + r.limpieza.toFixed(1) + '</td>' +
+      '<td>' + r.porte.toFixed(1) + '</td>' +
+      '<td><strong>' + r.total.toFixed(1) + '</strong><span class="barra-pts-wrap"><span class="barra-pts" style="width:' + (r.total/25*100) + '%"></span></span></td>' +
+      '</tr>';
   }).join('');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: filtrarResultados(categoria)
-//  Filtra la tabla de resultados por categoría
-// ---------------------------------------------------------
 function filtrarResultados(cat) {
-  const filtrados = cat ? resultados.filter(r => r.cat === cat) : resultados;
-  renderizarTablaResultados(filtrados);
+  renderizarTablaResultados(cat ? resultados.filter(function(r){return r.cat===cat;}) : resultados);
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: exportarCSV()
-//  Genera y descarga un archivo CSV con los datos de parejas
-// ---------------------------------------------------------
-function exportarCSV() {
-  const encabezado = ['Número','Integrante 1','Integrante 2','Categoría','Estilo','Correo','Teléfono','Confirmada'];
-  const filas = parejas.map(p => [
-    `#${p.numero}`, p.nombre1, p.nombre2, p.cat, p.estilo, p.correo, p.tel,
-    p.confirmado ? 'Sí' : 'No'
-  ]);
-
-  const csv = [encabezado, ...filas]
-    .map(fila => fila.map(c => `"${c}"`).join(','))
-    .join('\n');
-
-  // Crear blob y descargar
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // \uFEFF = BOM para Excel
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href     = url;
-  link.download = `parejas-huapango-${new Date().toISOString().slice(0,10)}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
-
-  mostrarToast('⬇ CSV descargado');
-}
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: exportarResultados()
-//  Descarga CSV con los resultados ordenados
-// ---------------------------------------------------------
 function exportarResultados() {
-  const ordenados = [...resultados].sort((a, b) => b.total - a.total);
-  const encabezado = ['Posición','Pareja','Categoría','Estilo','Vestuario','Estilo','Creatividad','Limpieza','Porte','Total','Estado'];
-  const filas = ordenados.map((r, i) => [
-    i+1, `#${r.numero}`, r.cat, r.estilo,
-    r.vestuario.toFixed(1), r.estilo_r.toFixed(1), r.creatividad.toFixed(1),
-    r.limpieza.toFixed(1), r.porte.toFixed(1), r.total.toFixed(1),
-    r.avanza ? 'Avanza' : 'Eliminada'
-  ]);
-
-  const csv = [encabezado, ...filas]
-    .map(fila => fila.map(c => `"${c}"`).join(','))
-    .join('\n');
-
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href     = url;
-  link.download = `resultados-huapango-${new Date().toISOString().slice(0,10)}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
-
+  var enc = ['Posición','Pareja','Categoría','Estilo','Vestuario','Estilo','Creatividad','Limpieza','Porte','Total'];
+  var ord = resultados.slice().sort(function(a,b){return b.total-a.total;});
+  var filas = ord.map(function(r,i){
+    return [i+1,'#'+r.numero,r.cat,r.estilo,r.vestuario.toFixed(1),r.estilo_r.toFixed(1),r.creatividad.toFixed(1),r.limpieza.toFixed(1),r.porte.toFixed(1),r.total.toFixed(1)];
+  });
+  descargarCSV([enc].concat(filas), 'resultados-huapango-' + new Date().toISOString().slice(0,10) + '.csv');
   mostrarToast('⬇ Resultados descargados');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarJueces()
-//  Dibuja las tarjetas de jueces con su selector de categoría
-// ---------------------------------------------------------
-function renderizarJueces() {
-  const lista = document.getElementById('lista-jueces');
-  lista.innerHTML = jueces.map(j => `
-    <div class="juez-card">
-      <div>
-        <div class="juez-nombre">${j.nombre}</div>
-        <div class="juez-cats">Asignado a: ${j.cat}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
-        <!-- El admin puede cambiar la categoría del juez -->
-        <select class="select-cat" onchange="cambiarCatJuez(${j.id}, this.value)">
-          <option ${j.cat === 'Todas las categorías' ? 'selected' : ''}>Todas las categorías</option>
-          <option ${j.cat === 'Pequeños Guapangueritos' ? 'selected' : ''}>Pequeños Guapangueritos</option>
-          <option ${j.cat === 'Infantil' ? 'selected' : ''}>Infantil</option>
-          <option ${j.cat === 'Juvenil'  ? 'selected' : ''}>Juvenil</option>
-          <option ${j.cat === 'Adulto'   ? 'selected' : ''}>Adulto</option>
-          <option ${j.cat === 'Infantil y Juvenil' ? 'selected' : ''}>Infantil y Juvenil</option>
-        </select>
-        <button class="btn btn-danger btn-sm" onclick="eliminarJuez(${j.id})">🗑</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cambiarCatJuez(id, nuevaCat)
-// ---------------------------------------------------------
-function cambiarCatJuez(id, nuevaCat) {
-  const juez = jueces.find(j => j.id === id);
-  if (juez) {
-    juez.cat = nuevaCat;
-    mostrarToast(`✓ Categoría de ${juez.nombre} actualizada`);
-    // TODO: Supabase update
+// =========================================================
+//  GESTIÓN DE USUARIOS (jueces y encargados)
+// =========================================================
+function renderizarUsuarios() {
+  var lista = document.getElementById('lista-jueces');
+  var staff = usuarios.filter(function(u){return u.rol !== 'admin';});
+  if (!staff.length) {
+    lista.innerHTML = '<p style="color:var(--texto-suave);">No hay jueces ni encargados registrados aún.</p>';
+    return;
   }
+  lista.innerHTML = staff.map(function(u) {
+    return '<div class="juez-card">' +
+      '<div><div class="juez-nombre">' + u.nombre + '</div>' +
+      '<div class="juez-cats">' + (u.rol==='juez'?'⚖️ Juez':'📋 Encargado') + ' · ' + u.correo + '</div></div>' +
+      '<button class="btn btn-danger btn-sm" onclick="eliminarUsuario(\'' + u.id + '\',\'' + u.nombre + '\')">🗑</button>' +
+      '</div>';
+  }).join('');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: eliminarJuez(id)
-// ---------------------------------------------------------
-function eliminarJuez(id) {
-  jueces = jueces.filter(j => j.id !== id);
-  renderizarJueces();
-  mostrarToast('🗑 Juez eliminado');
-  // TODO: Supabase delete
+function abrirModalUsuario() {
+  document.getElementById('nuevo-usuario-nombre').value = '';
+  document.getElementById('nuevo-usuario-correo').value = '';
+  document.getElementById('nuevo-usuario-password').value = '';
+  document.getElementById('modal-usuario').classList.add('abierto');
 }
 
+async function agregarUsuario() {
+  var nombre   = document.getElementById('nuevo-usuario-nombre').value.trim();
+  var correo   = document.getElementById('nuevo-usuario-correo').value.trim();
+  var password = document.getElementById('nuevo-usuario-password').value.trim();
+  var rol      = document.getElementById('nuevo-usuario-rol').value;
 
-// ---------------------------------------------------------
-//  FUNCIÓN: abrirModalJuez / agregarJuez
-// ---------------------------------------------------------
-function abrirModalJuez() {
-  document.getElementById('nuevo-juez-nombre').value = '';
-  document.getElementById('modal-juez').classList.add('abierto');
-}
+  if (!nombre || !correo || !password) { mostrarToast('⚠ Llena todos los campos'); return; }
 
-function agregarJuez() {
-  const nombre = document.getElementById('nuevo-juez-nombre').value.trim();
-  const cat    = document.getElementById('nuevo-juez-cat').value || 'Todas las categorías';
+  var btn = document.getElementById('btn-agregar-usuario');
+  btn.disabled = true;
+  btn.textContent = 'Creando...';
 
-  if (!nombre) {
-    mostrarToast('⚠ Escribe el nombre del juez');
+  // Crear usuario en Supabase Auth usando la función SQL que creamos
+  var r = await supabase.rpc('crear_usuario_staff', {
+    p_correo: correo, p_nombre: nombre, p_rol: rol, p_password: password
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Agregar';
+
+  if (r.error || r.data?.error) {
+    mostrarToast('⚠ Error: ' + (r.data?.error || r.error.message));
+    console.error(r.error || r.data);
     return;
   }
 
-  jueces.push({ id: jueces.length + 1, nombre, cat });
-
-  // TODO: Supabase insert
-  // await supabase.from('jueces').insert([{ nombre, cat }])
-
-  cerrarModal('modal-juez');
-  renderizarJueces();
-  mostrarToast(`✓ Juez ${nombre} agregado`);
+  cerrarModal('modal-usuario');
+  await cargarUsuarios();
+  mostrarToast('✓ ' + nombre + ' agregado como ' + rol);
 }
 
+async function eliminarUsuario(id, nombre) {
+  if (!confirm('¿Eliminar a ' + nombre + '?')) return;
+  var r = await supabase.from('usuarios').delete().eq('id', id);
+  if (r.error) { mostrarToast('⚠ Error al eliminar'); return; }
+  await cargarUsuarios();
+  mostrarToast('🗑 ' + nombre + ' eliminado');
+}
 
-// ---------------------------------------------------------
-//  FUNCIÓN: cerrarModal(id)
-// ---------------------------------------------------------
+// =========================================================
+//  UTILIDADES
+// =========================================================
+function descargarCSV(filas, nombreArchivo) {
+  var csv = filas.map(function(f){return f.map(function(c){return '"'+c+'"';}).join(',');}).join('\n');
+  var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url; link.download = nombreArchivo; link.click();
+  URL.revokeObjectURL(url);
+}
+
 function cerrarModal(id) {
   document.getElementById(id).classList.remove('abierto');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: mostrarToast(mensaje)
-// ---------------------------------------------------------
 function mostrarToast(mensaje) {
-  const toast = document.getElementById('toast');
+  var toast = document.getElementById('toast');
   toast.textContent = mensaje;
   toast.classList.add('visible');
-  setTimeout(() => toast.classList.remove('visible'), 2800);
+  setTimeout(function(){toast.classList.remove('visible');}, 2800);
 }
-
 </script>
 </body>
 </html>
