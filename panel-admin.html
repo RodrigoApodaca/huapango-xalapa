@@ -243,17 +243,18 @@
 <div class="modal-overlay" id="modal-usuario">
   <div class="modal">
     <h3>Agregar juez o encargado</h3>
-    <div class="campo-grupo" style="margin-top:1rem;">
+    <p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:1rem;line-height:1.5;">
+      Para crear un usuario nuevo, primero ve a
+      <strong>Supabase → Authentication → Users → Add user</strong>,
+      crea la cuenta con correo y contraseña, y luego regresa aquí para asignarle el rol.
+    </p>
+    <div class="campo-grupo">
       <label>Nombre completo</label>
       <input type="text" id="nuevo-usuario-nombre" placeholder="Nombre completo" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
     </div>
     <div class="campo-grupo">
-      <label>Correo electrónico</label>
+      <label>Correo electrónico (mismo que pusiste en Supabase)</label>
       <input type="email" id="nuevo-usuario-correo" placeholder="correo@ejemplo.com" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
-    </div>
-    <div class="campo-grupo">
-      <label>Contraseña temporal</label>
-      <input type="text" id="nuevo-usuario-password" placeholder="Contraseña que usará para entrar" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
     </div>
     <div class="campo-grupo">
       <label>Rol</label>
@@ -264,7 +265,7 @@
     </div>
     <div class="modal-botones">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-usuario')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-agregar-usuario" onclick="agregarUsuario()">Agregar</button>
+      <button class="btn btn-primary" id="btn-agregar-usuario" onclick="agregarUsuario()">Asignar rol</button>
     </div>
   </div>
 </div>
@@ -587,32 +588,47 @@ function abrirModalUsuario() {
 }
 
 async function agregarUsuario() {
-  var nombre   = document.getElementById('nuevo-usuario-nombre').value.trim();
-  var correo   = document.getElementById('nuevo-usuario-correo').value.trim();
-  var password = document.getElementById('nuevo-usuario-password').value.trim();
-  var rol      = document.getElementById('nuevo-usuario-rol').value;
+  var nombre  = document.getElementById('nuevo-usuario-nombre').value.trim();
+  var correo  = document.getElementById('nuevo-usuario-correo').value.trim();
+  var rol     = document.getElementById('nuevo-usuario-rol').value;
 
-  if (!nombre || !correo || !password) { mostrarToast('⚠ Llena todos los campos'); return; }
+  if (!nombre || !correo) { mostrarToast('⚠ Llena nombre y correo'); return; }
 
   var btn = document.getElementById('btn-agregar-usuario');
   btn.disabled = true;
-  btn.textContent = 'Creando...';
+  btn.textContent = 'Guardando...';
 
-  // Crear usuario en Supabase Auth usando la función SQL que creamos
-  var r = await supabase.rpc('crear_usuario_staff', {
-    p_correo: correo, p_nombre: nombre, p_rol: rol, p_password: password
-  });
+  // Buscar el ID del usuario en auth.users por correo
+  var rAuth = await supabase.rpc('obtener_id_por_correo', { p_correo: correo });
 
-  btn.disabled = false;
-  btn.textContent = 'Agregar';
+  var userId = null;
+  if (rAuth.data) userId = rAuth.data;
 
-  if (r.error || r.data?.error) {
-    mostrarToast('⚠ Error: ' + (r.data?.error || r.error.message));
-    console.error(r.error || r.data);
-    return;
+  if (!userId) {
+    // Insertar en usuarios sin ID — lo vinculamos por correo
+    var r = await supabase.from('usuarios').upsert([{
+      nombre: nombre, correo: correo, rol: rol
+    }], { onConflict: 'correo' });
+
+    if (r.error) {
+      mostrarToast('⚠ Error: ' + r.error.message);
+      btn.disabled = false; btn.textContent = 'Asignar rol';
+      return;
+    }
+  } else {
+    var r = await supabase.from('usuarios').upsert([{
+      id: userId, nombre: nombre, correo: correo, rol: rol
+    }], { onConflict: 'correo' });
+
+    if (r.error) {
+      mostrarToast('⚠ Error: ' + r.error.message);
+      btn.disabled = false; btn.textContent = 'Asignar rol';
+      return;
+    }
   }
 
   cerrarModal('modal-usuario');
+  btn.disabled = false; btn.textContent = 'Asignar rol';
   await cargarUsuarios();
   mostrarToast('✓ ' + nombre + ' agregado como ' + rol);
 }
