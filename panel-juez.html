@@ -6,511 +6,109 @@
   <title>Panel Juez — Huapango Xalapa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-
   <style>
     :root {
-      --verde-oscuro:  #1B4332;
-      --verde-medio:   #2D6A4F;
-      --verde-claro:   #40916C;
-      --dorado:        #D4A017;
-      --crema:         #FFF8E7;
-      --blanco:        #FFFFFF;
-      --gris-fondo:    #F4F6F4;
-      --gris-borde:    #D8E0D8;
-      --texto:         #1A1A1A;
-      --texto-suave:   #5A6A5A;
-      --exito:         #27AE60;
-      --error:         #C0392B;
-      --advertencia:   #E67E22;
-
-      /* Colores de los 5 rubros de calificación
-         Si se agregan rubros o cambian nombres, actualiza aquí */
-      --rubro-1: #8E44AD; /* Vestuario */
-      --rubro-2: #2980B9; /* Estilo */
-      --rubro-3: #16A085; /* Creatividad */
-      --rubro-4: #D35400; /* Limpieza */
-      --rubro-5: #C0392B; /* Porte */
+      --verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#40916C;
+      --dorado:#D4A017;--crema:#FFF8E7;--blanco:#FFFFFF;
+      --gris-fondo:#F4F6F4;--gris-borde:#D8E0D8;--texto:#1A1A1A;--texto-suave:#5A6A5A;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--gris-fondo);
-      color: var(--texto);
-      min-height: 100vh;
-    }
-
-    /* ===== BARRA SUPERIOR ===== */
-    .topbar {
-      background: var(--verde-oscuro);
-      padding: 0.85rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 2px solid var(--dorado);
-    }
-    .topbar-titulo {
-      font-family: 'Playfair Display', serif;
-      color: var(--dorado);
-      font-size: 1rem;
-    }
-    /* Indicador de qué juez está conectado */
-    .topbar-juez {
-      background: var(--verde-medio);
-      color: var(--crema);
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid var(--dorado);
-    }
-
-    /* ===== CONTENEDOR PRINCIPAL ===== */
-    .contenedor {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-    }
-
-    /* ===== BLOQUE ACTIVO (banner en la parte superior) ===== */
-    .banner-bloque {
-      background: var(--verde-oscuro);
-      border-radius: 14px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.5rem;
-      border: 2px solid var(--dorado);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .banner-bloque-info .bloque-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 0.25rem;
-    }
-    .banner-bloque-info .bloque-nombre {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      color: var(--dorado);
-    }
-    /* Indicador animado de "en vivo" */
-    .en-vivo {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.4rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      color: #fff;
-      font-weight: 700;
-    }
-    /* Punto parpadeante */
-    .punto-vivo {
-      width: 8px;
-      height: 8px;
-      background: #FF4444;
-      border-radius: 50%;
-      animation: parpadear 1.2s ease infinite;
-    }
-    @keyframes parpadear {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.2; }
-    }
-
-    /* ===== INSTRUCCIONES RÁPIDAS ===== */
-    .instrucciones {
-      background: #EBF5FB;
-      border: 1px solid #AED6F1;
-      border-radius: 10px;
-      padding: 0.85rem 1rem;
-      font-size: 0.83rem;
-      color: #1A5276;
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-    }
-
-    /* ===== TARJETA DE CADA PAREJA A CALIFICAR ===== */
-    .pareja-card {
-      background: var(--blanco);
-      border-radius: 14px;
-      border: 1.5px solid var(--gris-borde);
-      margin-bottom: 1.25rem;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    /* Resalta la tarjeta cuando está siendo calificada */
-    .pareja-card.calificando { border-color: var(--verde-claro); }
-    /* Aspecto diferente cuando ya fue calificada y enviada */
-    .pareja-card.bloqueada {
-      opacity: 0.7;
-      border-color: var(--gris-borde);
-    }
-
-    /* Header de cada tarjeta de pareja */
-    .pareja-header {
-      background: var(--gris-fondo);
-      padding: 0.9rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--gris-borde);
-    }
-    .pareja-numero {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      color: var(--verde-oscuro);
-      font-weight: 700;
-    }
-    /* Badge de "Calificada" cuando el juez ya envió */
-    .badge-calificada {
-      background: #D4EDDA;
-      color: #155724;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      display: none; /* oculto hasta que se califica */
-    }
-    /* Puntaje total de la pareja */
-    .pareja-total {
-      font-size: 0.85rem;
-      color: var(--texto-suave);
-      font-weight: 700;
-    }
-    .pareja-total span {
-      font-size: 1.3rem;
-      color: var(--verde-oscuro);
-    }
-
-    /* Cuerpo de la tarjeta con los rubros */
-    .pareja-body { padding: 1.25rem; }
-
-    /* ===== RUBROS DE CALIFICACIÓN =====
-       Cada rubro tiene: nombre, estrellas interactivas, y puntuación */
-    .rubros-lista {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .rubro-fila {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    /* Nombre del rubro con su color */
-    .rubro-nombre {
-      width: 160px;
-      flex-shrink: 0;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .rubro-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    @media (max-width: 500px) {
-      .rubro-nombre { width: 100%; }
-      .rubro-fila   { flex-direction: column; align-items: flex-start; }
-    }
-
-    /* ===== SISTEMA DE ESTRELLAS =====
-       5 estrellas clicables del 1 al 5 */
-    .estrellas {
-      display: flex;
-      gap: 6px;
-      flex: 1;
-    }
-    .estrella {
-      font-size: 2rem;       /* tamaño de la estrella */
-      cursor: pointer;
-      color: #DDD;           /* color sin seleccionar */
-      transition: color 0.15s, transform 0.1s;
-      user-select: none;     /* evita que se seleccione texto al hacer clic */
-      line-height: 1;
-    }
-    .estrella:hover         { transform: scale(1.15); }
-    .estrella.activa        { color: var(--dorado); }
-    /* No se puede cambiar cuando el bloque ya fue enviado */
-    .bloqueada .estrella    { cursor: not-allowed; pointer-events: none; }
-
-    /* Número de calificación a la derecha de las estrellas */
-    .rubro-valor {
-      width: 28px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--verde-oscuro);
-      text-align: center;
-    }
-    /* Descripción textual del valor (ej. "Excelente") */
-    .rubro-descripcion {
-      font-size: 0.75rem;
-      color: var(--texto-suave);
-      width: 70px;
-    }
-
-    /* ===== BARRA DE PROGRESO POR RUBRO ===== */
-    .rubro-barra-wrap {
-      width: 100%;
-      height: 4px;
-      background: #EEE;
-      border-radius: 999px;
-      margin-top: 0.25rem;
-    }
-    .rubro-barra {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.3s ease;
-      width: 0%;
-    }
-
-    /* ===== TOTAL Y BOTÓN DE ENVÍO ===== */
-    .pareja-footer {
-      padding: 1rem 1.25rem;
-      border-top: 1px solid var(--gris-borde);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .total-texto {
-      font-size: 0.85rem;
-      color: var(--texto-suave);
-    }
-    .total-numero {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--verde-oscuro);
-    }
-    .total-maximo {
-      font-size: 0.8rem;
-      color: var(--texto-suave);
-    }
-
-    /* Botón para marcar la calificación de la pareja como lista */
-    .btn-listo {
-      padding: 0.65rem 1.25rem;
-      background: var(--verde-claro);
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .btn-listo:hover    { background: var(--verde-medio); }
-    .btn-listo:disabled { background: #aaa; cursor: not-allowed; }
-
-    /* ===== BOTÓN FINAL: ENVIAR TODO EL BLOQUE ===== */
-    .seccion-enviar {
-      background: var(--blanco);
-      border-radius: 14px;
-      border: 1.5px solid var(--gris-borde);
-      padding: 1.5rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    .btn-enviar-bloque {
-      width: 100%;
-      padding: 1rem;
-      background: var(--verde-oscuro);
-      color: var(--dorado);
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      border: 2px solid var(--dorado);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.03em;
-    }
-    .btn-enviar-bloque:hover    { background: var(--dorado); color: var(--verde-oscuro); }
-    .btn-enviar-bloque:disabled { background: #aaa; border-color: #aaa; color: #fff; cursor: not-allowed; }
-
-    /* Progreso: cuántas parejas ya calificó el juez */
-    .progreso-texto {
-      font-size: 0.85rem;
-      color: var(--texto-suave);
-      margin-bottom: 0.85rem;
-    }
-    .barra-progreso-wrap {
-      background: var(--gris-borde);
-      border-radius: 999px;
-      height: 6px;
-      margin-bottom: 1rem;
-    }
-    .barra-progreso {
-      background: var(--verde-claro);
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.4s ease;
-    }
-
-    /* ===== HISTORIAL DE BLOQUES ANTERIORES ===== */
-    .historial {
-      background: var(--blanco);
-      border-radius: 14px;
-      border: 1px solid var(--gris-borde);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .historial-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--verde-oscuro);
-      margin-bottom: 1rem;
-    }
-    .historial-fila {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--gris-borde);
-      font-size: 0.85rem;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .historial-fila:last-child { border-bottom: none; }
-
-    /* ===== PANTALLA DE ÉXITO (cuando envía el bloque completo) ===== */
-    .pantalla-exito {
-      display: none;
-      text-align: center;
-      padding: 3rem 1rem;
-    }
-    .pantalla-exito .icono-grande { font-size: 4rem; margin-bottom: 1rem; }
-    .pantalla-exito h2 {
-      font-family: 'Playfair Display', serif;
-      color: var(--verde-oscuro);
-      margin-bottom: 0.5rem;
-    }
-    .pantalla-exito p { color: var(--texto-suave); font-size: 0.9rem; }
-
-    /* ===== TOAST ===== */
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--verde-oscuro);
-      color: var(--crema);
-      padding: 0.75rem 1.5rem;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      border: 1px solid var(--dorado);
-      z-index: 999;
-      transition: transform 0.3s;
-      white-space: nowrap;
-    }
-    .toast.visible { transform: translateX(-50%) translateY(0); }
-
-    /* ===== ESTADO: bloque terminado, esperando siguiente ===== */
-    .esperando {
-      text-align: center;
-      padding: 2rem 1rem;
-      color: var(--texto-suave);
-    }
-
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--gris-fondo);color:var(--texto);min-height:100vh;}
+    .topbar{background:var(--verde-oscuro);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--dorado);}
+    .topbar-titulo{font-family:'Playfair Display',serif;color:var(--dorado);font-size:1rem;}
+    .topbar-juez{background:var(--verde-medio);color:var(--crema);font-size:0.75rem;font-weight:700;padding:0.3rem 0.75rem;border-radius:999px;border:1px solid var(--dorado);}
+    .contenedor{max-width:780px;margin:0 auto;padding:1.5rem 1rem;}
+    .banner-bloque{background:var(--verde-oscuro);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;border:2px solid var(--dorado);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;}
+    .bloque-label{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:0.25rem;}
+    .bloque-nombre{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--dorado);}
+    .en-vivo{display:flex;align-items:center;gap:0.4rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:0.4rem 0.9rem;border-radius:999px;font-size:0.8rem;color:#fff;font-weight:700;}
+    .punto-vivo{width:8px;height:8px;background:#FF4444;border-radius:50%;animation:parpadear 1.2s ease infinite;}
+    @keyframes parpadear{0%,100%{opacity:1;}50%{opacity:0.2;}}
+    .instrucciones{background:#EBF5FB;border:1px solid #AED6F1;border-radius:10px;padding:0.85rem 1rem;font-size:0.83rem;color:#1A5276;margin-bottom:1.5rem;line-height:1.6;}
+    .pareja-card{background:var(--blanco);border-radius:14px;border:1.5px solid var(--gris-borde);margin-bottom:1.25rem;overflow:hidden;transition:border-color 0.2s;}
+    .pareja-card.bloqueada{opacity:0.7;}
+    .pareja-header{background:var(--gris-fondo);padding:0.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gris-borde);}
+    .pareja-numero{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--verde-oscuro);font-weight:700;}
+    .badge-calificada{background:#D4EDDA;color:#155724;font-size:0.75rem;font-weight:700;padding:0.3rem 0.75rem;border-radius:999px;display:none;}
+    .pareja-total{font-size:0.85rem;color:var(--texto-suave);font-weight:700;}
+    .pareja-body{padding:1.25rem;}
+    .rubros-lista{display:flex;flex-direction:column;gap:1rem;}
+    .rubro-fila{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .rubro-nombre{width:160px;flex-shrink:0;font-size:0.85rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;}
+    .rubro-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+    @media(max-width:500px){.rubro-nombre{width:100%;}.rubro-fila{flex-direction:column;align-items:flex-start;}}
+    .estrellas{display:flex;gap:6px;flex:1;}
+    .estrella{font-size:2rem;cursor:pointer;color:#DDD;transition:color 0.15s,transform 0.1s;user-select:none;line-height:1;}
+    .estrella:hover{transform:scale(1.15);}
+    .estrella.activa{color:var(--dorado);}
+    .bloqueada .estrella{cursor:not-allowed;pointer-events:none;}
+    .rubro-valor{width:28px;font-size:1rem;font-weight:700;color:var(--verde-oscuro);text-align:center;}
+    .rubro-descripcion{font-size:0.75rem;color:var(--texto-suave);width:70px;}
+    .rubro-barra-wrap{width:100%;height:4px;background:#EEE;border-radius:999px;margin-top:0.25rem;}
+    .rubro-barra{height:100%;border-radius:999px;transition:width 0.3s ease;width:0%;}
+    .pareja-footer{padding:1rem 1.25rem;border-top:1px solid var(--gris-borde);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+    .total-texto{font-size:0.85rem;color:var(--texto-suave);}
+    .total-numero{font-size:1.5rem;font-weight:700;color:var(--verde-oscuro);}
+    .total-maximo{font-size:0.8rem;color:var(--texto-suave);}
+    .btn-listo{padding:0.65rem 1.25rem;background:var(--verde-claro);color:#fff;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+    .btn-listo:hover{background:var(--verde-medio);}
+    .btn-listo:disabled{background:#aaa;cursor:not-allowed;}
+    .seccion-enviar{background:var(--blanco);border-radius:14px;border:1.5px solid var(--gris-borde);padding:1.5rem;text-align:center;margin-bottom:1.5rem;}
+    .btn-enviar-bloque{width:100%;padding:1rem;background:var(--verde-oscuro);color:var(--dorado);font-family:'Playfair Display',serif;font-size:1.05rem;border:2px solid var(--dorado);border-radius:10px;cursor:pointer;transition:all 0.2s;}
+    .btn-enviar-bloque:hover{background:var(--dorado);color:var(--verde-oscuro);}
+    .btn-enviar-bloque:disabled{background:#aaa;border-color:#aaa;color:#fff;cursor:not-allowed;}
+    .progreso-texto{font-size:0.85rem;color:var(--texto-suave);margin-bottom:0.85rem;}
+    .barra-progreso-wrap{background:var(--gris-borde);border-radius:999px;height:6px;margin-bottom:1rem;}
+    .barra-progreso{background:var(--verde-claro);height:100%;border-radius:999px;transition:width 0.4s ease;}
+    .historial{background:var(--blanco);border-radius:14px;border:1px solid var(--gris-borde);padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+    .historial-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--verde-oscuro);margin-bottom:1rem;}
+    .historial-fila{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--gris-borde);font-size:0.85rem;gap:0.5rem;flex-wrap:wrap;}
+    .historial-fila:last-child{border-bottom:none;}
+    .pantalla-exito{display:none;text-align:center;padding:3rem 1rem;}
+    .pantalla-exito .icono-grande{font-size:4rem;margin-bottom:1rem;}
+    .pantalla-exito h2{font-family:'Playfair Display',serif;color:var(--verde-oscuro);margin-bottom:0.5rem;}
+    .pantalla-exito p{color:var(--texto-suave);font-size:0.9rem;}
+    .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--verde-oscuro);color:var(--crema);padding:0.75rem 1.5rem;border-radius:999px;font-size:0.88rem;font-weight:700;border:1px solid var(--dorado);z-index:999;transition:transform 0.3s;white-space:nowrap;}
+    .toast.visible{transform:translateX(-50%) translateY(0);}
+    .esperando{text-align:center;padding:2rem 1rem;color:var(--texto-suave);}
   </style>
 </head>
 <body>
 
-<!-- ===== BARRA SUPERIOR ===== -->
 <header class="topbar">
   <span class="topbar-titulo">Panel Juez — Huapango Xalapa</span>
-  <!-- En producción, este nombre viene de la sesión del juez -->
   <span class="topbar-juez" id="badge-juez">Cargando...</span>
-  <button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(212,160,23,0.4);border-radius:6px;padding:0.3rem 0.75rem;color:rgba(255,255,255,0.6);font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">
-    Salir
-  </button>
+  <button onclick="cerrarSesion()" style="background:none;border:1px solid rgba(212,160,23,0.4);border-radius:6px;padding:0.3rem 0.75rem;color:rgba(255,255,255,0.6);font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">Salir</button>
 </header>
-
 
 <div class="contenedor">
 
-  <!-- =============================================
-       BANNER DEL BLOQUE ACTIVO
-       Muestra qué bloque está calificando el juez ahora
-  ============================================= -->
   <div class="banner-bloque">
     <div class="banner-bloque-info">
       <div class="bloque-label">Bloque en curso</div>
-      <div class="bloque-nombre" id="banner-nombre">Bloque 2 — Infantil / Hidalguense</div>
+      <div class="bloque-nombre" id="banner-nombre">Cargando...</div>
     </div>
-    <div class="en-vivo">
-      <div class="punto-vivo"></div>
-      En vivo
-    </div>
+    <div class="en-vivo"><div class="punto-vivo"></div>En vivo</div>
   </div>
 
-
-  <!-- =============================================
-       INSTRUCCIONES
-  ============================================= -->
   <div class="instrucciones">
     📋 <strong>Instrucciones:</strong> Califica cada pareja del 1 al 5 en los 5 rubros.
     Solo puedes ver el número de pareja — los nombres son confidenciales.
-    Una vez que presiones <strong>"Enviar calificaciones del bloque"</strong>,
-    ya no podrás modificar tus notas.
+    Una vez que presiones <strong>"Enviar calificaciones del bloque"</strong>, ya no podrás modificar tus notas.
   </div>
 
-
-  <!-- =============================================
-       VISTA PRINCIPAL: calificación del bloque activo
-       JavaScript decide si mostrar esto o la pantalla de éxito
-  ============================================= -->
   <div id="vista-calificacion">
-
-    <!-- Lista de tarjetas de parejas (generada por JS) -->
     <div id="lista-parejas-juez"></div>
-
-    <!-- Sección de envío del bloque completo -->
     <div class="seccion-enviar">
       <p class="progreso-texto" id="texto-progreso">0 de 0 parejas calificadas</p>
-      <div class="barra-progreso-wrap">
-        <div class="barra-progreso" id="barra-progreso" style="width:0%"></div>
-      </div>
-      <button
-        class="btn-enviar-bloque"
-        id="btn-enviar-bloque"
-        onclick="enviarBloque()"
-        disabled
-      >
+      <div class="barra-progreso-wrap"><div class="barra-progreso" id="barra-progreso" style="width:0%"></div></div>
+      <button class="btn-enviar-bloque" id="btn-enviar-bloque" onclick="enviarBloque()" disabled>
         Enviar calificaciones del bloque →
       </button>
-      <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:0.6rem;">
-        Debes calificar a todas las parejas antes de poder enviar.
-      </p>
+      <p style="font-size:0.78rem;color:var(--texto-suave);margin-top:0.6rem;">Debes calificar a todas las parejas antes de poder enviar.</p>
     </div>
+  </div>
 
-  </div><!-- fin vista-calificacion -->
-
-
-  <!-- =============================================
-       PANTALLA DE ÉXITO
-       Se muestra después de enviar el bloque
-  ============================================= -->
   <div class="pantalla-exito" id="pantalla-exito">
     <div class="icono-grande">✅</div>
     <h2>¡Calificaciones enviadas!</h2>
@@ -518,123 +116,73 @@
     <p>Espera la activación del siguiente bloque por parte del encargado.</p>
   </div>
 
-
-  <!-- =============================================
-       HISTORIAL DE BLOQUES ANTERIORES
-       El juez puede ver los bloques que ya calificó
-  ============================================= -->
   <div class="historial">
     <div class="historial-titulo">📋 Historial de bloques calificados</div>
-    <div id="historial-lista">
-      <!-- Se genera con JavaScript -->
-    </div>
+    <div id="historial-lista"></div>
   </div>
 
-</div><!-- fin contenedor -->
+</div>
 
-
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast">Acción realizada</div>
 
-<!-- ========================================
-     LIBRERÍA DE SUPABASE
-======================================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 // =========================================================
 //  CONFIGURACIÓN DE SUPABASE
 // =========================================================
-const SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // =========================================================
-//  CONFIGURACIÓN DE RUBROS
-//  Si cambias nombres o colores, solo modifica este array
+//  RUBROS — modificar aquí si cambian nombres o colores
 // =========================================================
-const RUBROS = [
-  { key: 'vestuario',   nombre: 'Vestuario',            color: '#8E44AD' },
-  { key: 'estilo',      nombre: 'Estilo',                color: '#2980B9' },
-  { key: 'creatividad', nombre: 'Creatividad en secuencia', color: '#16A085' },
-  { key: 'limpieza',    nombre: 'Limpieza en secuencia', color: '#D35400' },
-  { key: 'porte',       nombre: 'Porte',                 color: '#C0392B' },
+var RUBROS = [
+  { key:'vestuario',   nombre:'Vestuario',               color:'#8E44AD' },
+  { key:'estilo',      nombre:'Estilo',                   color:'#2980B9' },
+  { key:'creatividad', nombre:'Creatividad en secuencia', color:'#16A085' },
+  { key:'limpieza',    nombre:'Limpieza en secuencia',    color:'#D35400' },
+  { key:'porte',       nombre:'Porte',                    color:'#C0392B' },
 ];
 
-// Etiquetas descriptivas para cada valor de estrella
-const ETIQUETAS = {
-  0: '',
-  1: 'Deficiente',
-  2: 'Regular',
-  3: 'Bueno',
-  4: 'Muy bueno',
-  5: 'Excelente',
-};
-
+var ETIQUETAS = { 0:'', 1:'Deficiente', 2:'Regular', 3:'Bueno', 4:'Muy bueno', 5:'Excelente' };
 
 // =========================================================
-//  DATOS DE DEMOSTRACIÓN
-//  En producción vendrán de Supabase en tiempo real
+//  ESTADO GLOBAL — todo vacío, se llena desde Supabase
 // =========================================================
-
-// Bloque activo que está calificando el juez
-const bloqueActivo = {
-  id: 'B2',
-  nombre: 'Bloque 2 — Infantil / Hidalguense',
-  parejas: [
-    { numero: '234' },
-    { numero: '245' },
-    { numero: '256' },
-  ]
-};
-
-// Historial de bloques ya calificados por este juez
-const historialBloques = [
-  {
-    nombre: 'Bloque 1 — Pequeños Guapangueritos / Veracruzano',
-    parejas: [
-      { numero: '101', total: 22 },
-      { numero: '112', total: 18 },
-    ]
-  }
-];
-
-// Estado de calificaciones: { numero_pareja: { rubro_key: valor } }
-const calificaciones = {};
-// Estado de qué parejas ya marcó el juez como "listo"
-const parejasMarcadas = {};
-// Estado global: si el bloque ya fue enviado
-let bloqueEnviado = false;
-
+var bloqueActivo    = { id: null, nombre: '', parejas: [] };
+var historialBloques = [];
+var calificaciones  = {};
+var parejasMarcadas = {};
+var bloqueEnviado   = false;
+var juezId          = null;  // ID del juez logueado
 
 // =========================================================
-//  GUARD DE SESIÓN
+//  GUARD DE SESIÓN + INICIALIZACIÓN
 // =========================================================
-window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-
+window.addEventListener('DOMContentLoaded', async function() {
+  var session = (await supabase.auth.getSession()).data.session;
   if (!session) { window.location.href = 'login.html'; return; }
 
-  const { data: usuario } = await supabase
-    .from('usuarios').select('rol, nombre')
+  var res = await supabase.from('usuarios').select('rol,nombre')
     .eq('correo', session.user.email).maybeSingle();
 
-  if (!usuario || usuario.rol !== 'juez') {
+  if (!res.data || res.data.rol !== 'juez') {
     await supabase.auth.signOut();
     window.location.href = 'login.html';
     return;
   }
 
-  document.getElementById('badge-juez').textContent = `Juez: ${usuario.nombre}`;
+  juezId = session.user.id;
+  document.getElementById('badge-juez').textContent = 'Juez: ' + res.data.nombre;
 
   await cargarBloqueActivo();
   renderizarHistorial();
 
-  supabase
-    .channel('bloques-juez')
-    .on('postgres_changes', {
-      event: 'UPDATE', schema: 'public', table: 'bloques',
-      filter: "estado=eq.en_curso"
-    }, () => cargarBloqueActivo())
+  // Realtime: cuando el encargado cambie el bloque, el juez lo ve automáticamente
+  supabase.channel('bloques-juez')
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'bloques' },
+      function() { cargarBloqueActivo(); })
     .subscribe();
 });
 
@@ -643,373 +191,236 @@ async function cerrarSesion() {
   window.location.href = 'login.html';
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarBloqueActivo()
-//  Trae de Supabase el bloque que está "en_curso"
-//  con sus parejas asignadas
-// ---------------------------------------------------------
+// =========================================================
+//  CARGAR BLOQUE ACTIVO DESDE SUPABASE
+// =========================================================
 async function cargarBloqueActivo() {
-  const { data, error } = await supabase
-    .from('bloques')
-    .select(`
-      id, nombre, categoria, estilo, ronda,
-      bloque_parejas ( pareja_num )
-    `)
+  var r = await supabase.from('bloques')
+    .select('id, nombre, categoria, estilo, ronda, bloque_parejas(pareja_num)')
     .eq('estado', 'en_curso')
-    .single();
+    .maybeSingle();
 
-  if (error || !data) {
-    // No hay bloque activo todavía
+  if (r.error || !r.data) {
     document.getElementById('banner-nombre').textContent = 'Esperando bloque...';
     document.getElementById('lista-parejas-juez').innerHTML =
       '<div class="esperando"><p style="font-size:1.1rem;">⏳ El encargado activará el próximo bloque en un momento.</p></div>';
+    document.getElementById('btn-enviar-bloque').disabled = true;
     return;
   }
 
-  // Actualizar el banner
+  var data = r.data;
+
+  // Actualizar banner
   document.getElementById('banner-nombre').textContent =
-    `${data.nombre} — ${data.categoria} / ${data.estilo}`;
+    data.nombre + ' — ' + data.categoria + ' / ' + data.estilo;
 
-  // Actualizar bloqueActivo con datos reales
-  bloqueActivo.id       = data.id;
-  bloqueActivo.nombre   = `${data.nombre} — ${data.categoria} / ${data.estilo}`;
-  bloqueActivo.parejas  = data.bloque_parejas.map(bp => ({ numero: bp.pareja_num }));
+  // Si es un bloque diferente al que teníamos, reiniciar estado
+  if (bloqueActivo.id !== data.id) {
+    bloqueActivo.id     = data.id;
+    bloqueActivo.nombre = data.nombre + ' — ' + data.categoria + ' / ' + data.estilo;
+    bloqueActivo.parejas = data.bloque_parejas.map(function(bp) { return { numero: bp.pareja_num }; });
 
-  // Reiniciar estado de calificaciones para el nuevo bloque
-  bloqueActivo.parejas.forEach(p => {
-    calificaciones[p.numero] = {};
-    RUBROS.forEach(r => { calificaciones[p.numero][r.key] = 0; });
-    parejasMarcadas[p.numero] = false;
-  });
-  bloqueEnviado = false;
+    // Reiniciar calificaciones y marcas
+    calificaciones  = {};
+    parejasMarcadas = {};
+    bloqueEnviado   = false;
 
-  // Mostrar vista de calificación si estaba en éxito
-  document.getElementById('vista-calificacion').style.display = 'block';
-  document.getElementById('pantalla-exito').style.display     = 'none';
+    bloqueActivo.parejas.forEach(function(p) {
+      calificaciones[p.numero]  = {};
+      parejasMarcadas[p.numero] = false;
+      RUBROS.forEach(function(r) { calificaciones[p.numero][r.key] = 0; });
+    });
 
-  renderizarParejas();
-  actualizarProgreso();
+    document.getElementById('vista-calificacion').style.display = 'block';
+    document.getElementById('pantalla-exito').style.display     = 'none';
+
+    renderizarParejas();
+    actualizarProgreso();
+  }
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarParejas()
-//  Genera las tarjetas de calificación para cada pareja del bloque
-// ---------------------------------------------------------
+// =========================================================
+//  RENDERIZAR TARJETAS DE PAREJAS
+// =========================================================
 function renderizarParejas() {
-  const contenedor = document.getElementById('lista-parejas-juez');
+  var contenedor = document.getElementById('lista-parejas-juez');
 
-  contenedor.innerHTML = bloqueActivo.parejas.map(pareja => `
-    <div class="pareja-card" id="card-${pareja.numero}">
+  contenedor.innerHTML = bloqueActivo.parejas.map(function(pareja) {
+    var rubrosHTML = RUBROS.map(function(rubro) {
+      var estrellas = [1,2,3,4,5].map(function(n) {
+        return '<span class="estrella"' +
+          ' onclick="calificar(\'' + pareja.numero + '\',\'' + rubro.key + '\',' + n + ')"' +
+          ' onmouseenter="hover(\'' + pareja.numero + '\',\'' + rubro.key + '\',' + n + ')"' +
+          ' onmouseleave="quitarHover(\'' + pareja.numero + '\',\'' + rubro.key + '\')"' +
+          '>★</span>';
+      }).join('');
 
-      <!-- Header de la tarjeta: solo el número (sin nombre) -->
-      <div class="pareja-header">
-        <div>
-          <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:3px;">
-            Pareja
-          </div>
-          <div class="pareja-numero">#${pareja.numero}</div>
-        </div>
-        <div style="text-align:right;">
-          <!-- Badge que aparece cuando la pareja ya fue marcada como lista -->
-          <div class="badge-calificada" id="badge-${pareja.numero}">✓ Calificada</div>
-          <!-- Total en tiempo real -->
-          <div class="pareja-total">
-            Total: <span id="total-${pareja.numero}">0</span>
-            <span class="total-maximo">/ 25</span>
-          </div>
-        </div>
-      </div>
+      return '<div>' +
+        '<div class="rubro-fila">' +
+          '<div class="rubro-nombre"><span class="rubro-dot" style="background:' + rubro.color + '"></span>' + rubro.nombre + '</div>' +
+          '<div class="estrellas" id="estrellas-' + pareja.numero + '-' + rubro.key + '">' + estrellas + '</div>' +
+          '<div class="rubro-valor" id="val-' + pareja.numero + '-' + rubro.key + '">—</div>' +
+          '<div class="rubro-descripcion" id="desc-' + pareja.numero + '-' + rubro.key + '"></div>' +
+        '</div>' +
+        '<div class="rubro-barra-wrap"><div class="rubro-barra" id="barra-' + pareja.numero + '-' + rubro.key + '" style="background:' + rubro.color + ';width:0%"></div></div>' +
+      '</div>';
+    }).join('');
 
-      <!-- Rubros de calificación -->
-      <div class="pareja-body">
-        <div class="rubros-lista">
-          ${RUBROS.map(rubro => `
-            <div>
-              <div class="rubro-fila">
-                <!-- Nombre del rubro con su color -->
-                <div class="rubro-nombre">
-                  <span class="rubro-dot" style="background:${rubro.color}"></span>
-                  ${rubro.nombre}
-                </div>
-
-                <!-- 5 estrellas interactivas -->
-                <div class="estrellas" id="estrellas-${pareja.numero}-${rubro.key}">
-                  ${[1,2,3,4,5].map(n => `
-                    <span
-                      class="estrella"
-                      data-pareja="${pareja.numero}"
-                      data-rubro="${rubro.key}"
-                      data-valor="${n}"
-                      onclick="calificar('${pareja.numero}','${rubro.key}',${n})"
-                      onmouseenter="hover('${pareja.numero}','${rubro.key}',${n})"
-                      onmouseleave="quitarHover('${pareja.numero}','${rubro.key}')"
-                    >★</span>
-                  `).join('')}
-                </div>
-
-                <!-- Número y etiqueta del valor actual -->
-                <div class="rubro-valor" id="val-${pareja.numero}-${rubro.key}">—</div>
-                <div class="rubro-descripcion" id="desc-${pareja.numero}-${rubro.key}"></div>
-              </div>
-
-              <!-- Barra de progreso del rubro -->
-              <div class="rubro-barra-wrap">
-                <div
-                  class="rubro-barra"
-                  id="barra-${pareja.numero}-${rubro.key}"
-                  style="background:${rubro.color}; width:0%"
-                ></div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <!-- Footer: total + botón "Listo" -->
-      <div class="pareja-footer">
-        <div>
-          <div class="total-texto">Puntuación total</div>
-          <div>
-            <span class="total-numero" id="total-grande-${pareja.numero}">0</span>
-            <span class="total-maximo"> / 25 pts</span>
-          </div>
-        </div>
-        <button
-          class="btn-listo"
-          id="btn-listo-${pareja.numero}"
-          onclick="marcarListo('${pareja.numero}')"
-          disabled
-        >
-          ✓ Listo
-        </button>
-      </div>
-
-    </div>
-  `).join('');
+    return '<div class="pareja-card" id="card-' + pareja.numero + '">' +
+      '<div class="pareja-header">' +
+        '<div>' +
+          '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:3px;">Pareja</div>' +
+          '<div class="pareja-numero">#' + pareja.numero + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;">' +
+          '<div class="badge-calificada" id="badge-' + pareja.numero + '">✓ Calificada</div>' +
+          '<div class="pareja-total">Total: <span id="total-' + pareja.numero + '">0</span><span class="total-maximo">/ 25</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pareja-body"><div class="rubros-lista">' + rubrosHTML + '</div></div>' +
+      '<div class="pareja-footer">' +
+        '<div><div class="total-texto">Puntuación total</div>' +
+        '<div><span class="total-numero" id="total-grande-' + pareja.numero + '">0</span><span class="total-maximo"> / 25 pts</span></div></div>' +
+        '<button class="btn-listo" id="btn-listo-' + pareja.numero + '" onclick="marcarListo(\'' + pareja.numero + '\')" disabled>✓ Listo</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: calificar(pareja, rubro, valor)
-//  Registra la calificación y actualiza la UI
-// ---------------------------------------------------------
+// =========================================================
+//  CALIFICACIÓN
+// =========================================================
 function calificar(pareja, rubro, valor) {
-  if (bloqueEnviado || parejasMarcadas[pareja]) return; // bloqueado si ya se envió
+  if (bloqueEnviado || parejasMarcadas[pareja]) return;
 
-  // Guardar el valor
   calificaciones[pareja][rubro] = valor;
-
-  // Actualizar estrellas visualmente
   actualizarEstrellas(pareja, rubro, valor);
 
-  // Actualizar barra, número y etiqueta del rubro
-  document.getElementById(`val-${pareja}-${rubro}`).textContent = valor;
-  document.getElementById(`desc-${pareja}-${rubro}`).textContent = ETIQUETAS[valor];
-  document.getElementById(`barra-${pareja}-${rubro}`).style.width = `${(valor / 5) * 100}%`;
+  document.getElementById('val-' + pareja + '-' + rubro).textContent  = valor;
+  document.getElementById('desc-' + pareja + '-' + rubro).textContent = ETIQUETAS[valor];
+  document.getElementById('barra-' + pareja + '-' + rubro).style.width = (valor / 5 * 100) + '%';
 
-  // Recalcular total de esa pareja
   actualizarTotal(pareja);
 
-  // Habilitar el botón "Listo" si todos los rubros tienen valor
-  const todosCalificados = RUBROS.every(r => calificaciones[pareja][r.key] > 0);
-  document.getElementById(`btn-listo-${pareja}`).disabled = !todosCalificados;
+  var todosCalificados = RUBROS.every(function(r) { return calificaciones[pareja][r.key] > 0; });
+  document.getElementById('btn-listo-' + pareja).disabled = !todosCalificados;
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: actualizarEstrellas(pareja, rubro, valor)
-//  Pinta las estrellas del color dorado hasta el valor seleccionado
-// ---------------------------------------------------------
 function actualizarEstrellas(pareja, rubro, valor) {
-  const estrellas = document.querySelectorAll(
-    `#estrellas-${pareja}-${rubro} .estrella`
-  );
-  estrellas.forEach((el, i) => {
-    el.classList.toggle('activa', i < valor);
-  });
+  var estrellas = document.querySelectorAll('#estrellas-' + pareja + '-' + rubro + ' .estrella');
+  estrellas.forEach(function(el, i) { el.classList.toggle('activa', i < valor); });
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: hover / quitarHover
-//  Efecto visual cuando el juez pasa el mouse sobre las estrellas
-// ---------------------------------------------------------
 function hover(pareja, rubro, valor) {
   if (bloqueEnviado || parejasMarcadas[pareja]) return;
-  const estrellas = document.querySelectorAll(`#estrellas-${pareja}-${rubro} .estrella`);
-  estrellas.forEach((el, i) => {
-    el.style.color = i < valor ? '#F4C430' : '#DDD';
-  });
+  var estrellas = document.querySelectorAll('#estrellas-' + pareja + '-' + rubro + ' .estrella');
+  estrellas.forEach(function(el, i) { el.style.color = i < valor ? '#F4C430' : '#DDD'; });
 }
+
 function quitarHover(pareja, rubro) {
-  // Al quitar el hover, volver al valor real guardado
-  actualizarEstrellas(pareja, rubro, calificaciones[pareja]?.[rubro] || 0);
+  actualizarEstrellas(pareja, rubro, (calificaciones[pareja] && calificaciones[pareja][rubro]) || 0);
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: actualizarTotal(pareja)
-//  Suma los 5 rubros y actualiza los números de total
-// ---------------------------------------------------------
 function actualizarTotal(pareja) {
-  const total = RUBROS.reduce((sum, r) => sum + (calificaciones[pareja][r.key] || 0), 0);
-  document.getElementById(`total-${pareja}`).textContent       = total;
-  document.getElementById(`total-grande-${pareja}`).textContent = total;
+  var total = RUBROS.reduce(function(sum, r) { return sum + (calificaciones[pareja][r.key] || 0); }, 0);
+  document.getElementById('total-' + pareja).textContent       = total;
+  document.getElementById('total-grande-' + pareja).textContent = total;
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: marcarListo(pareja)
-//  El juez confirma que terminó de calificar a esta pareja
-// ---------------------------------------------------------
 function marcarListo(pareja) {
   parejasMarcadas[pareja] = true;
-
-  // Bloquear la tarjeta visualmente
-  document.getElementById(`card-${pareja}`).classList.add('bloqueada');
-
-  // Mostrar badge de "Calificada"
-  document.getElementById(`badge-${pareja}`).style.display = 'block';
-
-  // Deshabilitar el botón
-  const btn = document.getElementById(`btn-listo-${pareja}`);
+  document.getElementById('card-' + pareja).classList.add('bloqueada');
+  document.getElementById('badge-' + pareja).style.display = 'block';
+  var btn = document.getElementById('btn-listo-' + pareja);
   btn.textContent = '✓ Calificada';
   btn.disabled    = true;
-
-  // Actualizar barra de progreso global
   actualizarProgreso();
-  mostrarToast(`✓ Pareja #${pareja} calificada`);
+  mostrarToast('✓ Pareja #' + pareja + ' calificada');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: actualizarProgreso()
-//  Actualiza la barra de progreso y habilita el botón de envío
-//  cuando todas las parejas estén marcadas como listas
-// ---------------------------------------------------------
 function actualizarProgreso() {
-  const total      = bloqueActivo.parejas.length;
-  const marcadas   = Object.values(parejasMarcadas).filter(Boolean).length;
-  const porcentaje = total > 0 ? (marcadas / total) * 100 : 0;
+  var total    = bloqueActivo.parejas.length;
+  var marcadas = Object.values(parejasMarcadas).filter(Boolean).length;
+  var pct      = total > 0 ? (marcadas / total * 100) : 0;
 
   document.getElementById('texto-progreso').textContent =
-    `${marcadas} de ${total} ${total === 1 ? 'pareja calificada' : 'parejas calificadas'}`;
-
-  document.getElementById('barra-progreso').style.width = `${porcentaje}%`;
-
-  // Habilitar botón de envío solo cuando todas estén calificadas
+    marcadas + ' de ' + total + (total === 1 ? ' pareja calificada' : ' parejas calificadas');
+  document.getElementById('barra-progreso').style.width = pct + '%';
   document.getElementById('btn-enviar-bloque').disabled = marcadas < total;
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: enviarBloque()
-//  Guarda todas las calificaciones en Supabase de un jalón
-// ---------------------------------------------------------
+// =========================================================
+//  ENVIAR BLOQUE A SUPABASE
+// =========================================================
 async function enviarBloque() {
-  const todasListas = bloqueActivo.parejas.every(p => parejasMarcadas[p.numero]);
-  if (!todasListas) {
-    mostrarToast('⚠ Debes calificar a todas las parejas primero');
-    return;
-  }
+  var todasListas = bloqueActivo.parejas.every(function(p) { return parejasMarcadas[p.numero]; });
+  if (!todasListas) { mostrarToast('⚠ Debes calificar a todas las parejas primero'); return; }
+  if (!juezId) { mostrarToast('⚠ Sesión expirada, recarga la página'); return; }
 
   bloqueEnviado = true;
 
-  // Obtener el ID del juez actual desde la sesión de Supabase
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    mostrarToast('⚠ Sesión expirada, recarga la página');
+  var filas = bloqueActivo.parejas.map(function(p) {
+    return {
+      bloque_id:   bloqueActivo.id,
+      pareja_num:  p.numero,
+      juez_id:     juezId,
+      vestuario:   calificaciones[p.numero].vestuario,
+      estilo:      calificaciones[p.numero].estilo,
+      creatividad: calificaciones[p.numero].creatividad,
+      limpieza:    calificaciones[p.numero].limpieza,
+      porte:       calificaciones[p.numero].porte,
+    };
+  });
+
+  var r = await supabase.from('calificaciones').insert(filas);
+  if (r.error) {
+    mostrarToast('⚠ Error al enviar: ' + r.error.message);
+    console.error(r.error);
     bloqueEnviado = false;
     return;
   }
 
-  // Armar el array de filas a insertar — una por cada pareja
-  const filas = bloqueActivo.parejas.map(p => ({
-    bloque_id:   bloqueActivo.id,
-    pareja_num:  p.numero,
-    juez_id:     user.id,
-    vestuario:   calificaciones[p.numero].vestuario,
-    estilo:      calificaciones[p.numero].estilo,
-    creatividad: calificaciones[p.numero].creatividad,
-    limpieza:    calificaciones[p.numero].limpieza,
-    porte:       calificaciones[p.numero].porte,
-  }));
-
-  const { error } = await supabase
-    .from('calificaciones')
-    .insert(filas);
-
-  if (error) {
-    mostrarToast('⚠ Error al enviar, intenta de nuevo');
-    console.error(error);
-    bloqueEnviado = false;
-    return;
-  }
-
-  // Mostrar pantalla de éxito
   document.getElementById('vista-calificacion').style.display = 'none';
   document.getElementById('pantalla-exito').style.display     = 'block';
 
-  // Agregar al historial local
   historialBloques.push({
-    nombre: bloqueActivo.nombre,
-    parejas: bloqueActivo.parejas.map(p => ({
-      numero: p.numero,
-      total:  RUBROS.reduce((s, r) => s + calificaciones[p.numero][r.key], 0),
-    }))
+    nombre:  bloqueActivo.nombre,
+    parejas: bloqueActivo.parejas.map(function(p) {
+      return { numero: p.numero, total: RUBROS.reduce(function(s,r){ return s + calificaciones[p.numero][r.key]; }, 0) };
+    })
   });
   renderizarHistorial();
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarHistorial()
-//  Muestra los bloques que el juez ya calificó (solo lectura)
-// ---------------------------------------------------------
+// =========================================================
+//  HISTORIAL
+// =========================================================
 function renderizarHistorial() {
-  const lista = document.getElementById('historial-lista');
-
-  if (historialBloques.length === 0) {
-    lista.innerHTML = `<p style="font-size:0.85rem;color:var(--texto-suave);">
-      Aún no has calificado ningún bloque.
-    </p>`;
+  var lista = document.getElementById('historial-lista');
+  if (!historialBloques.length) {
+    lista.innerHTML = '<p style="font-size:0.85rem;color:var(--texto-suave);">Aún no has calificado ningún bloque.</p>';
     return;
   }
-
-  lista.innerHTML = historialBloques.map(b => `
-    <div style="margin-bottom:0.75rem;">
-      <div style="font-weight:700;font-size:0.85rem;color:var(--verde-oscuro);margin-bottom:0.4rem;">
-        ${b.nombre}
-      </div>
-      ${b.parejas.map(p => `
-        <div class="historial-fila">
-          <span style="font-weight:700;">Pareja #${p.numero}</span>
-          <span style="color:var(--texto-suave);font-size:0.82rem;">
-            Total: <strong style="color:var(--verde-oscuro);">${p.total}</strong> / 25 pts
-          </span>
-          <span style="background:#D4EDDA;color:#155724;font-size:0.72rem;
-                       font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;">
-            Enviado
-          </span>
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
+  lista.innerHTML = historialBloques.map(function(b) {
+    return '<div style="margin-bottom:0.75rem;">' +
+      '<div style="font-weight:700;font-size:0.85rem;color:var(--verde-oscuro);margin-bottom:0.4rem;">' + b.nombre + '</div>' +
+      b.parejas.map(function(p) {
+        return '<div class="historial-fila">' +
+          '<span style="font-weight:700;">Pareja #' + p.numero + '</span>' +
+          '<span style="color:var(--texto-suave);font-size:0.82rem;">Total: <strong style="color:var(--verde-oscuro);">' + p.total + '</strong> / 25 pts</span>' +
+          '<span style="background:#D4EDDA;color:#155724;font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;">Enviado</span>' +
+          '</div>';
+      }).join('') +
+    '</div>';
+  }).join('');
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: mostrarToast(mensaje)
-// ---------------------------------------------------------
 function mostrarToast(mensaje) {
-  const toast = document.getElementById('toast');
+  var toast = document.getElementById('toast');
   toast.textContent = mensaje;
   toast.classList.add('visible');
-  setTimeout(() => toast.classList.remove('visible'), 2800);
+  setTimeout(function(){ toast.classList.remove('visible'); }, 2800);
 }
-
 </script>
 </body>
 </html>
