@@ -395,40 +395,31 @@ function seleccionarRol(rol, boton) {
 //  Inicia sesión con Supabase Auth y redirige al panel
 // ---------------------------------------------------------
 async function entrar() {
-  const correo   = document.getElementById('correo').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const btn      = document.getElementById('btn-entrar');
+  var correo   = document.getElementById('correo').value.trim();
+  var password = document.getElementById('password').value.trim();
+  var btn      = document.getElementById('btn-entrar');
 
   if (!correo || !password) {
     mostrarError('Escribe tu correo y contraseña.');
     return;
   }
 
-  // Mostrar spinner
   btn.disabled  = true;
   btn.innerHTML = '<span class="spinner"></span> Entrando...';
   document.getElementById('msg-error').style.display = 'none';
 
   try {
-    // -------------------------------------------------------
-    //  LOGIN CON SUPABASE AUTH
-    //  Funciona igual para todos los roles.
-    //  La diferencia está en la contraseña:
-    //    - Parejas: número de pareja (ej. "177")
-    //    - Staff/Admin: contraseña normal creada por la admin
-    // -------------------------------------------------------
-    const { data, error } = await supabase.auth.signInWithPassword({
+    var res = await supabase.auth.signInWithPassword({
       email:    correo,
       password: password,
     });
 
-    if (error) {
+    if (res.error) {
       mostrarError('Correo o contraseña incorrectos. Intenta de nuevo.');
       return;
     }
 
-    // Redirigir según el rol del usuario
-    await redirigirSegunRol(data.user);
+    await redirigirSegunRol(res.data.user);
 
   } catch (err) {
     console.error(err);
@@ -446,37 +437,35 @@ async function entrar() {
 // ---------------------------------------------------------
 async function redirigirSegunRol(user) {
   // 1. Buscar en tabla "usuarios" (staff y admin)
-  const { data: usuarioData } = await supabase
+  var resUsuario = await supabase
     .from('usuarios')
     .select('rol')
     .eq('correo', user.email)
-    .maybeSingle(); // maybeSingle() no lanza error si no encuentra nada
+    .maybeSingle();
 
-  if (usuarioData?.rol) {
-    // Es staff o admin — redirigir a su panel
-    const destinos = {
+  if (resUsuario.data?.rol) {
+    var destinos = {
       admin:     RUTAS.admin,
       encargado: RUTAS.encargado,
       juez:      RUTAS.juez,
     };
-    window.location.href = destinos[usuarioData.rol] || RUTAS.admin;
+    window.location.href = destinos[resUsuario.data.rol] || RUTAS.admin;
     return;
   }
 
   // 2. Si no está en "usuarios", verificar si es una pareja
-  const { data: parejaData } = await supabase
+  var resPareja = await supabase
     .from('parejas')
     .select('numero')
     .eq('correo', user.email)
     .maybeSingle();
 
-  if (parejaData) {
-    // Es una pareja — llevar a su panel de resultados
+  if (resPareja.data) {
     window.location.href = RUTAS.pareja;
     return;
   }
 
-  // 3. Usuario sin rol asignado — cerrar sesión y mostrar error
+  // 3. Usuario sin rol — cerrar sesión y mostrar error
   await supabase.auth.signOut();
   mostrarError('Tu cuenta no tiene un rol asignado. Contacta al administrador.');
 }
