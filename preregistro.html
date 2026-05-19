@@ -700,12 +700,11 @@
 //  Estas dos variables conectan la página con tu base de datos
 //  Si cambias de proyecto, solo actualiza estas dos líneas
 // =========================================================
-const SUPABASE_URL  = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
-const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+var SUPABASE_URL  = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
 
-// Crear el cliente de Supabase — este objeto es el que usamos
-// en todo el archivo para leer y escribir datos
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Crear el cliente de Supabase
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =========================================================
 //  LÓGICA JAVASCRIPT DEL PRE-REGISTRO
@@ -718,7 +717,7 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 //  CATEGORÍAS DEL CONCURSO
 //  Si cambian los rangos de edad o nombres, modifica aquí
 // ---------------------------------------------------------
-const CATEGORIAS = [
+var CATEGORIAS = [
   { id: 1, nombre: 'Pequeños Guapangueritos', edadMin: 0,  edadMax: 6,  css: 'cat-1' },
   { id: 2, nombre: 'Infantil',                edadMin: 7,  edadMax: 12, css: 'cat-2' },
   { id: 3, nombre: 'Juvenil',                 edadMin: 13, edadMax: 17, css: 'cat-3' },
