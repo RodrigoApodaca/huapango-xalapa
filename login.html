@@ -433,7 +433,8 @@ async function entrar() {
 
 // ---------------------------------------------------------
 //  FUNCIÓN: redirigirSegunRol(user)
-//  Lee el rol desde la tabla "usuarios" y redirige
+//  Lee el rol real del usuario y verifica que coincida
+//  con el botón que seleccionó en el login
 // ---------------------------------------------------------
 async function redirigirSegunRol(user) {
   // 1. Buscar en tabla "usuarios" (staff y admin)
@@ -444,12 +445,38 @@ async function redirigirSegunRol(user) {
     .maybeSingle();
 
   if (resUsuario.data?.rol) {
+    var rolReal = resUsuario.data.rol;
+
+    // Verificar que el botón seleccionado coincida con el rol real
+    if (rolSeleccionado === 'pareja') {
+      // Un admin/juez/encargado intentando entrar como pareja
+      await supabase.auth.signOut();
+      mostrarError('Esta cuenta es de ' + rolReal + '. Selecciona el botón correcto.');
+      return;
+    }
+    if (rolSeleccionado === 'admin' && rolReal !== 'admin') {
+      await supabase.auth.signOut();
+      mostrarError('No tienes permisos de administrador.');
+      return;
+    }
+    if (rolSeleccionado === 'staff' && rolReal === 'admin') {
+      // Un admin intentando entrar como encargado/juez
+      await supabase.auth.signOut();
+      mostrarError('Esta cuenta es de administrador. Selecciona "Admin".');
+      return;
+    }
+    if (rolSeleccionado === 'staff' && rolReal !== 'juez' && rolReal !== 'encargado') {
+      await supabase.auth.signOut();
+      mostrarError('No tienes permisos de juez o encargado.');
+      return;
+    }
+
     var destinos = {
       admin:     RUTAS.admin,
       encargado: RUTAS.encargado,
       juez:      RUTAS.juez,
     };
-    window.location.href = destinos[resUsuario.data.rol] || RUTAS.admin;
+    window.location.href = destinos[rolReal] || RUTAS.admin;
     return;
   }
 
@@ -461,11 +488,17 @@ async function redirigirSegunRol(user) {
     .maybeSingle();
 
   if (resPareja.data) {
+    // Verificar que haya seleccionado "Soy pareja"
+    if (rolSeleccionado !== 'pareja') {
+      await supabase.auth.signOut();
+      mostrarError('Esta cuenta es de una pareja. Selecciona "Soy pareja".');
+      return;
+    }
     window.location.href = RUTAS.pareja;
     return;
   }
 
-  // 3. Usuario sin rol — cerrar sesión y mostrar error
+  // 3. Usuario sin rol asignado
   await supabase.auth.signOut();
   mostrarError('Tu cuenta no tiene un rol asignado. Contacta al administrador.');
 }
@@ -475,10 +508,10 @@ async function redirigirSegunRol(user) {
 //  FUNCIÓN: mostrarError(mensaje)
 // ---------------------------------------------------------
 function mostrarError(mensaje) {
-  const el = document.getElementById('msg-error');
+  var el = document.getElementById('msg-error');
   el.textContent   = mensaje;
   el.style.display = 'block';
-  const btn = document.getElementById('btn-entrar');
+  var btn = document.getElementById('btn-entrar');
   btn.disabled  = false;
   btn.innerHTML = 'Entrar →';
 }
