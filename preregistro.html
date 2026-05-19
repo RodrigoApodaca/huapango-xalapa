@@ -697,13 +697,15 @@
 <script>
 // =========================================================
 //  CONFIGURACIÓN DE SUPABASE
-//  Usando var para evitar error si el script se ejecuta dos veces
+//  Estas dos variables conectan la página con tu base de datos
+//  Si cambias de proyecto, solo actualiza estas dos líneas
 // =========================================================
-var SUPABASE_URL  = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
-var SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+const SUPABASE_URL  = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
 
-// Crear el cliente de Supabase
-var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Crear el cliente de Supabase — este objeto es el que usamos
+// en todo el archivo para leer y escribir datos
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =========================================================
 //  LÓGICA JAVASCRIPT DEL PRE-REGISTRO
@@ -768,6 +770,11 @@ function actualizarCategoria() {
   const hayMenor = (!isNaN(edad1) && edad1 < 18) || (!isNaN(edad2) && edad2 < 18);
   aviso.style.display = hayMenor ? 'block' : 'none';
 }
+
+// Escucha cambios en los campos de edad
+document.getElementById('edad1').addEventListener('input', actualizarCategoria);
+document.getElementById('edad2').addEventListener('input', actualizarCategoria);
+
 
 // ---------------------------------------------------------
 //  FUNCIÓN: toggleMaestro(radio)
@@ -949,88 +956,105 @@ function descargarTarjeta() {
 //  EVENTO: submit del formulario
 //  Ahora es async porque espera la respuesta de Supabase
 // ---------------------------------------------------------
-document.addEventListener('DOMContentLoaded', function() {
+document.getElementById('form-preregistro').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-  // Escucha cambios en los campos de edad para mostrar la categoría
-  document.getElementById('edad1').addEventListener('input', actualizarCategoria);
-  document.getElementById('edad2').addEventListener('input', actualizarCategoria);
+  // Validar antes de proceder
+  if (!validarFormulario()) {
+    const primerError = document.querySelector('.error');
+    if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
 
-  // -------------------------------------------------------
-  //  EVENTO SUBMIT — intercepta el envío del formulario
-  //  preventDefault() evita que la página se recargue
-  // -------------------------------------------------------
-  document.getElementById('form-preregistro').addEventListener('submit', async function(e) {
-    e.preventDefault();
+  // Deshabilitar botón para evitar doble envío
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled    = true;
+  btn.textContent = 'Registrando...';
 
-    // Validar antes de proceder
-    if (!validarFormulario()) {
-      const primerError = document.querySelector('.error');
-      if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
+  try {
+    // Calcular categoría
+    const edad1     = parseInt(document.getElementById('edad1').value);
+    const edad2     = parseInt(document.getElementById('edad2').value);
+    const edadMayor = Math.max(edad1, edad2);
+    const categoria = obtenerCategoria(edadMayor);
 
-    // Deshabilitar botón para evitar doble envío
-    const btn = document.getElementById('btn-enviar');
-    btn.disabled    = true;
-    btn.textContent = 'Registrando...';
+    // Generar número de pareja consultando Supabase
+    const numeroPareja = await generarNumeroPareja(categoria.id);
 
-    try {
-      // Calcular categoría
-      const edad1     = parseInt(document.getElementById('edad1').value);
-      const edad2     = parseInt(document.getElementById('edad2').value);
-      const edadMayor = Math.max(edad1, edad2);
-      const categoria = obtenerCategoria(edadMayor);
+    // Armar el objeto que se guarda en la base de datos
+    // Los nombres de campos deben coincidir EXACTAMENTE con las columnas de Supabase
+    const registro = {
+      numero:           numeroPareja,
+      nombre1:          document.getElementById('nombre1').value.trim(),
+      nombre2:          document.getElementById('nombre2').value.trim(),
+      edad1,
+      edad2,
+      genero1:          document.getElementById('genero1').value,
+      genero2:          document.getElementById('genero2').value,
+      categoria_id:     categoria.id,
+      categoria_nombre: categoria.nombre,
+      estilo:           document.getElementById('estilo').value,
+      correo:           document.getElementById('correo').value.trim(),
+      telefono:         document.getElementById('telefono').value.trim(),
+      tiene_maestro:    document.querySelector('input[name="tiene_maestro"]:checked')?.value === 'si',
+      maestro:          document.getElementById('maestro').value.trim() || null,
+    };
 
-      // Generar número de pareja consultando Supabase
-      const numeroPareja = await generarNumeroPareja(categoria.id);
+    // -------------------------------------------------------
+    //  GUARDAR EN SUPABASE
+    //  .from('parejas') = tabla donde se guarda
+    //  .insert([registro]) = inserta una fila nueva
+    //  .select() = devuelve el registro recién creado
+    // -------------------------------------------------------
+    const { data, error } = await supabase
+      .from('parejas')
+      .insert([registro])
+      .select()
+      .single(); // .single() porque solo insertamos una pareja
 
-      // Armar el objeto que se guarda en la base de datos
-      const registro = {
-        numero:           numeroPareja,
-        nombre1:          document.getElementById('nombre1').value.trim(),
-        nombre2:          document.getElementById('nombre2').value.trim(),
-        edad1,
-        edad2,
-        genero1:          document.getElementById('genero1').value,
-        genero2:          document.getElementById('genero2').value,
-        categoria_id:     categoria.id,
-        categoria_nombre: categoria.nombre,
-        estilo:           document.getElementById('estilo').value,
-        correo:           document.getElementById('correo').value.trim(),
-        telefono:         document.getElementById('telefono').value.trim(),
-        tiene_maestro:    document.querySelector('input[name="tiene_maestro"]:checked')?.value === 'si',
-        maestro:          document.getElementById('maestro').value.trim() || null,
-      };
-
-      // Guardar en Supabase
-      const { data, error } = await supabase
-        .from('parejas')
-        .insert([registro])
-        .select()
-        .single();
-
-      if (error) {
-        if (error.code === '23505') {
-          registro.numero = await generarNumeroPareja(categoria.id);
-          const reintento = await supabase.from('parejas').insert([registro]).select().single();
-          if (reintento.error) throw reintento.error;
-        } else {
-          throw error;
-        }
+    if (error) {
+      // Si el número ya existe (raro pero posible con mucho tráfico simultáneo),
+      // reintentamos con otro número
+      if (error.code === '23505') { // código de duplicado en PostgreSQL
+        console.warn('Número duplicado, reintentando...');
+        registro.numero = await generarNumeroPareja(categoria.id);
+        const reintento = await supabase.from('parejas').insert([registro]).select().single();
+        if (reintento.error) throw reintento.error;
+      } else {
+        throw error;
       }
-
-      // Mostrar pantalla de éxito
-      mostrarPantallaExito({ ...registro, numeroPareja, categoria });
-
-    } catch (err) {
-      console.error('Error al registrar:', err);
-      alert('Hubo un error al guardar tu registro. Por favor intenta de nuevo.');
-      btn.disabled    = false;
-      btn.textContent = 'Completar pre-registro →';
     }
-  });
 
-}); // fin DOMContentLoaded
+    // Mostrar pantalla de éxito con el número asignado
+    // Primero llamar a la Edge Function para crear la cuenta en Auth
+    try {
+      await fetch('https://uicdxokikzhhqnjcjbyz.supabase.co/functions/v1/crear-usuario-pareja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA',
+        },
+        body: JSON.stringify({
+          correo: registro.correo,
+          numero: registro.numero,
+        }),
+      });
+    } catch (edgeFnErr) {
+      // Si falla la creación del usuario en Auth no detenemos el flujo
+      // La pareja quedó guardada en BD, solo avisamos en consola
+      console.warn('Edge function error:', edgeFnErr);
+    }
+
+    mostrarPantallaExito({ ...registro, numeroPareja, categoria });
+
+  } catch (err) {
+    // Si algo falla, mostrar mensaje y rehabilitar el botón
+    console.error('Error al registrar:', err);
+    alert('Hubo un error al guardar tu registro. Por favor intenta de nuevo.');
+    btn.disabled    = false;
+    btn.textContent = 'Completar pre-registro →';
+  }
+});
 </script>
 
 </body>
