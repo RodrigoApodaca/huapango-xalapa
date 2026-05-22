@@ -88,7 +88,14 @@
     @media(max-width:768px){.sidebar-nav{width:100%;height:auto;min-height:unset;position:relative;flex-direction:row;flex-wrap:wrap;}.main{margin-left:0;}.nav-lista{display:flex;flex-direction:row;padding:0.5rem;flex-wrap:wrap;}.nav-item{padding:0.15rem;}.nav-link{padding:0.5rem 0.75rem;font-size:0.78rem;}.sidebar-usuario{display:none;}.sidebar-logo{width:100%;padding:1rem;}}
     .juez-card{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem;}
     .juez-nombre{font-weight:700;color:var(--verde-oscuro);}.juez-cats{font-size:0.82rem;color:var(--texto-suave);}
-    .select-cat{padding:0.45rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;cursor:pointer;}
+    /* Tarjeta de generar bloques automáticos */
+    .card-generar{background:linear-gradient(135deg,var(--verde-oscuro),var(--verde-medio));border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;border:2px solid var(--dorado);color:#fff;}
+    .card-generar h3{font-family:'Playfair Display',serif;color:var(--dorado);font-size:1.1rem;margin-bottom:0.5rem;}
+    .card-generar p{font-size:0.85rem;color:rgba(255,255,255,0.75);margin-bottom:1rem;line-height:1.5;}
+    .card-generar ul{font-size:0.82rem;color:rgba(255,255,255,0.65);margin-left:1.25rem;margin-bottom:1rem;line-height:1.8;}
+    .btn-generar{background:var(--dorado);color:var(--verde-oscuro);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;padding:0.85rem 1.5rem;border:none;border-radius:10px;cursor:pointer;transition:background 0.2s;width:100%;}
+    .btn-generar:hover{background:var(--dorado-claro);}
+    .btn-generar:disabled{background:#aaa;cursor:not-allowed;}
   </style>
 </head>
 <body>
@@ -131,7 +138,7 @@
         <div class="stat-card azul"><div class="stat-label">Bloques totales</div><div class="stat-num" id="stat-bloques">—</div></div>
       </div>
       <div class="seccion-header"><div class="seccion-titulo">Bloque en curso</div></div>
-      <div class="form-card" style="border-left:4px solid var(--dorado);" id="card-bloque-actual">
+      <div class="form-card" style="border-left:4px solid var(--dorado);">
         <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:0.4rem;">Bloque activo</p>
         <p style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--verde-oscuro);margin-bottom:0.5rem;" id="nombre-bloque-actual">Sin bloque activo</p>
         <div id="badges-bloque-actual"></div>
@@ -160,7 +167,27 @@
 
     <!-- VISTA 3: BLOQUES -->
     <div class="vista" id="vista-bloques">
-      <div class="seccion-header"><div class="seccion-titulo">Crear nuevo bloque</div></div>
+
+      <!-- ===== TARJETA DE GENERACIÓN AUTOMÁTICA ===== -->
+      <div class="card-generar">
+        <h3>🎯 Generar bloques automáticamente</h3>
+        <p>
+          Crea todos los bloques de primera ronda de un jalón, usando solo las parejas
+          que ya fueron <strong>confirmadas</strong> por el encargado.
+        </p>
+        <ul>
+          <li>Se agrupan por categoría + estilo</li>
+          <li>Bloques de mínimo 2 y máximo 6 parejas, lo más equilibrados posible</li>
+          <li>Solo parejas con presencia confirmada</li>
+          <li>Si ya hay bloques pendientes, se reemplazan</li>
+        </ul>
+        <button class="btn-generar" id="btn-generar-bloques" onclick="generarBloques()">
+          ⚡ Generar todos los bloques de primera ronda
+        </button>
+      </div>
+
+      <!-- Crear bloque manual -->
+      <div class="seccion-header"><div class="seccion-titulo">O crear bloque manualmente</div></div>
       <div class="form-card">
         <div class="form-grid">
           <div class="campo-grupo"><label>Categoría</label>
@@ -184,8 +211,9 @@
             <input type="text" id="nuevo-parejas" placeholder="234, 245, 256" />
           </div>
         </div>
-        <button class="btn btn-primary" onclick="crearBloque()">+ Crear bloque</button>
+        <button class="btn btn-primary" onclick="crearBloque()">+ Crear bloque manual</button>
       </div>
+
       <div class="seccion-header"><div class="seccion-titulo">Bloques del concurso</div></div>
       <div class="tabla-wrap">
         <table>
@@ -239,21 +267,32 @@
   </div>
 </div>
 
-<!-- MODAL: AGREGAR USUARIO (juez o encargado) -->
+<!-- MODAL: CONFIRMAR GENERAR BLOQUES -->
+<div class="modal-overlay" id="modal-generar">
+  <div class="modal">
+    <h3>⚡ Generar bloques automáticamente</h3>
+    <p id="modal-generar-texto">Se crearán bloques para todas las parejas confirmadas. Los bloques pendientes anteriores serán reemplazados. ¿Continuar?</p>
+    <div class="modal-botones">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-generar')">Cancelar</button>
+      <button class="btn btn-dorado" onclick="confirmarGenerarBloques()">⚡ Sí, generar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AGREGAR USUARIO -->
 <div class="modal-overlay" id="modal-usuario">
   <div class="modal">
     <h3>Agregar juez o encargado</h3>
     <p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:1rem;line-height:1.5;">
-      Para crear un usuario nuevo, primero ve a
-      <strong>Supabase → Authentication → Users → Add user</strong>,
-      crea la cuenta con correo y contraseña, y luego regresa aquí para asignarle el rol.
+      Primero ve a <strong>Supabase → Authentication → Users → Add user</strong>,
+      crea la cuenta, y luego regresa aquí para asignarle el rol.
     </p>
     <div class="campo-grupo">
       <label>Nombre completo</label>
       <input type="text" id="nuevo-usuario-nombre" placeholder="Nombre completo" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
     </div>
     <div class="campo-grupo">
-      <label>Correo electrónico (mismo que pusiste en Supabase)</label>
+      <label>Correo electrónico</label>
       <input type="email" id="nuevo-usuario-correo" placeholder="correo@ejemplo.com" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
     </div>
     <div class="campo-grupo">
@@ -274,110 +313,72 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// =========================================================
-//  CONFIGURACIÓN DE SUPABASE
-// =========================================================
 var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// =========================================================
-//  ESTADO GLOBAL — todos los arrays vacíos, se llenan desde Supabase
-// =========================================================
-var parejas    = [];
-var bloques    = [];
-var resultados = [];
-var usuarios   = [];
-var parejaAEliminar = null;
-
+var parejas=[], bloques=[], resultados=[], usuarios=[], parejaAEliminar=null;
 var titulosVistas = {
   resumen:'Resumen del evento', parejas:'Gestión de parejas',
   bloques:'Control de bloques', resultados:'Resultados en tiempo real',
   jueces:'Gestión de jueces y encargados'
 };
 
-// =========================================================
-//  GUARD DE SESIÓN + INICIALIZACIÓN
-// =========================================================
 window.addEventListener('DOMContentLoaded', async function() {
   var session = (await supabase.auth.getSession()).data.session;
   if (!session) { window.location.href = 'login.html'; return; }
-
   var res = await supabase.from('usuarios').select('rol,nombre').eq('correo', session.user.email).maybeSingle();
-  if (!res.data || res.data.rol !== 'admin') {
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-    return;
-  }
-
+  if (!res.data || res.data.rol !== 'admin') { await supabase.auth.signOut(); window.location.href = 'login.html'; return; }
   document.getElementById('nombre-admin').textContent = res.data.nombre || 'Admin';
-  document.getElementById('fecha-topbar').textContent =
-    new Date().toLocaleDateString('es-MX', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
+  document.getElementById('fecha-topbar').textContent = new Date().toLocaleDateString('es-MX', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
   await cargarTodo();
-
-  // Realtime: actualizar automáticamente cuando cambien datos
   supabase.channel('admin-rt')
     .on('postgres_changes', {event:'*', schema:'public', table:'parejas'}, cargarParejas)
     .on('postgres_changes', {event:'*', schema:'public', table:'bloques'}, cargarBloques)
     .subscribe();
 });
 
-async function cerrarSesion() {
-  await supabase.auth.signOut();
-  window.location.href = 'login.html';
-}
+async function cerrarSesion() { await supabase.auth.signOut(); window.location.href = 'login.html'; }
 
-// =========================================================
-//  CARGA DE DATOS
-// =========================================================
-async function cargarTodo() {
-  await Promise.all([cargarParejas(), cargarBloques(), cargarResultados(), cargarUsuarios()]);
-}
+async function cargarTodo() { await Promise.all([cargarParejas(), cargarBloques(), cargarResultados(), cargarUsuarios()]); }
 
 async function cargarParejas() {
   var r = await supabase.from('parejas').select('*').order('numero');
   if (r.error) { console.error(r.error); return; }
   parejas = r.data.map(function(p) {
-    return { id:p.id, numero:p.numero, cat:p.categoria_nombre, estilo:p.estilo,
-      nombre1:p.nombre1, nombre2:p.nombre2, correo:p.correo, tel:p.telefono, confirmado:p.confirmado };
+    return {id:p.id, numero:p.numero, cat:p.categoria_nombre, estilo:p.estilo,
+      nombre1:p.nombre1, nombre2:p.nombre2, correo:p.correo, tel:p.telefono, confirmado:p.confirmado};
   });
   renderizarTablaParejas(parejas);
-  // Actualizar stats
   var conf = parejas.filter(function(p){return p.confirmado;}).length;
-  document.getElementById('stat-total').textContent      = parejas.length;
+  document.getElementById('stat-total').textContent       = parejas.length;
   document.getElementById('stat-confirmadas').textContent = conf;
   document.getElementById('stat-pendientes').textContent  = parejas.length - conf;
 }
 
 async function cargarBloques() {
-  var r = await supabase.from('bloques')
-    .select('id,nombre,categoria,estilo,ronda,estado,orden,bloque_parejas(pareja_num)')
-    .order('orden');
+  var r = await supabase.from('bloques').select('id,nombre,categoria,estilo,ronda,estado,orden,bloque_parejas(pareja_num)').order('orden');
   if (r.error) { console.error(r.error); return; }
   bloques = r.data.map(function(b) {
-    return { id:b.id, nombre:b.nombre, cat:b.categoria, estilo:b.estilo,
-      ronda:b.ronda, estado:b.estado, parejas:b.bloque_parejas.map(function(bp){return bp.pareja_num;}) };
+    return {id:b.id, nombre:b.nombre, cat:b.categoria, estilo:b.estilo,
+      ronda:b.ronda, estado:b.estado, parejas:b.bloque_parejas.map(function(bp){return bp.pareja_num;})};
   });
   renderizarTablaBloques();
-  // Actualizar stats y bloque actual
   document.getElementById('stat-bloques').textContent = bloques.length;
   var activo = bloques.find(function(b){return b.estado==='en_curso';});
-  document.getElementById('nombre-bloque-actual').textContent =
-    activo ? (activo.nombre + ' — ' + activo.cat + ' / ' + activo.estilo) : 'Sin bloque activo';
+  document.getElementById('nombre-bloque-actual').textContent = activo ? (activo.nombre) : 'Sin bloque activo';
   document.getElementById('badges-bloque-actual').innerHTML = activo
-    ? '<span class="badge badge-amarillo">⏳ En curso</span> <span class="badge badge-azul">' + activo.parejas.length + ' parejas</span>'
-    : '';
+    ? '<span class="badge badge-amarillo">⏳ En curso</span> <span class="badge badge-azul">'+activo.parejas.length+' parejas</span>' : '';
 }
 
 async function cargarResultados() {
   var r = await supabase.from('resultados_por_pareja').select('*');
   if (r.error) { console.error(r.error); return; }
   resultados = r.data.map(function(x) {
-    return { numero:x.pareja_num, cat:x.categoria, estilo:x.estilo,
+    return {numero:x.pareja_num, cat:x.categoria, estilo:x.estilo,
       vestuario:parseFloat(x.prom_vestuario)||0, estilo_r:parseFloat(x.prom_estilo)||0,
       creatividad:parseFloat(x.prom_creatividad)||0, limpieza:parseFloat(x.prom_limpieza)||0,
-      porte:parseFloat(x.prom_porte)||0, total:parseFloat(x.prom_total)||0 };
+      porte:parseFloat(x.prom_porte)||0, total:parseFloat(x.prom_total)||0};
   });
   renderizarTablaResultados(resultados);
 }
@@ -389,278 +390,231 @@ async function cargarUsuarios() {
   renderizarUsuarios();
 }
 
-// =========================================================
-//  NAVEGACIÓN
-// =========================================================
 function mostrarVista(nombre, btn) {
   document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('activa');});
-  document.getElementById('vista-' + nombre).classList.add('activa');
+  document.getElementById('vista-'+nombre).classList.add('activa');
   document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('activo');});
   if (btn) btn.classList.add('activo');
   document.getElementById('titulo-vista').textContent = titulosVistas[nombre] || nombre;
 }
 
-// =========================================================
-//  TABLA DE PAREJAS
-// =========================================================
 function renderizarTablaParejas(lista) {
   var tbody = document.getElementById('tabla-parejas-body');
-  if (!lista.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay parejas registradas</td></tr>';
-    return;
-  }
+  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay parejas registradas</td></tr>'; return; }
   tbody.innerHTML = lista.map(function(p) {
-    return '<tr>' +
-      '<td><span class="num-pareja">#' + p.numero + '</span></td>' +
-      '<td><div style="font-weight:700;font-size:0.88rem;">' + p.nombre1 + '</div><div style="color:var(--texto-suave);font-size:0.82rem;">' + p.nombre2 + '</div></td>' +
-      '<td>' + (p.cat||'—') + '</td>' +
-      '<td>' + (p.estilo||'—') + '</td>' +
-      '<td><div style="font-size:0.82rem;">' + p.correo + '</div><div style="color:var(--texto-suave);font-size:0.8rem;">' + p.tel + '</div></td>' +
-      '<td><span class="badge ' + (p.confirmado?'badge-verde':'badge-amarillo') + '">' + (p.confirmado?'✓ Confirmada':'Pendiente') + '</span></td>' +
-      '<td><button class="btn btn-danger btn-sm" onclick="pedirEliminar(\'' + p.id + '\')">🗑 Eliminar</button></td>' +
+    return '<tr>'+
+      '<td><span class="num-pareja">#'+p.numero+'</span></td>'+
+      '<td><div style="font-weight:700;font-size:0.88rem;">'+p.nombre1+'</div><div style="color:var(--texto-suave);font-size:0.82rem;">'+p.nombre2+'</div></td>'+
+      '<td>'+(p.cat||'—')+'</td><td>'+(p.estilo||'—')+'</td>'+
+      '<td><div style="font-size:0.82rem;">'+p.correo+'</div><div style="color:var(--texto-suave);font-size:0.8rem;">'+p.tel+'</div></td>'+
+      '<td><span class="badge '+(p.confirmado?'badge-verde':'badge-amarillo')+'">'+(p.confirmado?'✓ Confirmada':'Pendiente')+'</span></td>'+
+      '<td><button class="btn btn-danger btn-sm" onclick="pedirEliminar(\''+p.id+'\')">🗑 Eliminar</button></td>'+
       '</tr>';
   }).join('');
 }
 
 function filtrarTabla(texto) {
   var q = texto.toLowerCase();
-  renderizarTablaParejas(q ? parejas.filter(function(p) {
-    return p.numero.includes(q) || p.nombre1.toLowerCase().includes(q) ||
-           p.nombre2.toLowerCase().includes(q) || (p.cat||'').toLowerCase().includes(q);
+  renderizarTablaParejas(q ? parejas.filter(function(p){
+    return p.numero.includes(q)||p.nombre1.toLowerCase().includes(q)||p.nombre2.toLowerCase().includes(q)||(p.cat||'').toLowerCase().includes(q);
   }) : parejas);
 }
 
 function pedirEliminar(id) {
   parejaAEliminar = id;
   var p = parejas.find(function(x){return x.id===id;});
-  document.getElementById('modal-eliminar-texto').textContent =
-    '¿Seguro que deseas eliminar la pareja #' + p.numero + ' (' + p.nombre1 + ' & ' + p.nombre2 + ')? Esta acción no se puede deshacer.';
+  document.getElementById('modal-eliminar-texto').textContent = '¿Seguro que deseas eliminar la pareja #'+p.numero+' ('+p.nombre1+' & '+p.nombre2+')? Esta acción no se puede deshacer.';
   document.getElementById('modal-eliminar').classList.add('abierto');
 }
 
 async function confirmarEliminar() {
   var r = await supabase.from('parejas').delete().eq('id', parejaAEliminar);
-  if (r.error) { mostrarToast('⚠ Error al eliminar'); console.error(r.error); }
-  else { mostrarToast('🗑 Pareja eliminada'); await cargarParejas(); }
-  cerrarModal('modal-eliminar');
-  parejaAEliminar = null;
+  if (r.error) { mostrarToast('⚠ Error al eliminar'); } else { mostrarToast('🗑 Pareja eliminada'); await cargarParejas(); }
+  cerrarModal('modal-eliminar'); parejaAEliminar = null;
 }
 
 function exportarCSV() {
   var enc = ['Número','Integrante 1','Integrante 2','Categoría','Estilo','Correo','Teléfono','Confirmada'];
-  var filas = parejas.map(function(p){
-    return [p.numero, p.nombre1, p.nombre2, p.cat, p.estilo, p.correo, p.tel, p.confirmado?'Sí':'No'];
-  });
-  descargarCSV([enc].concat(filas), 'parejas-huapango-' + new Date().toISOString().slice(0,10) + '.csv');
+  var filas = parejas.map(function(p){return [p.numero,p.nombre1,p.nombre2,p.cat,p.estilo,p.correo,p.tel,p.confirmado?'Sí':'No'];});
+  descargarCSV([enc].concat(filas), 'parejas-huapango-'+new Date().toISOString().slice(0,10)+'.csv');
   mostrarToast('⬇ CSV descargado');
 }
 
 // =========================================================
-//  TABLA DE BLOQUES
+//  GENERAR BLOQUES AUTOMÁTICAMENTE
 // =========================================================
-function renderizarTablaBloques() {
-  var tbody = document.getElementById('tabla-bloques-body');
-  if (!bloques.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay bloques creados</td></tr>';
+function generarBloques() {
+  // Verificar que haya parejas confirmadas antes de abrir el modal
+  var confirmadas = parejas.filter(function(p){return p.confirmado;}).length;
+  if (confirmadas === 0) {
+    mostrarToast('⚠ No hay parejas confirmadas aún. El encargado debe confirmar presencia primero.');
     return;
   }
+  document.getElementById('modal-generar-texto').textContent =
+    'Se crearán bloques para ' + confirmadas + ' pareja' + (confirmadas !== 1 ? 's' : '') +
+    ' confirmada' + (confirmadas !== 1 ? 's' : '') +
+    '. Los bloques pendientes anteriores serán reemplazados. ¿Continuar?';
+  document.getElementById('modal-generar').classList.add('abierto');
+}
+
+async function confirmarGenerarBloques() {
+  cerrarModal('modal-generar');
+  var btn = document.getElementById('btn-generar-bloques');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generando bloques...';
+
+  // Llamar a la función SQL que creamos
+  var r = await supabase.rpc('generar_bloques_primera_ronda');
+
+  btn.disabled = false;
+  btn.textContent = '⚡ Generar todos los bloques de primera ronda';
+
+  if (r.error) {
+    mostrarToast('⚠ Error al generar bloques: ' + r.error.message);
+    console.error(r.error);
+    return;
+  }
+
+  if (r.data && r.data.error) {
+    mostrarToast('⚠ Error: ' + r.data.error);
+    return;
+  }
+
+  var creados = r.data && r.data.bloques_creados ? r.data.bloques_creados : '?';
+  await cargarBloques();
+  mostrarToast('✅ ' + creados + ' bloques generados correctamente');
+}
+
+function renderizarTablaBloques() {
+  var tbody = document.getElementById('tabla-bloques-body');
+  if (!bloques.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay bloques creados</td></tr>'; return; }
   var estadoLabel = {en_curso:'⏳ En curso', terminado:'✓ Terminado', pendiente:'Pendiente'};
   var estadoBadge = {en_curso:'badge-amarillo', terminado:'badge-verde', pendiente:'badge-gris'};
   tbody.innerHTML = bloques.map(function(b) {
-    return '<tr>' +
-      '<td style="font-weight:700;">' + b.nombre + '</td>' +
-      '<td>' + b.cat + ' / ' + b.estilo + '</td>' +
-      '<td>' + (b.ronda||'').replace('_',' ') + '</td>' +
-      '<td>' + b.parejas.map(function(n){return '<span class="badge badge-gris">#'+n+'</span>';}).join(' ') + '</td>' +
-      '<td><span class="badge ' + (estadoBadge[b.estado]||'badge-gris') + '">' + (estadoLabel[b.estado]||b.estado) + '</span></td>' +
-      '<td>' + (b.estado==='pendiente'
-        ? '<button class="btn btn-primary btn-sm" onclick="activarBloque(\'' + b.id + '\')">▶ Activar</button>'
-        : '<button class="btn btn-ghost btn-sm" disabled>' + (b.estado==='terminado'?'Terminado':'En curso') + '</button>') +
+    return '<tr>'+
+      '<td style="font-weight:700;">'+b.nombre+'</td>'+
+      '<td>'+b.cat+' / '+b.estilo+'</td>'+
+      '<td>'+(b.ronda||'').replace(/_/g,' ')+'</td>'+
+      '<td>'+b.parejas.map(function(n){return '<span class="badge badge-gris">#'+n+'</span>';}).join(' ')+'</td>'+
+      '<td><span class="badge '+(estadoBadge[b.estado]||'badge-gris')+'">'+(estadoLabel[b.estado]||b.estado)+'</span></td>'+
+      '<td>'+(b.estado==='pendiente'
+        ? '<button class="btn btn-primary btn-sm" onclick="activarBloque(\''+b.id+'\')">▶ Activar</button>'
+        : '<button class="btn btn-ghost btn-sm" disabled>'+(b.estado==='terminado'?'Terminado':'En curso')+'</button>')+
       '</td></tr>';
   }).join('');
 }
 
 async function crearBloque() {
-  var cat       = document.getElementById('nuevo-cat').value;
-  var estilo    = document.getElementById('nuevo-estilo').value;
-  var ronda     = document.getElementById('nuevo-ronda').value;
-  var parsRaw   = document.getElementById('nuevo-parejas').value;
-
-  if (!cat || !estilo || !parsRaw.trim()) { mostrarToast('⚠ Llena todos los campos'); return; }
-
-  var numParejas = parsRaw.split(',').map(function(s){return s.trim();}).filter(Boolean);
-  var nombre     = 'Bloque ' + (bloques.length + 1);
-  var orden      = bloques.length + 1;
-
-  // Insertar bloque en Supabase
-  var r = await supabase.from('bloques').insert([{nombre:nombre, categoria:cat, estilo:estilo, ronda:ronda, estado:'pendiente', orden:orden}]).select().single();
-  if (r.error) { mostrarToast('⚠ Error al crear bloque'); console.error(r.error); return; }
-
-  // Insertar relaciones pareja-bloque
-  var rels = numParejas.map(function(n){return {bloque_id:r.data.id, pareja_num:n};});
-  var r2 = await supabase.from('bloque_parejas').insert(rels);
-  if (r2.error) { mostrarToast('⚠ Error al asignar parejas'); console.error(r2.error); return; }
-
+  var cat=document.getElementById('nuevo-cat').value, estilo=document.getElementById('nuevo-estilo').value;
+  var ronda=document.getElementById('nuevo-ronda').value, parsRaw=document.getElementById('nuevo-parejas').value;
+  if (!cat||!estilo||!parsRaw.trim()) { mostrarToast('⚠ Llena todos los campos'); return; }
+  var numParejas=parsRaw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  var nombre='Bloque '+(bloques.length+1), orden=bloques.length+1;
+  var r=await supabase.from('bloques').insert([{nombre:nombre,categoria:cat,estilo:estilo,ronda:ronda,estado:'pendiente',orden:orden}]).select().single();
+  if (r.error) { mostrarToast('⚠ Error al crear bloque'); return; }
+  var rels=numParejas.map(function(n){return {bloque_id:r.data.id,pareja_num:n};});
+  var r2=await supabase.from('bloque_parejas').insert(rels);
+  if (r2.error) { mostrarToast('⚠ Error al asignar parejas'); return; }
   await cargarBloques();
-  mostrarToast('✓ ' + nombre + ' creado');
-  document.getElementById('nuevo-cat').value = '';
-  document.getElementById('nuevo-estilo').value = '';
-  document.getElementById('nuevo-parejas').value = '';
+  mostrarToast('✓ '+nombre+' creado');
+  document.getElementById('nuevo-cat').value=''; document.getElementById('nuevo-estilo').value=''; document.getElementById('nuevo-parejas').value='';
 }
 
 async function activarBloque(id) {
-  // Terminar el que estaba en curso
-  var anterior = bloques.find(function(b){return b.estado==='en_curso';});
-  if (anterior) await supabase.from('bloques').update({estado:'terminado'}).eq('id', anterior.id);
-  var r = await supabase.from('bloques').update({estado:'en_curso'}).eq('id', id);
+  var anterior=bloques.find(function(b){return b.estado==='en_curso';});
+  if (anterior) await supabase.from('bloques').update({estado:'terminado'}).eq('id',anterior.id);
+  var r=await supabase.from('bloques').update({estado:'en_curso'}).eq('id',id);
   if (r.error) { mostrarToast('⚠ Error al activar'); return; }
   await cargarBloques();
   mostrarToast('🟡 Bloque activado');
 }
 
-// =========================================================
-//  TABLA DE RESULTADOS
-// =========================================================
 function renderizarTablaResultados(lista) {
-  var tbody = document.getElementById('tabla-resultados-body');
-  if (!lista.length) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--texto-suave);padding:2rem;">Sin calificaciones aún</td></tr>';
-    return;
-  }
-  var ordenados = lista.slice().sort(function(a,b){return b.total-a.total;});
-  var emojis = ['🥇','🥈','🥉'];
-  tbody.innerHTML = ordenados.map(function(r, i) {
-    var pos = i+1;
-    var cls = pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
-    return '<tr>' +
-      '<td><span class="posicion-num ' + cls + '">' + (pos<=3?emojis[pos-1]:pos) + '</span></td>' +
-      '<td><span class="num-pareja">#' + r.numero + '</span></td>' +
-      '<td style="font-size:0.82rem;">' + r.cat + '</td>' +
-      '<td style="font-size:0.82rem;">' + r.estilo + '</td>' +
-      '<td>' + r.vestuario.toFixed(1) + '</td>' +
-      '<td>' + r.estilo_r.toFixed(1) + '</td>' +
-      '<td>' + r.creatividad.toFixed(1) + '</td>' +
-      '<td>' + r.limpieza.toFixed(1) + '</td>' +
-      '<td>' + r.porte.toFixed(1) + '</td>' +
-      '<td><strong>' + r.total.toFixed(1) + '</strong><span class="barra-pts-wrap"><span class="barra-pts" style="width:' + (r.total/25*100) + '%"></span></span></td>' +
+  var tbody=document.getElementById('tabla-resultados-body');
+  if (!lista.length) { tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--texto-suave);padding:2rem;">Sin calificaciones aún</td></tr>'; return; }
+  var ordenados=lista.slice().sort(function(a,b){return b.total-a.total;});
+  var emojis=['🥇','🥈','🥉'];
+  tbody.innerHTML=ordenados.map(function(r,i){
+    var pos=i+1, cls=pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
+    return '<tr>'+
+      '<td><span class="posicion-num '+cls+'">'+(pos<=3?emojis[pos-1]:pos)+'</span></td>'+
+      '<td><span class="num-pareja">#'+r.numero+'</span></td>'+
+      '<td style="font-size:0.82rem;">'+r.cat+'</td><td style="font-size:0.82rem;">'+r.estilo+'</td>'+
+      '<td>'+r.vestuario.toFixed(1)+'</td><td>'+r.estilo_r.toFixed(1)+'</td>'+
+      '<td>'+r.creatividad.toFixed(1)+'</td><td>'+r.limpieza.toFixed(1)+'</td>'+
+      '<td>'+r.porte.toFixed(1)+'</td>'+
+      '<td><strong>'+r.total.toFixed(1)+'</strong><span class="barra-pts-wrap"><span class="barra-pts" style="width:'+(r.total/25*100)+'%"></span></span></td>'+
       '</tr>';
   }).join('');
 }
 
-function filtrarResultados(cat) {
-  renderizarTablaResultados(cat ? resultados.filter(function(r){return r.cat===cat;}) : resultados);
-}
+function filtrarResultados(cat) { renderizarTablaResultados(cat?resultados.filter(function(r){return r.cat===cat;}):resultados); }
 
 function exportarResultados() {
-  var enc = ['Posición','Pareja','Categoría','Estilo','Vestuario','Estilo','Creatividad','Limpieza','Porte','Total'];
-  var ord = resultados.slice().sort(function(a,b){return b.total-a.total;});
-  var filas = ord.map(function(r,i){
-    return [i+1,'#'+r.numero,r.cat,r.estilo,r.vestuario.toFixed(1),r.estilo_r.toFixed(1),r.creatividad.toFixed(1),r.limpieza.toFixed(1),r.porte.toFixed(1),r.total.toFixed(1)];
-  });
-  descargarCSV([enc].concat(filas), 'resultados-huapango-' + new Date().toISOString().slice(0,10) + '.csv');
+  var enc=['Posición','Pareja','Categoría','Estilo','Vestuario','Estilo','Creatividad','Limpieza','Porte','Total'];
+  var ord=resultados.slice().sort(function(a,b){return b.total-a.total;});
+  var filas=ord.map(function(r,i){return [i+1,'#'+r.numero,r.cat,r.estilo,r.vestuario.toFixed(1),r.estilo_r.toFixed(1),r.creatividad.toFixed(1),r.limpieza.toFixed(1),r.porte.toFixed(1),r.total.toFixed(1)];});
+  descargarCSV([enc].concat(filas),'resultados-huapango-'+new Date().toISOString().slice(0,10)+'.csv');
   mostrarToast('⬇ Resultados descargados');
 }
 
-// =========================================================
-//  GESTIÓN DE USUARIOS (jueces y encargados)
-// =========================================================
 function renderizarUsuarios() {
-  var lista = document.getElementById('lista-jueces');
-  var staff = usuarios.filter(function(u){return u.rol !== 'admin';});
-  if (!staff.length) {
-    lista.innerHTML = '<p style="color:var(--texto-suave);">No hay jueces ni encargados registrados aún.</p>';
-    return;
-  }
-  lista.innerHTML = staff.map(function(u) {
-    return '<div class="juez-card">' +
-      '<div><div class="juez-nombre">' + u.nombre + '</div>' +
-      '<div class="juez-cats">' + (u.rol==='juez'?'⚖️ Juez':'📋 Encargado') + ' · ' + u.correo + '</div></div>' +
-      '<button class="btn btn-danger btn-sm" onclick="eliminarUsuario(\'' + u.id + '\',\'' + u.nombre + '\')">🗑</button>' +
+  var lista=document.getElementById('lista-jueces');
+  var staff=usuarios.filter(function(u){return u.rol!=='admin';});
+  if (!staff.length) { lista.innerHTML='<p style="color:var(--texto-suave);">No hay jueces ni encargados registrados aún.</p>'; return; }
+  lista.innerHTML=staff.map(function(u){
+    return '<div class="juez-card">'+
+      '<div><div class="juez-nombre">'+u.nombre+'</div>'+
+      '<div class="juez-cats">'+(u.rol==='juez'?'⚖️ Juez':'📋 Encargado')+' · '+u.correo+'</div></div>'+
+      '<button class="btn btn-danger btn-sm" onclick="eliminarUsuario(\''+u.id+'\',\''+u.nombre+'\')">🗑</button>'+
       '</div>';
   }).join('');
 }
 
 function abrirModalUsuario() {
-  document.getElementById('nuevo-usuario-nombre').value = '';
-  document.getElementById('nuevo-usuario-correo').value = '';
+  document.getElementById('nuevo-usuario-nombre').value='';
+  document.getElementById('nuevo-usuario-correo').value='';
   document.getElementById('modal-usuario').classList.add('abierto');
 }
 
 async function agregarUsuario() {
-  var nombre  = document.getElementById('nuevo-usuario-nombre').value.trim();
-  var correo  = document.getElementById('nuevo-usuario-correo').value.trim();
-  var rol     = document.getElementById('nuevo-usuario-rol').value;
-
-  if (!nombre || !correo) { mostrarToast('⚠ Llena nombre y correo'); return; }
-
-  var btn = document.getElementById('btn-agregar-usuario');
-  btn.disabled = true;
-  btn.textContent = 'Guardando...';
-
-  // Buscar el ID del usuario en auth.users por correo
-  var rAuth = await supabase.rpc('obtener_id_por_correo', { p_correo: correo });
-
-  var userId = null;
-  if (rAuth.data) userId = rAuth.data;
-
-  if (!userId) {
-    // Insertar en usuarios sin ID — lo vinculamos por correo
-    var r = await supabase.from('usuarios').upsert([{
-      nombre: nombre, correo: correo, rol: rol
-    }], { onConflict: 'correo' });
-
-    if (r.error) {
-      mostrarToast('⚠ Error: ' + r.error.message);
-      btn.disabled = false; btn.textContent = 'Asignar rol';
-      return;
-    }
-  } else {
-    var r = await supabase.from('usuarios').upsert([{
-      id: userId, nombre: nombre, correo: correo, rol: rol
-    }], { onConflict: 'correo' });
-
-    if (r.error) {
-      mostrarToast('⚠ Error: ' + r.error.message);
-      btn.disabled = false; btn.textContent = 'Asignar rol';
-      return;
-    }
-  }
-
-  cerrarModal('modal-usuario');
-  btn.disabled = false; btn.textContent = 'Asignar rol';
-  await cargarUsuarios();
-  mostrarToast('✓ ' + nombre + ' agregado como ' + rol);
+  var nombre=document.getElementById('nuevo-usuario-nombre').value.trim();
+  var correo=document.getElementById('nuevo-usuario-correo').value.trim();
+  var rol=document.getElementById('nuevo-usuario-rol').value;
+  if (!nombre||!correo) { mostrarToast('⚠ Llena nombre y correo'); return; }
+  var btn=document.getElementById('btn-agregar-usuario'); btn.disabled=true; btn.textContent='Guardando...';
+  var rAuth=await supabase.rpc('obtener_id_por_correo',{p_correo:correo});
+  var userId=rAuth.data||null;
+  var upsertData=userId?{id:userId,nombre:nombre,correo:correo,rol:rol}:{nombre:nombre,correo:correo,rol:rol};
+  var r=await supabase.from('usuarios').upsert([upsertData],{onConflict:'correo'});
+  btn.disabled=false; btn.textContent='Asignar rol';
+  if (r.error) { mostrarToast('⚠ Error: '+r.error.message); return; }
+  cerrarModal('modal-usuario'); await cargarUsuarios();
+  mostrarToast('✓ '+nombre+' agregado como '+rol);
 }
 
 async function eliminarUsuario(id, nombre) {
-  if (!confirm('¿Eliminar a ' + nombre + '?')) return;
-  var r = await supabase.from('usuarios').delete().eq('id', id);
+  if (!confirm('¿Eliminar a '+nombre+'?')) return;
+  var r=await supabase.from('usuarios').delete().eq('id',id);
   if (r.error) { mostrarToast('⚠ Error al eliminar'); return; }
-  await cargarUsuarios();
-  mostrarToast('🗑 ' + nombre + ' eliminado');
+  await cargarUsuarios(); mostrarToast('🗑 '+nombre+' eliminado');
 }
 
-// =========================================================
-//  UTILIDADES
-// =========================================================
 function descargarCSV(filas, nombreArchivo) {
-  var csv = filas.map(function(f){return f.map(function(c){return '"'+c+'"';}).join(',');}).join('\n');
-  var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
-  var url  = URL.createObjectURL(blob);
-  var link = document.createElement('a');
-  link.href = url; link.download = nombreArchivo; link.click();
+  var csv=filas.map(function(f){return f.map(function(c){return '"'+c+'"';}).join(',');}).join('\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var link=document.createElement('a');
+  link.href=url; link.download=nombreArchivo; link.click();
   URL.revokeObjectURL(url);
 }
 
-function cerrarModal(id) {
-  document.getElementById(id).classList.remove('abierto');
-}
+function cerrarModal(id) { document.getElementById(id).classList.remove('abierto'); }
 
 function mostrarToast(mensaje) {
-  var toast = document.getElementById('toast');
-  toast.textContent = mensaje;
-  toast.classList.add('visible');
-  setTimeout(function(){toast.classList.remove('visible');}, 2800);
+  var toast=document.getElementById('toast');
+  toast.textContent=mensaje; toast.classList.add('visible');
+  setTimeout(function(){toast.classList.remove('visible');},2800);
 }
 </script>
 </body>
