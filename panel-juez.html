@@ -176,8 +176,8 @@ window.addEventListener('DOMContentLoaded', async function() {
   juezId = session.user.id;
   document.getElementById('badge-juez').textContent = 'Juez: ' + res.data.nombre;
 
+  await cargarHistorialDesdeSupabase();
   await cargarBloqueActivo();
-  renderizarHistorial();
 
   // Realtime: cuando el encargado cambie el bloque, el juez lo ve automáticamente
   supabase.channel('bloques-juez')
@@ -189,6 +189,39 @@ window.addEventListener('DOMContentLoaded', async function() {
 async function cerrarSesion() {
   await supabase.auth.signOut();
   window.location.href = 'login.html';
+}
+
+// =========================================================
+//  CARGAR HISTORIAL DESDE SUPABASE
+//  Al entrar, carga los bloques que este juez ya calificó
+// =========================================================
+async function cargarHistorialDesdeSupabase() {
+  var r = await supabase
+    .from('calificaciones')
+    .select('bloque_id, pareja_num, vestuario, estilo, creatividad, limpieza, porte, bloques(nombre, categoria, estilo_baile:estilo)')
+    .eq('juez_id', juezId)
+    .order('enviado_en', { ascending: true });
+
+  if (r.error || !r.data || !r.data.length) {
+    renderizarHistorial();
+    return;
+  }
+
+  // Agrupar por bloque
+  var porBloque = {};
+  r.data.forEach(function(c) {
+    if (!porBloque[c.bloque_id]) {
+      porBloque[c.bloque_id] = {
+        nombre:  (c.bloques ? c.bloques.nombre + ' — ' + c.bloques.categoria + ' / ' + c.bloques.estilo_baile : c.bloque_id),
+        parejas: []
+      };
+    }
+    var total = (c.vestuario || 0) + (c.estilo || 0) + (c.creatividad || 0) + (c.limpieza || 0) + (c.porte || 0);
+    porBloque[c.bloque_id].parejas.push({ numero: c.pareja_num, total: total });
+  });
+
+  historialBloques = Object.values(porBloque);
+  renderizarHistorial();
 }
 
 // =========================================================
@@ -220,7 +253,22 @@ async function cargarBloqueActivo() {
     bloqueActivo.nombre = data.nombre + ' — ' + data.categoria + ' / ' + data.estilo;
     bloqueActivo.parejas = data.bloque_parejas.map(function(bp) { return { numero: bp.pareja_num }; });
 
-    // Reiniciar calificaciones y marcas
+    // Verificar si este juez ya calificó este bloque
+    var yaCalifico = await supabase
+      .from('calificaciones')
+      .select('pareja_num')
+      .eq('bloque_id', data.id)
+      .eq('juez_id', juezId);
+
+    if (yaCalifico.data && yaCalifico.data.length > 0) {
+      // Ya calificó este bloque — mostrar pantalla de éxito directamente
+      bloqueEnviado = true;
+      document.getElementById('vista-calificacion').style.display = 'none';
+      document.getElementById('pantalla-exito').style.display     = 'block';
+      return;
+    }
+
+    // No ha calificado — inicializar estado limpio
     calificaciones  = {};
     parejasMarcadas = {};
     bloqueEnviado   = false;
