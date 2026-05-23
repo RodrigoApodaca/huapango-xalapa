@@ -2,574 +2,131 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <!-- Sin zoom ni scroll en la TV -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Pantalla Pública — Huapango Xalapa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
-
   <style>
-    /* ===== VARIABLES =====
-       Paleta oscura/dorada optimizada para TV (alto contraste) */
-    :root {
-      --negro:         #0A0A0A;
-      --verde-oscuro:  #1B4332;
-      --verde-medio:   #2D6A4F;
-      --verde-claro:   #52B788;
-      --dorado:        #D4A017;
-      --dorado-claro:  #F4C430;
-      --crema:         #FFF8E7;
-      --blanco:        #FFFFFF;
-      --gris:          #888;
-      --rojo-vivo:     #FF3B30;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden; /* sin scroll en TV */
-      background: var(--negro);
-      color: var(--blanco);
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    /* ===== FONDO CON TEXTURA =====
-       Patrón geométrico sutil que da profundidad en pantalla grande */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45,106,79,0.35) 0%, transparent 70%),
-        repeating-linear-gradient(
-          60deg,
-          transparent 0px, transparent 60px,
-          rgba(255,255,255,0.012) 60px, rgba(255,255,255,0.012) 61px
-        );
-      pointer-events: none;
-    }
-
-    /* ===== LAYOUT PRINCIPAL =====
-       3 columnas: bloque actual (grande) | siguiente | info lateral */
-    .layout {
-      position: relative; z-index: 1;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      height: 100vh;
-      gap: 0;
-    }
-
-    /* ===== BARRA SUPERIOR ===== */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.9rem 2.5rem;
-      background: rgba(27,67,50,0.6);
-      border-bottom: 2px solid var(--dorado);
-      backdrop-filter: blur(8px);
-    }
-    .topbar-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem;
-      color: var(--dorado);
-      letter-spacing: 0.06em;
-    }
-    .topbar-logo span {
-      color: var(--crema);
-      font-size: 1rem;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 400;
-      letter-spacing: 0;
-      margin-left: 1rem;
-    }
-
-    /* Reloj en tiempo real */
-    .reloj {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2rem;
-      color: var(--dorado);
-      letter-spacing: 0.08em;
-    }
-
-    /* ===== CUERPO CENTRAL ===== */
-    .cuerpo {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 0;
-      overflow: hidden;
-    }
-    @media (max-width: 1100px) {
-      .cuerpo { grid-template-columns: 1fr; }
-      .sidebar-derecho { display: none; }
-    }
-
-    /* ===== COLUMNA IZQUIERDA: bloque actual + siguientes ===== */
-    .col-izq {
-      padding: 2rem 2.5rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      overflow: hidden;
-    }
-
-    /* Label pequeño de sección */
-    .etiqueta-seccion {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--verde-claro);
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* ===== BLOQUE EN CURSO (tarjeta grande) ===== */
-    .bloque-en-curso {
-      background: linear-gradient(135deg, rgba(45,106,79,0.5), rgba(27,67,50,0.3));
-      border: 2px solid var(--dorado);
-      border-radius: 20px;
-      padding: 2rem 2.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-    /* Decoración diagonal en la esquina */
-    .bloque-en-curso::after {
-      content: '';
-      position: absolute;
-      right: -40px; top: -40px;
-      width: 160px; height: 160px;
-      background: radial-gradient(circle, rgba(212,160,23,0.15), transparent 70%);
-      pointer-events: none;
-    }
-
-    /* Indicador parpadeante EN VIVO */
-    .en-vivo {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255,59,48,0.15);
-      border: 1px solid var(--rojo-vivo);
-      padding: 0.3rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--rojo-vivo);
-      margin-bottom: 1rem;
-      letter-spacing: 0.08em;
-    }
-    .punto-vivo {
-      width: 8px; height: 8px;
-      background: var(--rojo-vivo);
-      border-radius: 50%;
-      animation: parpadear 1s ease infinite;
-    }
-    @keyframes parpadear {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.1; }
-    }
-
-    /* Nombre del bloque en curso (fuente gigante) */
-    .bloque-nombre-grande {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      line-height: 1;
-      color: var(--dorado-claro);
-      margin-bottom: 0.25rem;
-      letter-spacing: 0.04em;
-    }
-    .bloque-subtitulo {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 1.5rem;
-    }
-
-    /* ===== CHIPS DE PAREJAS DEL BLOQUE =====
-       Números grandes y visibles para que la gente los reconozca */
-    .parejas-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .pareja-chip {
-      background: var(--dorado);
-      color: var(--negro);
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.2rem;
-      padding: 0.3rem 1.1rem;
-      border-radius: 12px;
-      letter-spacing: 0.06em;
-      line-height: 1.2;
-      transition: transform 0.3s ease;
-    }
-    /* Animación de entrada para los chips */
-    .pareja-chip { animation: chipEntrada 0.4s ease both; }
-    @keyframes chipEntrada {
-      from { opacity: 0; transform: scale(0.8) translateY(10px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    /* Retardo escalonado por índice (se aplica con JS) */
-
-    /* ===== SIGUIENTES BLOQUES =====
-       3 tarjetas lado a lado, bien visibles en TV */
-    .siguientes-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-
-    .bloque-siguiente {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
-      padding: 1.1rem 1.25rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      transition: border-color 0.2s;
-    }
-    .bloque-siguiente:hover { border-color: rgba(212,160,23,0.5); }
-
-    /* Etiqueta de turno: "Siguiente →", "Después", "Más tarde" */
-    .siguiente-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 0.82rem;
-      color: var(--verde-claro);
-      letter-spacing: 0.18em;
-    }
-
-    /* Nombre del bloque */
-    .siguiente-nombre {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--crema);
-      line-height: 1.35;
-    }
-
-    /* Divisor sutil entre nombre y parejas */
-    .siguiente-divisor {
-      height: 1px;
-      background: rgba(255,255,255,0.07);
-    }
-
-    /* Label "PAREJAS:" */
-    .siguiente-parejas-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
-    }
-
-    /* Chips de números de pareja */
-    .siguiente-parejas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    /* Número de pareja — grande y dorado para verse en TV */
-    .siguiente-chip {
-      background: rgba(212,160,23,0.18);
-      border: 1.5px solid rgba(212,160,23,0.45);
-      color: var(--dorado-claro);
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem;
-      padding: 0.05rem 0.8rem;
-      border-radius: 8px;
-      letter-spacing: 0.06em;
-      line-height: 1.4;
-    }
-
-    /* ===== COLUMNA DERECHA (sidebar) ===== */
-    .sidebar-derecho {
-      border-left: 1px solid rgba(255,255,255,0.08);
-      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      overflow-y: auto;
-      background: rgba(0,0,0,0.2);
-    }
-
-    /* Tarjeta de info del evento */
-    .info-evento {
-      background: rgba(45,106,79,0.25);
-      border: 1px solid rgba(82,183,136,0.3);
-      border-radius: 14px;
-      padding: 1.25rem;
-    }
-    .info-evento-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--dorado);
-      margin-bottom: 0.75rem;
-      line-height: 1.3;
-    }
-    .info-fila {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.82rem;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    .info-fila:last-child { border-bottom: none; }
-    .info-fila .key   { color: rgba(255,255,255,0.5); }
-    .info-fila .valor { font-weight: 700; color: var(--crema); }
-
-    /* Categorías activas */
-    .cats-lista {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .cat-fila {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255,255,255,0.04);
-      border-radius: 8px;
-      padding: 0.6rem 0.9rem;
-      font-size: 0.82rem;
-    }
-    .cat-nombre { color: var(--crema); font-weight: 500; }
-    .cat-num    { font-family: 'Bebas Neue', sans-serif; color: var(--dorado); font-size: 1rem; }
-
-    /* ===== BARRA INFERIOR: mensaje rotativo ===== */
-    .barra-inferior {
-      background: var(--verde-oscuro);
-      border-top: 2px solid var(--dorado);
-      padding: 0.6rem 2.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      overflow: hidden;
-    }
-    .barra-label {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1rem;
-      color: var(--dorado);
-      letter-spacing: 0.1em;
-      white-space: nowrap;
-      padding-right: 1rem;
-      border-right: 1px solid rgba(212,160,23,0.4);
-    }
-    /* Texto que se desliza */
-    .ticker-wrap { flex: 1; overflow: hidden; }
-    .ticker {
-      display: inline-flex;
-      white-space: nowrap;
-      animation: ticker 30s linear infinite;
-      font-size: 0.88rem;
-      color: rgba(255,255,255,0.7);
-      gap: 4rem;
-    }
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-
-    /* ===== ANIMACIÓN DE TRANSICIÓN DE BLOQUE =====
-       Cuando el encargado cambia el bloque, la UI hace un fade */
-    .fade-out { animation: fadeOut 0.4s ease forwards; }
-    .fade-in  { animation: fadeIn  0.5s ease forwards; }
-    @keyframes fadeOut {
-      from { opacity: 1; transform: translateY(0); }
-      to   { opacity: 0; transform: translateY(-10px); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===== ORNAMENTO DECORATIVO ===== */
-    .ornamento {
-      position: fixed;
-      bottom: 60px; right: 20px;
-      font-size: 12rem;
-      opacity: 0.03;
-      pointer-events: none;
-      user-select: none;
-      z-index: 0;
-      line-height: 1;
-    }
-
+    :root{--negro:#0A0A0A;--verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#52B788;--dorado:#D4A017;--dorado-claro:#F4C430;--crema:#FFF8E7;--blanco:#FFFFFF;--rojo-vivo:#FF3B30;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{width:100%;height:100%;overflow:hidden;background:var(--negro);color:var(--blanco);font-family:'DM Sans',sans-serif;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(45,106,79,0.35) 0%,transparent 70%),repeating-linear-gradient(60deg,transparent 0px,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px);pointer-events:none;}
+    .layout{position:relative;z-index:1;display:grid;grid-template-rows:auto 1fr auto;height:100vh;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 2.5rem;background:rgba(27,67,50,0.6);border-bottom:2px solid var(--dorado);backdrop-filter:blur(8px);}
+    .topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--dorado);letter-spacing:0.06em;}
+    .topbar-logo span{color:var(--crema);font-size:1rem;font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0;margin-left:1rem;}
+    .reloj{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--dorado);letter-spacing:0.08em;}
+    .cuerpo{display:grid;grid-template-columns:1fr 380px;gap:0;overflow:hidden;}
+    @media(max-width:1100px){.cuerpo{grid-template-columns:1fr;}.sidebar-derecho{display:none;}}
+    .col-izq{padding:2rem 2.5rem 1.5rem;display:flex;flex-direction:column;gap:1.5rem;overflow:hidden;}
+    .etiqueta-seccion{font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--verde-claro);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;}
+    .bloque-en-curso{background:linear-gradient(135deg,rgba(45,106,79,0.5),rgba(27,67,50,0.3));border:2px solid var(--dorado);border-radius:20px;padding:2rem 2.5rem;position:relative;overflow:hidden;}
+    .bloque-en-curso::after{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(212,160,23,0.15),transparent 70%);pointer-events:none;}
+    .en-vivo{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,59,48,0.15);border:1px solid var(--rojo-vivo);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.78rem;font-weight:700;color:var(--rojo-vivo);margin-bottom:1rem;letter-spacing:0.08em;}
+    .punto-vivo{width:8px;height:8px;background:var(--rojo-vivo);border-radius:50%;animation:parpadear 1s ease infinite;}
+    @keyframes parpadear{0%,100%{opacity:1;}50%{opacity:0.1;}}
+    .bloque-nombre-grande{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1;color:var(--dorado-claro);margin-bottom:0.25rem;letter-spacing:0.04em;}
+    .bloque-subtitulo{font-size:1rem;color:rgba(255,255,255,0.6);margin-bottom:1.5rem;}
+    .parejas-chips{display:flex;flex-wrap:wrap;gap:0.75rem;}
+    .pareja-chip{background:var(--dorado);color:var(--negro);font-family:'Bebas Neue',sans-serif;font-size:2.2rem;padding:0.3rem 1.1rem;border-radius:12px;letter-spacing:0.06em;line-height:1.2;animation:chipEntrada 0.4s ease both;}
+    @keyframes chipEntrada{from{opacity:0;transform:scale(0.8) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .siguientes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+    .bloque-siguiente{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:1.1rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:0.6rem;}
+    .siguiente-num{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;color:var(--verde-claro);letter-spacing:0.18em;}
+    .siguiente-nombre{font-size:0.9rem;font-weight:700;color:var(--crema);line-height:1.35;}
+    .siguiente-divisor{height:1px;background:rgba(255,255,255,0.07);}
+    .siguiente-parejas-label{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+    .siguiente-parejas{display:flex;flex-wrap:wrap;gap:0.5rem;}
+    .siguiente-chip{background:rgba(212,160,23,0.18);border:1.5px solid rgba(212,160,23,0.45);color:var(--dorado-claro);font-family:'Bebas Neue',sans-serif;font-size:1.6rem;padding:0.05rem 0.8rem;border-radius:8px;letter-spacing:0.06em;line-height:1.4;}
+    .sidebar-derecho{border-left:1px solid rgba(255,255,255,0.08);padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;background:rgba(0,0,0,0.2);}
+    .info-evento{background:rgba(45,106,79,0.25);border:1px solid rgba(82,183,136,0.3);border-radius:14px;padding:1.25rem;}
+    .info-evento-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--dorado);margin-bottom:0.75rem;line-height:1.3;}
+    .info-fila{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .info-fila:last-child{border-bottom:none;}
+    .info-fila .key{color:rgba(255,255,255,0.5);}
+    .info-fila .valor{font-weight:700;color:var(--crema);}
+    .cats-lista{display:flex;flex-direction:column;gap:0.5rem;}
+    .cat-fila{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.6rem 0.9rem;font-size:0.82rem;}
+    .cat-nombre{color:var(--crema);font-weight:500;}
+    .cat-num{font-family:'Bebas Neue',sans-serif;color:var(--dorado);font-size:1rem;}
+    .barra-inferior{background:var(--verde-oscuro);border-top:2px solid var(--dorado);padding:0.6rem 2.5rem;display:flex;align-items:center;gap:1rem;overflow:hidden;}
+    .barra-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--dorado);letter-spacing:0.1em;white-space:nowrap;padding-right:1rem;border-right:1px solid rgba(212,160,23,0.4);}
+    .ticker-wrap{flex:1;overflow:hidden;}
+    .ticker{display:inline-flex;white-space:nowrap;animation:ticker 30s linear infinite;font-size:0.88rem;color:rgba(255,255,255,0.7);gap:4rem;}
+    @keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .fade-out{animation:fadeOut 0.4s ease forwards;}
+    .fade-in{animation:fadeIn 0.5s ease forwards;}
+    @keyframes fadeOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-10px);}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .ornamento{position:fixed;bottom:60px;right:20px;font-size:12rem;opacity:0.03;pointer-events:none;user-select:none;z-index:0;line-height:1;}
   </style>
 </head>
 <body>
 
-<!-- Ornamento de fondo decorativo -->
 <div class="ornamento">♪</div>
 
 <div class="layout">
-
-  <!-- ===== BARRA SUPERIOR ===== -->
   <header class="topbar">
-    <div class="topbar-logo">
-      Huapango Xalapa
-      <span>1er Concurso Nacional</span>
-    </div>
-    <!-- El reloj se actualiza cada segundo con JS -->
+    <div class="topbar-logo">Huapango Xalapa<span>1er Concurso Nacional</span></div>
     <div class="reloj" id="reloj">00:00:00</div>
   </header>
 
-
-  <!-- ===== CUERPO CENTRAL ===== -->
   <div class="cuerpo">
-
-    <!-- COLUMNA IZQUIERDA -->
     <div class="col-izq">
-
-      <!-- Bloque en curso -->
       <div>
         <div class="etiqueta-seccion">
           <span class="punto-vivo" style="width:6px;height:6px;background:var(--verde-claro);"></span>
           Bailando ahora
         </div>
-
         <div class="bloque-en-curso" id="bloque-actual">
-          <div class="en-vivo">
-            <div class="punto-vivo"></div>
-            EN VIVO
-          </div>
-
-          <!-- Nombre del bloque activo -->
-          <div class="bloque-nombre-grande" id="actual-nombre">
-            BLOQUE 2
-          </div>
-          <div class="bloque-subtitulo" id="actual-subtitulo">
-            Infantil · Hidalguense — Ronda 1
-          </div>
-
-          <!-- Chips de números de pareja (visible y grande para el público) -->
-          <div class="etiqueta-seccion" style="margin-bottom:0.75rem;">
-            Parejas en pista
-          </div>
-          <div class="parejas-chips" id="actual-chips">
-            <!-- Se generan con JavaScript -->
-          </div>
+          <div class="en-vivo"><div class="punto-vivo"></div>EN VIVO</div>
+          <div class="bloque-nombre-grande" id="actual-nombre">EN ESPERA</div>
+          <div class="bloque-subtitulo" id="actual-subtitulo">El encargado activará el primer bloque en breve</div>
+          <div class="etiqueta-seccion" style="margin-bottom:0.75rem;">Parejas en pista</div>
+          <div class="parejas-chips" id="actual-chips"></div>
         </div>
       </div>
-
-      <!-- Siguientes bloques -->
       <div>
         <div class="etiqueta-seccion">⏭ Próximos bloques</div>
-        <div class="siguientes-grid" id="siguientes-grid">
-          <!-- Se generan con JavaScript -->
-        </div>
-      </div>
-
-    </div><!-- fin col-izq -->
-
-
-    <!-- COLUMNA DERECHA (sidebar) -->
-    <div class="sidebar-derecho">
-
-      <!-- Info general del evento -->
-      <div class="info-evento">
-        <div class="info-evento-titulo">
-          1er Concurso Nacional<br>de Huapango de Xalapa
-        </div>
-        <div class="info-fila">
-          <span class="key">Sede</span>
-          <span class="valor">Xalapa, Veracruz</span>
-        </div>
-        <div class="info-fila">
-          <span class="key">Ronda actual</span>
-          <span class="valor" id="info-ronda">Primera ronda</span>
-        </div>
-        <div class="info-fila">
-          <span class="key">Parejas totales</span>
-          <span class="valor" id="info-total">8</span>
-        </div>
-        <div class="info-fila">
-          <span class="key">Confirmadas</span>
-          <span class="valor" id="info-confirmadas" style="color:var(--verde-claro)">5</span>
-        </div>
-      </div>
-
-      <!-- Resumen por categoría -->
-      <div>
-        <div class="etiqueta-seccion">Categorías</div>
-        <div class="cats-lista">
-          <!-- Se genera con JS -->
-        </div>
-      </div>
-
-    </div><!-- fin sidebar-derecho -->
-
-  </div><!-- fin cuerpo -->
-
-
-  <!-- ===== BARRA INFERIOR: TICKER ===== -->
-  <footer class="barra-inferior">
-    <div class="barra-label">AVISO</div>
-    <div class="ticker-wrap">
-      <!-- El texto se duplica para que el ticker sea continuo -->
-      <div class="ticker" id="ticker">
-        <!-- Se llena con JS -->
+        <div class="siguientes-grid" id="siguientes-grid"></div>
       </div>
     </div>
+
+    <div class="sidebar-derecho">
+      <div class="info-evento">
+        <div class="info-evento-titulo">1er Concurso Nacional<br>de Huapango de Xalapa</div>
+        <div class="info-fila"><span class="key">Sede</span><span class="valor">Xalapa, Veracruz</span></div>
+        <div class="info-fila"><span class="key">Ronda actual</span><span class="valor" id="info-ronda">—</span></div>
+        <div class="info-fila"><span class="key">Parejas totales</span><span class="valor" id="info-total">—</span></div>
+        <div class="info-fila"><span class="key">Confirmadas</span><span class="valor" id="info-confirmadas" style="color:var(--verde-claro)">—</span></div>
+      </div>
+      <div>
+        <div class="etiqueta-seccion">Categorías</div>
+        <div class="cats-lista" id="cats-lista"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="barra-inferior">
+    <div class="barra-label">AVISO</div>
+    <div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
   </footer>
-
-</div><!-- fin layout -->
-
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 // =========================================================
-//  CONFIGURACIÓN DE SUPABASE
+//  CONFIGURACIÓN DE SUPABASE — usando var para evitar errores
 // =========================================================
-const SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-// =========================================================
-//  DATOS DE DEMOSTRACIÓN
-//  En producción todos estos datos vendrán de Supabase
-//  con actualizaciones en tiempo real (Supabase Realtime)
-// =========================================================
+var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Bloque que está bailando ahora
-const bloqueActivo = {
-  nombre:    'BLOQUE 2',
-  subtitulo: 'Infantil · Hidalguense — Ronda 1',
-  parejas:   ['234', '245', '256'],
-};
+// Estado global — todo con var
+var bloqueActivoActual = { nombre:'', subtitulo:'', parejas:[] };
+var bloquesSiguientes  = [];
 
-// Siguientes bloques en orden
-const bloquesSiguientes = [
-  {
-    etiqueta:  'Siguiente →',
-    nombre:    'Bloque 3 — Juvenil / Tamaulipeco',
-    parejas:   ['356', '367', '378'],
-  },
-  {
-    etiqueta:  'Después',
-    nombre:    'Bloque 4 — Adulto / Veracruzano',
-    parejas:   ['478', '489', '490'],
-  },
-  {
-    etiqueta:  'Más tarde',
-    nombre:    'Bloque 5 — Pequeños / Poblano',
-    parejas:   ['125', '136'],
-  },
-];
-
-// Resumen por categoría para el sidebar
-const categorias = [
-  { nombre: 'Pequeños Guapangueritos', parejas: 2 },
-  { nombre: 'Infantil',                parejas: 3 },
-  { nombre: 'Juvenil',                 parejas: 2 },
-  { nombre: 'Adulto',                  parejas: 3 },
-];
-
-// Mensajes del ticker inferior
-// Si quieres agregar avisos del día, ponlos aquí
-const mensajesTicker = [
+var mensajesTicker = [
   '🎶 Recuerda estar atento al número de tu pareja para subir a pista a tiempo.',
   '💃 Los bloques se activarán en orden — estate pendiente de la pantalla.',
   '📵 Por favor mantén el teléfono en silencio durante las presentaciones.',
@@ -577,204 +134,176 @@ const mensajesTicker = [
   '👋 ¡Bienvenidos al 1er Concurso Nacional de Huapango de Xalapa!',
 ];
 
-
 // =========================================================
 //  INICIALIZACIÓN
 // =========================================================
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener('DOMContentLoaded', async function() {
   iniciarReloj();
-  await cargarDatos();   // cargar bloques reales desde Supabase
+  await cargarDatos();
+  await cargarStats();
   iniciarTicker();
 
-  // -------------------------------------------------------
-  //  REALTIME — la magia que actualiza la pantalla sola
-  //  Cuando el encargado activa un bloque desde su panel,
-  //  esta pantalla cambia automáticamente sin recargar
-  // -------------------------------------------------------
-  supabase
-    .channel('pantalla-publica')
-    .on('postgres_changes', {
-      event:  'UPDATE',
-      schema: 'public',
-      table:  'bloques',
-    }, async () => {
-      // Cuando cualquier bloque cambie de estado, recargamos todo
-      await cargarDatos();
-    })
+  // Realtime — la pantalla se actualiza sola cuando cambia un bloque
+  supabase.channel('pantalla-publica')
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'bloques' },
+      async function() { await cargarDatos(); })
     .subscribe();
 });
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarDatos()
-//  Trae los bloques de Supabase y actualiza la pantalla
-// ---------------------------------------------------------
+// =========================================================
+//  CARGAR DATOS DESDE SUPABASE
+// =========================================================
 async function cargarDatos() {
-  const { data, error } = await supabase
+  var r = await supabase
     .from('bloques')
-    .select(`
-      id, nombre, categoria, estilo, ronda, estado, orden,
-      bloque_parejas ( pareja_num )
-    `)
+    .select('id, nombre, categoria, estilo, ronda, estado, orden, bloque_parejas(pareja_num)')
     .order('orden', { ascending: true });
 
-  if (error) {
-    console.error('Error cargando bloques:', error);
-    return;
-  }
+  if (r.error) { console.error('Error cargando bloques:', r.error); return; }
 
-  // Separar el bloque en curso de los siguientes
-  const enCurso   = data.find(b => b.estado === 'en_curso');
-  const pendientes = data.filter(b => b.estado === 'pendiente');
+  var data      = r.data || [];
+  var enCurso   = data.find(function(b){ return b.estado === 'en_curso'; });
+  var pendientes = data.filter(function(b){ return b.estado === 'pendiente'; });
 
   if (enCurso) {
-    // Actualizar el bloque activo con animación de transición
-    const nuevo = {
-      nombre:    `${enCurso.nombre}`,
-      subtitulo: `${enCurso.categoria} · ${enCurso.estilo} — ${enCurso.ronda.replace('_', ' ')}`,
-      parejas:   enCurso.bloque_parejas.map(bp => bp.pareja_num),
+    var nuevo = {
+      nombre:    enCurso.nombre,
+      subtitulo: enCurso.categoria + ' · ' + enCurso.estilo + ' — ' + (enCurso.ronda||'').replace(/_/g,' '),
+      parejas:   enCurso.bloque_parejas.map(function(bp){ return bp.pareja_num; }),
     };
     cambiarBloque(nuevo);
+    document.getElementById('info-ronda').textContent = (enCurso.ronda||'').replace(/_/g,' ');
   } else {
-    // No hay bloque activo aún
     document.getElementById('actual-nombre').textContent    = 'EN ESPERA';
     document.getElementById('actual-subtitulo').textContent = 'El encargado activará el primer bloque en breve';
     document.getElementById('actual-chips').innerHTML       = '';
+    document.getElementById('info-ronda').textContent       = '—';
   }
 
-  // Actualizar los siguientes 3 bloques
-  bloquesSiguientes.length = 0; // limpiar array
-  const etiquetas = ['Siguiente →', 'Después', 'Más tarde'];
-  pendientes.slice(0, 3).forEach((b, i) => {
+  // Próximos 3 bloques
+  bloquesSiguientes = [];
+  var etiquetas = ['Siguiente →', 'Después', 'Más tarde'];
+  pendientes.slice(0, 3).forEach(function(b, i) {
     bloquesSiguientes.push({
-      etiqueta: etiquetas[i] || `En ${i + 1}`,
-      nombre:   `${b.nombre} — ${b.categoria} / ${b.estilo}`,
-      parejas:  b.bloque_parejas.map(bp => bp.pareja_num),
+      etiqueta: etiquetas[i] || 'En breve',
+      nombre:   b.nombre + ' — ' + b.categoria + ' / ' + b.estilo,
+      parejas:  b.bloque_parejas.map(function(bp){ return bp.pareja_num; }),
     });
   });
   renderizarSiguientes();
 }
 
+// =========================================================
+//  CARGAR ESTADÍSTICAS DEL SIDEBAR
+// =========================================================
+async function cargarStats() {
+  // Total y confirmadas
+  var r = await supabase.from('parejas').select('confirmado');
+  if (!r.error && r.data) {
+    document.getElementById('info-total').textContent        = r.data.length;
+    document.getElementById('info-confirmadas').textContent  = r.data.filter(function(p){ return p.confirmado; }).length;
+  }
 
-// ---------------------------------------------------------
-//  FUNCIÓN: iniciarReloj()
-//  Actualiza el reloj cada segundo
-// ---------------------------------------------------------
+  // Categorías
+  var r2 = await supabase
+    .from('parejas')
+    .select('categoria_nombre')
+    .eq('confirmado', true);
+
+  if (!r2.error && r2.data) {
+    var conteo = {};
+    r2.data.forEach(function(p) {
+      conteo[p.categoria_nombre] = (conteo[p.categoria_nombre] || 0) + 1;
+    });
+    var lista = document.getElementById('cats-lista');
+    lista.innerHTML = Object.entries(conteo).map(function(entry) {
+      return '<div class="cat-fila">' +
+        '<span class="cat-nombre">' + entry[0] + '</span>' +
+        '<span class="cat-num">' + entry[1] + ' parejas</span>' +
+        '</div>';
+    }).join('') || '<div class="cat-fila"><span class="cat-nombre" style="opacity:0.5">Sin datos aún</span></div>';
+  }
+}
+
+// =========================================================
+//  RENDERIZAR BLOQUE ACTIVO
+// =========================================================
+function renderizarBloqueActivo() {
+  document.getElementById('actual-nombre').textContent    = bloqueActivoActual.nombre;
+  document.getElementById('actual-subtitulo').textContent = bloqueActivoActual.subtitulo;
+
+  document.getElementById('actual-chips').innerHTML = bloqueActivoActual.parejas.map(function(num, i) {
+    return '<div class="pareja-chip" style="animation-delay:' + (i * 0.08) + 's">#' + num + '</div>';
+  }).join('');
+}
+
+// =========================================================
+//  RENDERIZAR SIGUIENTES BLOQUES
+// =========================================================
+function renderizarSiguientes() {
+  var grid = document.getElementById('siguientes-grid');
+
+  if (!bloquesSiguientes.length) {
+    grid.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;grid-column:1/-1;">No hay más bloques pendientes</div>';
+    return;
+  }
+
+  grid.innerHTML = bloquesSiguientes.slice(0, 3).map(function(b) {
+    return '<div class="bloque-siguiente">' +
+      '<div class="siguiente-num">' + b.etiqueta + '</div>' +
+      '<div class="siguiente-nombre">' + b.nombre + '</div>' +
+      '<div class="siguiente-divisor"></div>' +
+      '<div class="siguiente-parejas-label">Parejas</div>' +
+      '<div class="siguiente-parejas">' +
+        b.parejas.map(function(n){ return '<span class="siguiente-chip">#' + n + '</span>'; }).join('') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// =========================================================
+//  CAMBIAR BLOQUE CON ANIMACIÓN
+// =========================================================
+function cambiarBloque(nuevoBloqueData) {
+  var contenedor = document.getElementById('bloque-actual');
+  contenedor.classList.add('fade-out');
+
+  setTimeout(function() {
+    bloqueActivoActual.nombre    = nuevoBloqueData.nombre;
+    bloqueActivoActual.subtitulo = nuevoBloqueData.subtitulo;
+    bloqueActivoActual.parejas   = nuevoBloqueData.parejas;
+
+    renderizarBloqueActivo();
+
+    contenedor.classList.remove('fade-out');
+    contenedor.classList.add('fade-in');
+    setTimeout(function(){ contenedor.classList.remove('fade-in'); }, 500);
+  }, 400);
+}
+
+// =========================================================
+//  RELOJ
+// =========================================================
 function iniciarReloj() {
   function actualizar() {
-    const ahora = new Date();
-    const h = String(ahora.getHours()).padStart(2, '0');
-    const m = String(ahora.getMinutes()).padStart(2, '0');
-    const s = String(ahora.getSeconds()).padStart(2, '0');
-    document.getElementById('reloj').textContent = `${h}:${m}:${s}`;
+    var ahora = new Date();
+    var h = String(ahora.getHours()).padStart(2,'0');
+    var m = String(ahora.getMinutes()).padStart(2,'0');
+    var s = String(ahora.getSeconds()).padStart(2,'0');
+    document.getElementById('reloj').textContent = h + ':' + m + ':' + s;
   }
   actualizar();
   setInterval(actualizar, 1000);
 }
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarBloqueActivo()
-//  Dibuja el bloque actual con sus chips de parejas
-// ---------------------------------------------------------
-function renderizarBloqueActivo() {
-  document.getElementById('actual-nombre').textContent   = bloqueActivo.nombre;
-  document.getElementById('actual-subtitulo').textContent = bloqueActivo.subtitulo;
-
-  const chips = document.getElementById('actual-chips');
-  chips.innerHTML = bloqueActivo.parejas.map((num, i) => `
-    <div class="pareja-chip" style="animation-delay:${i * 0.08}s">
-      #${num}
-    </div>
-  `).join('');
-}
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarSiguientes()
-//  Muestra los próximos bloques con sus pares de números
-// ---------------------------------------------------------
-function renderizarSiguientes() {
-  const grid = document.getElementById('siguientes-grid');
-
-  // Solo mostramos máximo 3 bloques siguientes
-  grid.innerHTML = bloquesSiguientes.slice(0, 3).map(b => `
-    <div class="bloque-siguiente">
-      <!-- Etiqueta de turno -->
-      <div class="siguiente-num">${b.etiqueta}</div>
-
-      <!-- Nombre del bloque -->
-      <div class="siguiente-nombre">${b.nombre}</div>
-
-      <!-- Divisor -->
-      <div class="siguiente-divisor"></div>
-
-      <!-- Números de pareja bien visibles -->
-      <div class="siguiente-parejas-label">Parejas</div>
-      <div class="siguiente-parejas">
-        ${b.parejas.map(n => `<span class="siguiente-chip">#${n}</span>`).join('')}
-      </div>
-    </div>
-  `).join('');
-}
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: renderizarCategorias()
-//  Muestra el conteo por categoría en el sidebar
-// ---------------------------------------------------------
-function renderizarCategorias() {
-  const lista = document.querySelector('.cats-lista');
-  lista.innerHTML = categorias.map(c => `
-    <div class="cat-fila">
-      <span class="cat-nombre">${c.nombre}</span>
-      <span class="cat-num">${c.parejas} parejas</span>
-    </div>
-  `).join('');
-}
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: iniciarTicker()
-//  Rellena el texto del ticker inferior y lo duplica
-//  para que el desplazamiento sea continuo e infinito
-// ---------------------------------------------------------
+// =========================================================
+//  TICKER INFERIOR
+// =========================================================
 function iniciarTicker() {
-  // Unir todos los mensajes con separador
-  const texto = mensajesTicker.join('      ✦      ');
-  // Duplicar para que el loop sea perfecto
-  const ticker = document.getElementById('ticker');
-  ticker.innerHTML = `<span>${texto}</span><span>${texto}</span>`;
+  var texto  = mensajesTicker.join('      ✦      ');
+  var ticker = document.getElementById('ticker');
+  ticker.innerHTML = '<span>' + texto + '</span><span>' + texto + '</span>';
 }
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cambiarBloque(nuevoBloqueData)
-//  Se llama cuando Supabase notifica un cambio de bloque.
-//  Hace una animación de transición antes de actualizar la UI.
-// ---------------------------------------------------------
-function cambiarBloque(nuevoBloqueData) {
-  const contenedor = document.getElementById('bloque-actual');
-
-  // Fade out
-  contenedor.classList.add('fade-out');
-
-  setTimeout(() => {
-    // Actualizar datos
-    bloqueActivo.nombre    = nuevoBloqueData.nombre;
-    bloqueActivo.subtitulo = nuevoBloqueData.subtitulo;
-    bloqueActivo.parejas   = nuevoBloqueData.parejas;
-
-    // Re-renderizar
-    renderizarBloqueActivo();
-
-    // Fade in
-    contenedor.classList.remove('fade-out');
-    contenedor.classList.add('fade-in');
-    setTimeout(() => contenedor.classList.remove('fade-in'), 500);
-  }, 400);
-}
-
 </script>
 </body>
 </html>
