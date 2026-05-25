@@ -7,13 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#40916C;
-      --dorado:#D4A017;--dorado-claro:#F4C430;--crema:#FFF8E7;
-      --blanco:#FFFFFF;--gris-fondo:#F0F2F0;--gris-borde:#D8E0D8;
-      --texto:#1A1A1A;--texto-suave:#5A6A5A;--exito:#27AE60;
-      --error:#C0392B;--advertencia:#E67E22;--info:#2980B9;--sidebar-w:240px;
-    }
+    :root{--verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#40916C;--dorado:#D4A017;--dorado-claro:#F4C430;--crema:#FFF8E7;--blanco:#FFFFFF;--gris-fondo:#F0F2F0;--gris-borde:#D8E0D8;--texto:#1A1A1A;--texto-suave:#5A6A5A;--exito:#27AE60;--error:#C0392B;--advertencia:#E67E22;--info:#2980B9;--sidebar-w:240px;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'DM Sans',sans-serif;background:var(--gris-fondo);color:var(--texto);min-height:100vh;display:flex;}
     .sidebar-nav{width:var(--sidebar-w);background:var(--verde-oscuro);min-height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:50;border-right:2px solid var(--dorado);}
@@ -59,8 +53,7 @@
     tbody tr:last-child td{border-bottom:none;}tbody tr:hover{background:#F8FAF8;}
     .badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:0.2rem 0.65rem;border-radius:999px;}
     .badge-verde{background:#D4EDDA;color:#155724;}.badge-amarillo{background:#FFF3CD;color:#856404;}
-    .badge-rojo{background:#F8D7DA;color:#721C24;}.badge-azul{background:#D1ECF1;color:#0C5460;}
-    .badge-gris{background:#E2E8E2;color:#4A5A4A;}
+    .badge-rojo{background:#F8D7DA;color:#721C24;}.badge-azul{background:#D1ECF1;color:#0C5460;}.badge-gris{background:#E2E8E2;color:#4A5A4A;}
     .num-pareja{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--verde-oscuro);font-weight:700;}
     .buscador-wrap{position:relative;max-width:280px;}
     .buscador-wrap input{width:100%;padding:0.6rem 1rem 0.6rem 2.2rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;background:var(--gris-fondo);}
@@ -79,7 +72,7 @@
     .barra-pts{height:100%;border-radius:999px;background:var(--verde-claro);}
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;}
     .modal-overlay.abierto{display:flex;}
-    .modal{background:var(--blanco);border-radius:16px;padding:2rem;max-width:420px;width:90%;border:2px solid var(--gris-borde);}
+    .modal{background:var(--blanco);border-radius:16px;padding:2rem;max-width:460px;width:90%;border:2px solid var(--gris-borde);}
     .modal h3{font-family:'Playfair Display',serif;color:var(--verde-oscuro);margin-bottom:0.5rem;font-size:1.1rem;}
     .modal p{font-size:0.88rem;color:var(--texto-suave);margin-bottom:1.25rem;}
     .modal-botones{display:flex;gap:0.75rem;}
@@ -88,14 +81,33 @@
     @media(max-width:768px){.sidebar-nav{width:100%;height:auto;min-height:unset;position:relative;flex-direction:row;flex-wrap:wrap;}.main{margin-left:0;}.nav-lista{display:flex;flex-direction:row;padding:0.5rem;flex-wrap:wrap;}.nav-item{padding:0.15rem;}.nav-link{padding:0.5rem 0.75rem;font-size:0.78rem;}.sidebar-usuario{display:none;}.sidebar-logo{width:100%;padding:1rem;}}
     .juez-card{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem;}
     .juez-nombre{font-weight:700;color:var(--verde-oscuro);}.juez-cats{font-size:0.82rem;color:var(--texto-suave);}
-    /* Tarjeta de generar bloques automáticos */
+    /* Banner de grupo activo */
+    .grupo-activo-banner{background:var(--verde-oscuro);border-radius:14px;padding:1rem 1.5rem;margin-bottom:1.5rem;border:2px solid var(--dorado);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;}
+    .grupo-activo-info .label{font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:0.2rem;}
+    .grupo-activo-info .nombre{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--dorado);}
+    /* Selector de grupo */
+    .grupo-selector{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.5rem;background:var(--blanco);border-radius:10px;border:1px solid var(--gris-borde);padding:1rem 1.25rem;}
+    .grupo-selector label{font-size:0.78rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
+    .grupo-selector select{padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;min-width:280px;}
+    .grupo-selector select:focus{border-color:var(--verde-claro);}
+    /* Card generar */
     .card-generar{background:linear-gradient(135deg,var(--verde-oscuro),var(--verde-medio));border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;border:2px solid var(--dorado);color:#fff;}
     .card-generar h3{font-family:'Playfair Display',serif;color:var(--dorado);font-size:1.1rem;margin-bottom:0.5rem;}
-    .card-generar p{font-size:0.85rem;color:rgba(255,255,255,0.75);margin-bottom:1rem;line-height:1.5;}
-    .card-generar ul{font-size:0.82rem;color:rgba(255,255,255,0.65);margin-left:1.25rem;margin-bottom:1rem;line-height:1.8;}
-    .btn-generar{background:var(--dorado);color:var(--verde-oscuro);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;padding:0.85rem 1.5rem;border:none;border-radius:10px;cursor:pointer;transition:background 0.2s;width:100%;}
+    .card-generar p{font-size:0.85rem;color:rgba(255,255,255,0.75);margin-bottom:0.75rem;line-height:1.5;}
+    .btn-generar{background:var(--dorado);color:var(--verde-oscuro);font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:700;padding:0.75rem 1.25rem;border:none;border-radius:10px;cursor:pointer;transition:background 0.2s;}
     .btn-generar:hover{background:var(--dorado-claro);}
     .btn-generar:disabled{background:#aaa;cursor:not-allowed;}
+    /* Card semifinal */
+    .card-semifinal{background:var(--blanco);border-radius:12px;border:2px solid var(--info);padding:1.25rem 1.5rem;margin-bottom:1.25rem;}
+    .card-semifinal h3{font-family:'Playfair Display',serif;color:var(--info);font-size:1rem;margin-bottom:0.5rem;}
+    .card-semifinal p{font-size:0.85rem;color:var(--texto-suave);margin-bottom:0.75rem;line-height:1.5;}
+    .semifinal-controles{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .semifinal-input{width:80px;padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;text-align:center;}
+    .semifinal-input:focus{border-color:var(--info);}
+    /* Tabs de ronda */
+    .ronda-tabs{display:flex;gap:0.5rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+    .ronda-tab{padding:0.5rem 1rem;border-radius:8px;border:1.5px solid var(--gris-borde);background:var(--blanco);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;color:var(--texto-suave);transition:all 0.15s;}
+    .ronda-tab.activo{border-color:var(--verde-claro);background:#EBF5EF;color:var(--verde-oscuro);}
   </style>
 </head>
 <body>
@@ -112,10 +124,7 @@
     <li class="nav-item"><button class="nav-link" onclick="mostrarVista('resultados',this)"><span class="icono">🏆</span> Resultados</button></li>
     <li class="nav-item"><button class="nav-link" onclick="mostrarVista('jueces',this)"><span class="icono">⚖️</span> Jueces</button></li>
   </ul>
-  <div class="sidebar-usuario">
-    <strong id="nombre-admin">Admin</strong>
-    Panel de control general
-  </div>
+  <div class="sidebar-usuario"><strong id="nombre-admin">Admin</strong>Panel de control general</div>
 </nav>
 
 <div class="main">
@@ -133,29 +142,41 @@
     <div class="vista activa" id="vista-resumen">
       <div class="stats-grid">
         <div class="stat-card verde"><div class="stat-label">Parejas registradas</div><div class="stat-num" id="stat-total">—</div></div>
-        <div class="stat-card dorado"><div class="stat-label">Confirmadas hoy</div><div class="stat-num" id="stat-confirmadas">—</div></div>
+        <div class="stat-card dorado"><div class="stat-label">Confirmadas</div><div class="stat-num" id="stat-confirmadas">—</div></div>
         <div class="stat-card naranja"><div class="stat-label">Por confirmar</div><div class="stat-num" id="stat-pendientes">—</div></div>
         <div class="stat-card azul"><div class="stat-label">Bloques totales</div><div class="stat-num" id="stat-bloques">—</div></div>
       </div>
-      <div class="seccion-header"><div class="seccion-titulo">Bloque en curso</div></div>
-      <div class="form-card" style="border-left:4px solid var(--dorado);">
-        <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--texto-suave);margin-bottom:0.4rem;">Bloque activo</p>
-        <p style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--verde-oscuro);margin-bottom:0.5rem;" id="nombre-bloque-actual">Sin bloque activo</p>
+      <!-- Grupo en curso -->
+      <div class="grupo-activo-banner" id="banner-grupo-activo">
+        <div class="grupo-activo-info">
+          <div class="label">Grupo en curso ahora</div>
+          <div class="nombre" id="nombre-grupo-activo">Sin bloque activo</div>
+        </div>
         <div id="badges-bloque-actual"></div>
+      </div>
+      <!-- Progreso por grupo -->
+      <div class="seccion-header"><div class="seccion-titulo">Progreso por grupo (categoría / estilo)</div></div>
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Categoría / Estilo</th><th>Parejas confirmadas</th><th>Bloques 1ª ronda</th><th>Calificados</th><th>Estado</th></tr></thead>
+          <tbody id="tabla-progreso-body"><tr><td colspan="5" style="text-align:center;color:var(--texto-suave);padding:2rem;">Cargando...</td></tr></tbody>
+        </table>
       </div>
     </div>
 
     <!-- VISTA 2: PAREJAS -->
     <div class="vista" id="vista-parejas">
-      <div class="seccion-header">
-        <div class="seccion-titulo">Gestión de parejas</div>
-        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
-          <div class="buscador-wrap">
-            <span class="ico-buscar">🔍</span>
-            <input type="text" placeholder="Buscar..." oninput="filtrarTabla(this.value)" />
-          </div>
-          <button class="btn btn-dorado" onclick="exportarCSV()">⬇ Exportar CSV</button>
+      <!-- Selector de grupo -->
+      <div class="grupo-selector">
+        <label>Filtrar por grupo:</label>
+        <select id="filtro-grupo-parejas" onchange="filtrarParejasPorGrupo(this.value)">
+          <option value="">Todas las parejas</option>
+        </select>
+        <div class="buscador-wrap" style="margin-left:auto;">
+          <span class="ico-buscar">🔍</span>
+          <input type="text" placeholder="Buscar nombre o número..." oninput="filtrarTabla(this.value)" />
         </div>
+        <button class="btn btn-dorado" onclick="exportarCSV()">⬇ CSV</button>
       </div>
       <div class="tabla-wrap">
         <table>
@@ -167,54 +188,45 @@
 
     <!-- VISTA 3: BLOQUES -->
     <div class="vista" id="vista-bloques">
-
-      <!-- ===== TARJETA DE GENERACIÓN AUTOMÁTICA ===== -->
+      <!-- Generar primera ronda -->
       <div class="card-generar">
-        <h3>🎯 Generar bloques automáticamente</h3>
-        <p>
-          Crea todos los bloques de primera ronda de un jalón, usando solo las parejas
-          que ya fueron <strong>confirmadas</strong> por el encargado.
-        </p>
-        <ul>
-          <li>Se agrupan por categoría + estilo</li>
-          <li>Bloques de mínimo 2 y máximo 6 parejas, lo más equilibrados posible</li>
-          <li>Solo parejas con presencia confirmada</li>
-          <li>Si ya hay bloques pendientes, se reemplazan</li>
-        </ul>
-        <button class="btn-generar" id="btn-generar-bloques" onclick="generarBloques()">
-          ⚡ Generar todos los bloques de primera ronda
-        </button>
+        <h3>🎯 Generar bloques de primera ronda</h3>
+        <p>Crea todos los bloques usando solo parejas confirmadas, agrupadas por categoría + estilo, con orden aleatorio. Los bloques pendientes anteriores se reemplazan.</p>
+        <button class="btn-generar" id="btn-generar-bloques" onclick="generarBloques()">⚡ Generar primera ronda</button>
       </div>
 
-      <!-- Crear bloque manual -->
-      <div class="seccion-header"><div class="seccion-titulo">O crear bloque manualmente</div></div>
-      <div class="form-card">
-        <div class="form-grid">
-          <div class="campo-grupo"><label>Categoría</label>
-            <select id="nuevo-cat">
-              <option value="">— Selecciona —</option>
-              <option>Pequeños Guapangueritos</option><option>Infantil</option><option>Juvenil</option><option>Adulto</option>
-            </select>
+      <!-- Generar semifinal -->
+      <div class="card-semifinal">
+        <h3>🏅 Generar semifinal</h3>
+        <p>Selecciona el grupo y cuántas parejas pasan a la semifinal. La final siempre tendrá exactamente 6 parejas.</p>
+        <div class="semifinal-controles">
+          <select id="semi-grupo" style="padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;min-width:250px;">
+            <option value="">— Selecciona grupo —</option>
+          </select>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label style="font-size:0.82rem;color:var(--texto-suave);white-space:nowrap;">Parejas a semifinal:</label>
+            <input type="number" id="semi-cantidad" class="semifinal-input" min="6" max="50" value="10" />
           </div>
-          <div class="campo-grupo"><label>Estilo</label>
-            <select id="nuevo-estilo">
-              <option value="">— Selecciona —</option>
-              <option>Veracruzano</option><option>Poblano</option><option>Hidalguense</option><option>Potosino</option><option>Tamaulipeco</option><option>Queretano</option>
-            </select>
-          </div>
-          <div class="campo-grupo"><label>Ronda</label>
-            <select id="nuevo-ronda">
-              <option value="primera_ronda">Primera ronda</option><option value="semifinal">Semifinal</option><option value="final">Final</option><option value="campeon_de_campeones">Campeón de campeones</option>
-            </select>
-          </div>
-          <div class="campo-grupo"><label>Números de pareja (separados por coma)</label>
-            <input type="text" id="nuevo-parejas" placeholder="234, 245, 256" />
-          </div>
+          <button class="btn btn-primary" onclick="generarSemifinal()">Generar semifinal</button>
         </div>
-        <button class="btn btn-primary" onclick="crearBloque()">+ Crear bloque manual</button>
       </div>
 
-      <div class="seccion-header"><div class="seccion-titulo">Bloques del concurso</div></div>
+      <!-- Filtro de ronda y grupo -->
+      <div class="grupo-selector">
+        <label>Grupo:</label>
+        <select id="filtro-grupo-bloques" onchange="filtrarBloquesPorGrupo(this.value)">
+          <option value="">Todos los grupos</option>
+        </select>
+        <label style="margin-left:0.5rem;">Ronda:</label>
+        <select id="filtro-ronda-bloques" onchange="filtrarBloquesPorGrupo(document.getElementById('filtro-grupo-bloques').value)" style="padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;">
+          <option value="">Todas</option>
+          <option value="primera_ronda">Primera ronda</option>
+          <option value="semifinal">Semifinal</option>
+          <option value="final">Final</option>
+          <option value="campeon_de_campeones">Campeón de campeones</option>
+        </select>
+      </div>
+
       <div class="tabla-wrap">
         <table>
           <thead><tr><th>Bloque</th><th>Categoría / Estilo</th><th>Ronda</th><th>Parejas</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -225,15 +237,12 @@
 
     <!-- VISTA 4: RESULTADOS -->
     <div class="vista" id="vista-resultados">
-      <div class="seccion-header">
-        <div class="seccion-titulo">Tabla de resultados en tiempo real</div>
-        <div style="display:flex;gap:0.75rem;">
-          <select id="filtro-cat-resultados" onchange="filtrarResultados(this.value)" style="padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;">
-            <option value="">Todas las categorías</option>
-            <option>Pequeños Guapangueritos</option><option>Infantil</option><option>Juvenil</option><option>Adulto</option>
-          </select>
-          <button class="btn btn-dorado" onclick="exportarResultados()">⬇ Exportar</button>
-        </div>
+      <div class="grupo-selector">
+        <label>Grupo:</label>
+        <select id="filtro-grupo-resultados" onchange="filtrarResultadosPorGrupo(this.value)" style="padding:0.5rem 0.75rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;min-width:280px;">
+          <option value="">Todos los grupos</option>
+        </select>
+        <button class="btn btn-dorado" onclick="exportarResultados()" style="margin-left:auto;">⬇ Exportar</button>
       </div>
       <div class="tabla-wrap">
         <table>
@@ -255,11 +264,11 @@
   </div>
 </div>
 
-<!-- MODAL: ELIMINAR PAREJA -->
+<!-- MODALES -->
 <div class="modal-overlay" id="modal-eliminar">
   <div class="modal">
     <h3>⚠️ Eliminar pareja</h3>
-    <p id="modal-eliminar-texto">¿Seguro que deseas eliminar esta pareja?</p>
+    <p id="modal-eliminar-texto">¿Seguro?</p>
     <div class="modal-botones">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-eliminar')">Cancelar</button>
       <button class="btn btn-danger" onclick="confirmarEliminar()">Sí, eliminar</button>
@@ -267,11 +276,10 @@
   </div>
 </div>
 
-<!-- MODAL: CONFIRMAR GENERAR BLOQUES -->
 <div class="modal-overlay" id="modal-generar">
   <div class="modal">
-    <h3>⚡ Generar bloques automáticamente</h3>
-    <p id="modal-generar-texto">Se crearán bloques para todas las parejas confirmadas. Los bloques pendientes anteriores serán reemplazados. ¿Continuar?</p>
+    <h3>⚡ Generar bloques</h3>
+    <p id="modal-generar-texto"></p>
     <div class="modal-botones">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-generar')">Cancelar</button>
       <button class="btn btn-dorado" onclick="confirmarGenerarBloques()">⚡ Sí, generar</button>
@@ -279,29 +287,24 @@
   </div>
 </div>
 
-<!-- MODAL: AGREGAR USUARIO -->
+<div class="modal-overlay" id="modal-semifinal">
+  <div class="modal">
+    <h3>🏅 Confirmar semifinal</h3>
+    <p id="modal-semifinal-texto"></p>
+    <div class="modal-botones">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-semifinal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarSemifinal()">Generar semifinal</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-usuario">
   <div class="modal">
     <h3>Agregar juez o encargado</h3>
-    <p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:1rem;line-height:1.5;">
-      Primero ve a <strong>Supabase → Authentication → Users → Add user</strong>,
-      crea la cuenta, y luego regresa aquí para asignarle el rol.
-    </p>
-    <div class="campo-grupo">
-      <label>Nombre completo</label>
-      <input type="text" id="nuevo-usuario-nombre" placeholder="Nombre completo" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
-    </div>
-    <div class="campo-grupo">
-      <label>Correo electrónico</label>
-      <input type="email" id="nuevo-usuario-correo" placeholder="correo@ejemplo.com" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" />
-    </div>
-    <div class="campo-grupo">
-      <label>Rol</label>
-      <select id="nuevo-usuario-rol" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;">
-        <option value="juez">Juez</option>
-        <option value="encargado">Encargado</option>
-      </select>
-    </div>
+    <p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:1rem;line-height:1.5;">Primero ve a <strong>Supabase → Authentication → Users → Add user</strong>, crea la cuenta, y luego regresa aquí para asignarle el rol.</p>
+    <div class="campo-grupo"><label>Nombre completo</label><input type="text" id="nuevo-usuario-nombre" placeholder="Nombre completo" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" /></div>
+    <div class="campo-grupo"><label>Correo electrónico</label><input type="email" id="nuevo-usuario-correo" placeholder="correo@ejemplo.com" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;" /></div>
+    <div class="campo-grupo"><label>Rol</label><select id="nuevo-usuario-rol" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gris-borde);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;"><option value="juez">Juez</option><option value="encargado">Encargado</option></select></div>
     <div class="modal-botones">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-usuario')">Cancelar</button>
       <button class="btn btn-primary" id="btn-agregar-usuario" onclick="agregarUsuario()">Asignar rol</button>
@@ -318,63 +321,353 @@ var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 var parejas=[], bloques=[], resultados=[], usuarios=[], parejaAEliminar=null;
+var grupoActivo = null; // { categoria, estilo } del bloque en curso
+var semifinalPendiente = null; // datos para confirmar semifinal
+
 var titulosVistas = {
   resumen:'Resumen del evento', parejas:'Gestión de parejas',
   bloques:'Control de bloques', resultados:'Resultados en tiempo real',
   jueces:'Gestión de jueces y encargados'
 };
 
+// =========================================================
+//  INICIALIZACIÓN
+// =========================================================
 window.addEventListener('DOMContentLoaded', async function() {
   var session = (await supabase.auth.getSession()).data.session;
   if (!session) { window.location.href = 'login.html'; return; }
   var res = await supabase.from('usuarios').select('rol,nombre').eq('correo', session.user.email).maybeSingle();
   if (!res.data || res.data.rol !== 'admin') { await supabase.auth.signOut(); window.location.href = 'login.html'; return; }
   document.getElementById('nombre-admin').textContent = res.data.nombre || 'Admin';
-  document.getElementById('fecha-topbar').textContent = new Date().toLocaleDateString('es-MX', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('fecha-topbar').textContent = new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   await cargarTodo();
   supabase.channel('admin-rt')
-    .on('postgres_changes', {event:'*', schema:'public', table:'parejas'}, cargarParejas)
-    .on('postgres_changes', {event:'*', schema:'public', table:'bloques'}, cargarBloques)
+    .on('postgres_changes',{event:'*',schema:'public',table:'parejas'}, cargarParejas)
+    .on('postgres_changes',{event:'*',schema:'public',table:'bloques'}, cargarBloques)
+    .on('postgres_changes',{event:'*',schema:'public',table:'calificaciones'}, cargarResultados)
     .subscribe();
 });
 
 async function cerrarSesion() { await supabase.auth.signOut(); window.location.href = 'login.html'; }
-
 async function cargarTodo() { await Promise.all([cargarParejas(), cargarBloques(), cargarResultados(), cargarUsuarios()]); }
 
+// =========================================================
+//  CARGAR PAREJAS
+// =========================================================
 async function cargarParejas() {
   var r = await supabase.from('parejas').select('*').order('numero');
   if (r.error) { console.error(r.error); return; }
-  parejas = r.data.map(function(p) {
-    return {id:p.id, numero:p.numero, cat:p.categoria_nombre, estilo:p.estilo,
-      nombre1:p.nombre1, nombre2:p.nombre2, correo:p.correo, tel:p.telefono, confirmado:p.confirmado};
+  parejas = r.data.map(function(p){
+    return {id:p.id,numero:p.numero,cat:p.categoria_nombre,estilo:p.estilo,
+      nombre1:p.nombre1,nombre2:p.nombre2,correo:p.correo,tel:p.telefono,confirmado:p.confirmado};
   });
   renderizarTablaParejas(parejas);
   var conf = parejas.filter(function(p){return p.confirmado;}).length;
   document.getElementById('stat-total').textContent       = parejas.length;
   document.getElementById('stat-confirmadas').textContent = conf;
   document.getElementById('stat-pendientes').textContent  = parejas.length - conf;
+  poblarSelectoresGrupo();
 }
 
+// =========================================================
+//  CARGAR BLOQUES
+// =========================================================
 async function cargarBloques() {
   var r = await supabase.from('bloques').select('id,nombre,categoria,estilo,ronda,estado,orden,bloque_parejas(pareja_num)').order('orden');
   if (r.error) { console.error(r.error); return; }
-  bloques = r.data.map(function(b) {
-    return {id:b.id, nombre:b.nombre, cat:b.categoria, estilo:b.estilo,
-      ronda:b.ronda, estado:b.estado, parejas:b.bloque_parejas.map(function(bp){return bp.pareja_num;})};
+  bloques = r.data.map(function(b){
+    return {id:b.id,nombre:b.nombre,cat:b.categoria,estilo:b.estilo,
+      ronda:b.ronda,estado:b.estado,parejas:b.bloque_parejas.map(function(bp){return bp.pareja_num;})};
   });
-  renderizarTablaBloques();
   document.getElementById('stat-bloques').textContent = bloques.length;
+
+  // Detectar grupo activo
   var activo = bloques.find(function(b){return b.estado==='en_curso';});
-  document.getElementById('nombre-bloque-actual').textContent = activo ? (activo.nombre) : 'Sin bloque activo';
-  document.getElementById('badges-bloque-actual').innerHTML = activo
-    ? '<span class="badge badge-amarillo">⏳ En curso</span> <span class="badge badge-azul">'+activo.parejas.length+' parejas</span>' : '';
+  if (activo) {
+    grupoActivo = {categoria:activo.cat, estilo:activo.estilo};
+    document.getElementById('nombre-grupo-activo').textContent = activo.nombre + ' — ' + activo.cat + ' / ' + activo.estilo;
+    document.getElementById('badges-bloque-actual').innerHTML =
+      '<span class="badge badge-amarillo">⏳ En curso</span> <span class="badge badge-azul">'+activo.parejas.length+' parejas</span>';
+  } else {
+    grupoActivo = null;
+    document.getElementById('nombre-grupo-activo').textContent = 'Sin bloque activo';
+    document.getElementById('badges-bloque-actual').innerHTML = '';
+  }
+
+  renderizarTablaBloques(bloques);
+  renderizarProgreso();
+  poblarSelectoresGrupo();
 }
 
+// =========================================================
+//  POBLAR SELECTORES DE GRUPO
+// =========================================================
+function poblarSelectoresGrupo() {
+  // Obtener grupos únicos de parejas confirmadas
+  var grupos = {};
+  parejas.filter(function(p){return p.confirmado;}).forEach(function(p){
+    var key = p.cat + ' / ' + p.estilo;
+    if (!grupos[key]) grupos[key] = {cat:p.cat, estilo:p.estilo, key:key};
+  });
+  var opciones = Object.values(grupos).sort(function(a,b){return a.key.localeCompare(b.key);});
+
+  // Actualizar todos los selectores de grupo
+  ['filtro-grupo-parejas','filtro-grupo-bloques','filtro-grupo-resultados','semi-grupo'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    var valorActual = sel.value;
+    var primerOpcion = sel.options[0].outerHTML;
+    sel.innerHTML = primerOpcion + opciones.map(function(g){
+      return '<option value="'+g.key+'">'+g.key+'</option>';
+    }).join('');
+    sel.value = valorActual;
+  });
+}
+
+// =========================================================
+//  RENDERIZAR TABLA DE PROGRESO (resumen)
+// =========================================================
+function renderizarProgreso() {
+  var tbody = document.getElementById('tabla-progreso-body');
+  if (!tbody) return;
+
+  // Agrupar parejas confirmadas por categoría/estilo
+  var grupos = {};
+  parejas.filter(function(p){return p.confirmado;}).forEach(function(p){
+    var key = p.cat + ' / ' + p.estilo;
+    if (!grupos[key]) grupos[key] = {key:key, cat:p.cat, estilo:p.estilo, total:0};
+    grupos[key].total++;
+  });
+
+  // Contar bloques y calificados por grupo
+  bloques.forEach(function(b){
+    var key = b.cat + ' / ' + b.estilo;
+    if (!grupos[key]) grupos[key] = {key:key, cat:b.cat, estilo:b.estilo, total:0};
+    if (!grupos[key].bloques) grupos[key].bloques = 0;
+    if (!grupos[key].terminados) grupos[key].terminados = 0;
+    if (b.ronda === 'primera_ronda') {
+      grupos[key].bloques++;
+      if (b.estado === 'terminado') grupos[key].terminados++;
+    }
+  });
+
+  var lista = Object.values(grupos).sort(function(a,b){return a.key.localeCompare(b.key);});
+
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--texto-suave);padding:2rem;">Sin datos aún</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = lista.map(function(g){
+    var bloqTotal = g.bloques || 0;
+    var term = g.terminados || 0;
+    var pct = bloqTotal > 0 ? Math.round(term/bloqTotal*100) : 0;
+    var esCurso = grupoActivo && grupoActivo.categoria === g.cat && grupoActivo.estilo === g.estilo;
+    var estado = esCurso ? '<span class="badge badge-amarillo">⏳ En curso</span>' :
+                 (term === bloqTotal && bloqTotal > 0) ? '<span class="badge badge-verde">✓ Completo</span>' :
+                 '<span class="badge badge-gris">Pendiente</span>';
+    return '<tr'+(esCurso?' style="background:#FFFBEF;"':'')+'>' +
+      '<td><strong>'+g.key+'</strong></td>'+
+      '<td>'+g.total+'</td>'+
+      '<td>'+term+' / '+bloqTotal+'</td>'+
+      '<td><div style="width:100px;height:6px;background:var(--gris-borde);border-radius:999px;display:inline-block;vertical-align:middle;"><div style="width:'+pct+'%;height:100%;background:var(--verde-claro);border-radius:999px;"></div></div> '+pct+'%</td>'+
+      '<td>'+estado+'</td>'+
+      '</tr>';
+  }).join('');
+}
+
+// =========================================================
+//  TABLA DE PAREJAS
+// =========================================================
+function renderizarTablaParejas(lista) {
+  var tbody = document.getElementById('tabla-parejas-body');
+  if (!lista.length) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay parejas</td></tr>'; return; }
+  tbody.innerHTML = lista.map(function(p){
+    return '<tr>'+
+      '<td><span class="num-pareja">#'+p.numero+'</span></td>'+
+      '<td><div style="font-weight:700;font-size:0.88rem;">'+p.nombre1+'</div><div style="color:var(--texto-suave);font-size:0.82rem;">'+p.nombre2+'</div></td>'+
+      '<td>'+(p.cat||'—')+'</td><td>'+(p.estilo||'—')+'</td>'+
+      '<td><div style="font-size:0.82rem;">'+p.correo+'</div></td>'+
+      '<td><span class="badge '+(p.confirmado?'badge-verde':'badge-amarillo')+'">'+(p.confirmado?'✓ Confirmada':'Pendiente')+'</span></td>'+
+      '<td><button class="btn btn-danger btn-sm" onclick="pedirEliminar(\''+p.id+'\')">🗑</button></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function filtrarParejasPorGrupo(grupo) {
+  if (!grupo) { renderizarTablaParejas(parejas); return; }
+  var partes = grupo.split(' / ');
+  renderizarTablaParejas(parejas.filter(function(p){return p.cat===partes[0] && p.estilo===partes[1];}));
+}
+
+function filtrarTabla(texto) {
+  var q = texto.toLowerCase();
+  var grupo = document.getElementById('filtro-grupo-parejas').value;
+  var base = grupo ? parejas.filter(function(p){var parts=grupo.split(' / ');return p.cat===parts[0]&&p.estilo===parts[1];}) : parejas;
+  renderizarTablaParejas(q ? base.filter(function(p){return p.numero.includes(q)||p.nombre1.toLowerCase().includes(q)||p.nombre2.toLowerCase().includes(q);}) : base);
+}
+
+function pedirEliminar(id) {
+  parejaAEliminar=id;
+  var p=parejas.find(function(x){return x.id===id;});
+  document.getElementById('modal-eliminar-texto').textContent='¿Eliminar pareja #'+p.numero+' ('+p.nombre1+' & '+p.nombre2+')?';
+  document.getElementById('modal-eliminar').classList.add('abierto');
+}
+async function confirmarEliminar() {
+  var r=await supabase.from('parejas').delete().eq('id',parejaAEliminar);
+  if (r.error) { mostrarToast('⚠ Error al eliminar'); } else { mostrarToast('🗑 Pareja eliminada'); await cargarParejas(); }
+  cerrarModal('modal-eliminar'); parejaAEliminar=null;
+}
+
+function exportarCSV() {
+  var enc=['Número','Integrante 1','Integrante 2','Categoría','Estilo','Correo','Teléfono','Confirmada'];
+  var filas=parejas.map(function(p){return [p.numero,p.nombre1,p.nombre2,p.cat,p.estilo,p.correo,p.tel,p.confirmado?'Sí':'No'];});
+  descargarCSV([enc].concat(filas),'parejas-huapango-'+new Date().toISOString().slice(0,10)+'.csv');
+  mostrarToast('⬇ CSV descargado');
+}
+
+// =========================================================
+//  BLOQUES
+// =========================================================
+function renderizarTablaBloques(lista) {
+  var tbody = document.getElementById('tabla-bloques-body');
+  if (!lista || !lista.length) { tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay bloques</td></tr>'; return; }
+  var estadoLabel={en_curso:'⏳ En curso',terminado:'✓ Terminado',pendiente:'Pendiente'};
+  var estadoBadge={en_curso:'badge-amarillo',terminado:'badge-verde',pendiente:'badge-gris'};
+  tbody.innerHTML=lista.map(function(b){
+    return '<tr>'+
+      '<td style="font-weight:700;">'+b.nombre+'</td>'+
+      '<td>'+b.cat+' / '+b.estilo+'</td>'+
+      '<td>'+(b.ronda||'').replace(/_/g,' ')+'</td>'+
+      '<td>'+b.parejas.map(function(n){return '<span class="badge badge-gris">#'+n+'</span>';}).join(' ')+'</td>'+
+      '<td><span class="badge '+(estadoBadge[b.estado]||'badge-gris')+'">'+(estadoLabel[b.estado]||b.estado)+'</span></td>'+
+      '<td>'+(b.estado==='pendiente'
+        ?'<button class="btn btn-primary btn-sm" onclick="activarBloque(\''+b.id+'\')">▶ Activar</button>'
+        :'<button class="btn btn-ghost btn-sm" disabled>'+(b.estado==='terminado'?'Terminado':'En curso')+'</button>')+
+      '</td></tr>';
+  }).join('');
+}
+
+function filtrarBloquesPorGrupo(grupo) {
+  var ronda = document.getElementById('filtro-ronda-bloques').value;
+  var filtrados = bloques;
+  if (grupo) {
+    var partes = grupo.split(' / ');
+    filtrados = filtrados.filter(function(b){return b.cat===partes[0]&&b.estilo===partes[1];});
+  }
+  if (ronda) filtrados = filtrados.filter(function(b){return b.ronda===ronda;});
+  renderizarTablaBloques(filtrados);
+}
+
+function generarBloques() {
+  var conf = parejas.filter(function(p){return p.confirmado;}).length;
+  if (conf===0) { mostrarToast('⚠ No hay parejas confirmadas'); return; }
+  document.getElementById('modal-generar-texto').textContent = 'Se crearán bloques para '+conf+' pareja'+(conf!==1?'s':'')+' confirmada'+(conf!==1?'s':'')+'. ¿Continuar?';
+  document.getElementById('modal-generar').classList.add('abierto');
+}
+
+async function confirmarGenerarBloques() {
+  cerrarModal('modal-generar');
+  var btn=document.getElementById('btn-generar-bloques');
+  btn.disabled=true; btn.textContent='⏳ Generando...';
+  var r=await supabase.rpc('generar_bloques_primera_ronda');
+  btn.disabled=false; btn.textContent='⚡ Generar primera ronda';
+  if (r.error||r.data?.error) { mostrarToast('⚠ Error: '+(r.data?.error||r.error?.message)); return; }
+  await cargarBloques();
+  mostrarToast('✅ '+(r.data?.bloques_creados||'?')+' bloques generados');
+}
+
+async function activarBloque(id) {
+  var anterior=bloques.find(function(b){return b.estado==='en_curso';});
+  if (anterior) await supabase.from('bloques').update({estado:'terminado'}).eq('id',anterior.id);
+  var r=await supabase.from('bloques').update({estado:'en_curso'}).eq('id',id);
+  if (r.error) { mostrarToast('⚠ Error al activar'); return; }
+  await cargarBloques(); mostrarToast('🟡 Bloque activado');
+}
+
+// =========================================================
+//  SEMIFINAL
+// =========================================================
+function generarSemifinal() {
+  var grupoVal = document.getElementById('semi-grupo').value;
+  var cantidad  = parseInt(document.getElementById('semi-cantidad').value);
+
+  if (!grupoVal) { mostrarToast('⚠ Selecciona un grupo'); return; }
+  if (!cantidad || cantidad < 6) { mostrarToast('⚠ Mínimo 6 parejas para semifinal'); return; }
+
+  var partes = grupoVal.split(' / ');
+  semifinalPendiente = { cat: partes[0], estilo: partes[1], cantidad: cantidad };
+
+  document.getElementById('modal-semifinal-texto').textContent =
+    'Se generará la semifinal de ' + grupoVal + ' con las ' + cantidad + ' mejores parejas de primera ronda, divididas en bloques equilibrados. La final siempre tendrá 6 parejas. ¿Continuar?';
+  document.getElementById('modal-semifinal').classList.add('abierto');
+}
+
+async function confirmarSemifinal() {
+  cerrarModal('modal-semifinal');
+  if (!semifinalPendiente) return;
+
+  var cat      = semifinalPendiente.cat;
+  var estilo   = semifinalPendiente.estilo;
+  var cantidad = semifinalPendiente.cantidad;
+
+  // Obtener los mejores de primera ronda por puntaje promedio
+  var r = await supabase
+    .from('resultados_por_pareja')
+    .select('pareja_num, prom_total')
+    .eq('categoria', cat)
+    .eq('estilo', estilo)
+    .order('prom_total', {ascending: false})
+    .limit(cantidad);
+
+  if (r.error || !r.data || !r.data.length) {
+    mostrarToast('⚠ No hay calificaciones de primera ronda para este grupo');
+    return;
+  }
+
+  var mejores = r.data.map(function(x){return x.pareja_num;});
+
+  // Dividir en bloques equilibrados (máx 6)
+  var numBloques = Math.ceil(mejores.length / 6);
+  var porBloque  = Math.ceil(mejores.length / numBloques);
+
+  // Orden aleatorio
+  mejores = mejores.sort(function(){return Math.random()-0.5;});
+
+  // Obtener el orden máximo actual
+  var maxOrden = bloques.length > 0 ? Math.max.apply(null, bloques.map(function(b){return b.orden||0;})) : 0;
+
+  for (var i = 0; i < numBloques; i++) {
+    var grupo = mejores.slice(i * porBloque, (i + 1) * porBloque);
+    maxOrden++;
+
+    var rb = await supabase.from('bloques').insert([{
+      nombre:    'Bloque ' + (i+1),
+      categoria: cat,
+      estilo:    estilo,
+      ronda:     'semifinal',
+      estado:    'pendiente',
+      orden:     maxOrden,
+    }]).select().single();
+
+    if (rb.error) { mostrarToast('⚠ Error al crear bloque de semifinal'); return; }
+
+    var rels = grupo.map(function(n){return {bloque_id:rb.data.id, pareja_num:n};});
+    await supabase.from('bloque_parejas').insert(rels);
+  }
+
+  semifinalPendiente = null;
+  await cargarBloques();
+  mostrarToast('✅ Semifinal generada con '+mejores.length+' parejas en '+numBloques+' bloque'+(numBloques!==1?'s':''));
+}
+
+// =========================================================
+//  RESULTADOS
+// =========================================================
 async function cargarResultados() {
   var r = await supabase.from('resultados_por_pareja').select('*');
   if (r.error) { console.error(r.error); return; }
-  resultados = r.data.map(function(x) {
+  resultados = r.data.map(function(x){
     return {numero:x.pareja_num, cat:x.categoria, estilo:x.estilo,
       vestuario:parseFloat(x.prom_vestuario)||0, estilo_r:parseFloat(x.prom_estilo)||0,
       creatividad:parseFloat(x.prom_creatividad)||0, limpieza:parseFloat(x.prom_limpieza)||0,
@@ -383,150 +676,10 @@ async function cargarResultados() {
   renderizarTablaResultados(resultados);
 }
 
-async function cargarUsuarios() {
-  var r = await supabase.from('usuarios').select('*').order('nombre');
-  if (r.error) { console.error(r.error); return; }
-  usuarios = r.data;
-  renderizarUsuarios();
-}
-
-function mostrarVista(nombre, btn) {
-  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('activa');});
-  document.getElementById('vista-'+nombre).classList.add('activa');
-  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('activo');});
-  if (btn) btn.classList.add('activo');
-  document.getElementById('titulo-vista').textContent = titulosVistas[nombre] || nombre;
-}
-
-function renderizarTablaParejas(lista) {
-  var tbody = document.getElementById('tabla-parejas-body');
-  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay parejas registradas</td></tr>'; return; }
-  tbody.innerHTML = lista.map(function(p) {
-    return '<tr>'+
-      '<td><span class="num-pareja">#'+p.numero+'</span></td>'+
-      '<td><div style="font-weight:700;font-size:0.88rem;">'+p.nombre1+'</div><div style="color:var(--texto-suave);font-size:0.82rem;">'+p.nombre2+'</div></td>'+
-      '<td>'+(p.cat||'—')+'</td><td>'+(p.estilo||'—')+'</td>'+
-      '<td><div style="font-size:0.82rem;">'+p.correo+'</div><div style="color:var(--texto-suave);font-size:0.8rem;">'+p.tel+'</div></td>'+
-      '<td><span class="badge '+(p.confirmado?'badge-verde':'badge-amarillo')+'">'+(p.confirmado?'✓ Confirmada':'Pendiente')+'</span></td>'+
-      '<td><button class="btn btn-danger btn-sm" onclick="pedirEliminar(\''+p.id+'\')">🗑 Eliminar</button></td>'+
-      '</tr>';
-  }).join('');
-}
-
-function filtrarTabla(texto) {
-  var q = texto.toLowerCase();
-  renderizarTablaParejas(q ? parejas.filter(function(p){
-    return p.numero.includes(q)||p.nombre1.toLowerCase().includes(q)||p.nombre2.toLowerCase().includes(q)||(p.cat||'').toLowerCase().includes(q);
-  }) : parejas);
-}
-
-function pedirEliminar(id) {
-  parejaAEliminar = id;
-  var p = parejas.find(function(x){return x.id===id;});
-  document.getElementById('modal-eliminar-texto').textContent = '¿Seguro que deseas eliminar la pareja #'+p.numero+' ('+p.nombre1+' & '+p.nombre2+')? Esta acción no se puede deshacer.';
-  document.getElementById('modal-eliminar').classList.add('abierto');
-}
-
-async function confirmarEliminar() {
-  var r = await supabase.from('parejas').delete().eq('id', parejaAEliminar);
-  if (r.error) { mostrarToast('⚠ Error al eliminar'); } else { mostrarToast('🗑 Pareja eliminada'); await cargarParejas(); }
-  cerrarModal('modal-eliminar'); parejaAEliminar = null;
-}
-
-function exportarCSV() {
-  var enc = ['Número','Integrante 1','Integrante 2','Categoría','Estilo','Correo','Teléfono','Confirmada'];
-  var filas = parejas.map(function(p){return [p.numero,p.nombre1,p.nombre2,p.cat,p.estilo,p.correo,p.tel,p.confirmado?'Sí':'No'];});
-  descargarCSV([enc].concat(filas), 'parejas-huapango-'+new Date().toISOString().slice(0,10)+'.csv');
-  mostrarToast('⬇ CSV descargado');
-}
-
-// =========================================================
-//  GENERAR BLOQUES AUTOMÁTICAMENTE
-// =========================================================
-function generarBloques() {
-  // Verificar que haya parejas confirmadas antes de abrir el modal
-  var confirmadas = parejas.filter(function(p){return p.confirmado;}).length;
-  if (confirmadas === 0) {
-    mostrarToast('⚠ No hay parejas confirmadas aún. El encargado debe confirmar presencia primero.');
-    return;
-  }
-  document.getElementById('modal-generar-texto').textContent =
-    'Se crearán bloques para ' + confirmadas + ' pareja' + (confirmadas !== 1 ? 's' : '') +
-    ' confirmada' + (confirmadas !== 1 ? 's' : '') +
-    '. Los bloques pendientes anteriores serán reemplazados. ¿Continuar?';
-  document.getElementById('modal-generar').classList.add('abierto');
-}
-
-async function confirmarGenerarBloques() {
-  cerrarModal('modal-generar');
-  var btn = document.getElementById('btn-generar-bloques');
-  btn.disabled = true;
-  btn.textContent = '⏳ Generando bloques...';
-
-  // Llamar a la función SQL que creamos
-  var r = await supabase.rpc('generar_bloques_primera_ronda');
-
-  btn.disabled = false;
-  btn.textContent = '⚡ Generar todos los bloques de primera ronda';
-
-  if (r.error) {
-    mostrarToast('⚠ Error al generar bloques: ' + r.error.message);
-    console.error(r.error);
-    return;
-  }
-
-  if (r.data && r.data.error) {
-    mostrarToast('⚠ Error: ' + r.data.error);
-    return;
-  }
-
-  var creados = r.data && r.data.bloques_creados ? r.data.bloques_creados : '?';
-  await cargarBloques();
-  mostrarToast('✅ ' + creados + ' bloques generados correctamente');
-}
-
-function renderizarTablaBloques() {
-  var tbody = document.getElementById('tabla-bloques-body');
-  if (!bloques.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--texto-suave);padding:2rem;">No hay bloques creados</td></tr>'; return; }
-  var estadoLabel = {en_curso:'⏳ En curso', terminado:'✓ Terminado', pendiente:'Pendiente'};
-  var estadoBadge = {en_curso:'badge-amarillo', terminado:'badge-verde', pendiente:'badge-gris'};
-  tbody.innerHTML = bloques.map(function(b) {
-    return '<tr>'+
-      '<td style="font-weight:700;">'+b.nombre+'</td>'+
-      '<td>'+b.cat+' / '+b.estilo+'</td>'+
-      '<td>'+(b.ronda||'').replace(/_/g,' ')+'</td>'+
-      '<td>'+b.parejas.map(function(n){return '<span class="badge badge-gris">#'+n+'</span>';}).join(' ')+'</td>'+
-      '<td><span class="badge '+(estadoBadge[b.estado]||'badge-gris')+'">'+(estadoLabel[b.estado]||b.estado)+'</span></td>'+
-      '<td>'+(b.estado==='pendiente'
-        ? '<button class="btn btn-primary btn-sm" onclick="activarBloque(\''+b.id+'\')">▶ Activar</button>'
-        : '<button class="btn btn-ghost btn-sm" disabled>'+(b.estado==='terminado'?'Terminado':'En curso')+'</button>')+
-      '</td></tr>';
-  }).join('');
-}
-
-async function crearBloque() {
-  var cat=document.getElementById('nuevo-cat').value, estilo=document.getElementById('nuevo-estilo').value;
-  var ronda=document.getElementById('nuevo-ronda').value, parsRaw=document.getElementById('nuevo-parejas').value;
-  if (!cat||!estilo||!parsRaw.trim()) { mostrarToast('⚠ Llena todos los campos'); return; }
-  var numParejas=parsRaw.split(',').map(function(s){return s.trim();}).filter(Boolean);
-  var nombre='Bloque '+(bloques.length+1), orden=bloques.length+1;
-  var r=await supabase.from('bloques').insert([{nombre:nombre,categoria:cat,estilo:estilo,ronda:ronda,estado:'pendiente',orden:orden}]).select().single();
-  if (r.error) { mostrarToast('⚠ Error al crear bloque'); return; }
-  var rels=numParejas.map(function(n){return {bloque_id:r.data.id,pareja_num:n};});
-  var r2=await supabase.from('bloque_parejas').insert(rels);
-  if (r2.error) { mostrarToast('⚠ Error al asignar parejas'); return; }
-  await cargarBloques();
-  mostrarToast('✓ '+nombre+' creado');
-  document.getElementById('nuevo-cat').value=''; document.getElementById('nuevo-estilo').value=''; document.getElementById('nuevo-parejas').value='';
-}
-
-async function activarBloque(id) {
-  var anterior=bloques.find(function(b){return b.estado==='en_curso';});
-  if (anterior) await supabase.from('bloques').update({estado:'terminado'}).eq('id',anterior.id);
-  var r=await supabase.from('bloques').update({estado:'en_curso'}).eq('id',id);
-  if (r.error) { mostrarToast('⚠ Error al activar'); return; }
-  await cargarBloques();
-  mostrarToast('🟡 Bloque activado');
+function filtrarResultadosPorGrupo(grupo) {
+  if (!grupo) { renderizarTablaResultados(resultados); return; }
+  var partes = grupo.split(' / ');
+  renderizarTablaResultados(resultados.filter(function(r){return r.cat===partes[0]&&r.estilo===partes[1];}));
 }
 
 function renderizarTablaResultados(lista) {
@@ -535,7 +688,7 @@ function renderizarTablaResultados(lista) {
   var ordenados=lista.slice().sort(function(a,b){return b.total-a.total;});
   var emojis=['🥇','🥈','🥉'];
   tbody.innerHTML=ordenados.map(function(r,i){
-    var pos=i+1, cls=pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
+    var pos=i+1,cls=pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
     return '<tr>'+
       '<td><span class="posicion-num '+cls+'">'+(pos<=3?emojis[pos-1]:pos)+'</span></td>'+
       '<td><span class="num-pareja">#'+r.numero+'</span></td>'+
@@ -548,14 +701,21 @@ function renderizarTablaResultados(lista) {
   }).join('');
 }
 
-function filtrarResultados(cat) { renderizarTablaResultados(cat?resultados.filter(function(r){return r.cat===cat;}):resultados); }
-
 function exportarResultados() {
   var enc=['Posición','Pareja','Categoría','Estilo','Vestuario','Estilo','Creatividad','Limpieza','Porte','Total'];
   var ord=resultados.slice().sort(function(a,b){return b.total-a.total;});
   var filas=ord.map(function(r,i){return [i+1,'#'+r.numero,r.cat,r.estilo,r.vestuario.toFixed(1),r.estilo_r.toFixed(1),r.creatividad.toFixed(1),r.limpieza.toFixed(1),r.porte.toFixed(1),r.total.toFixed(1)];});
   descargarCSV([enc].concat(filas),'resultados-huapango-'+new Date().toISOString().slice(0,10)+'.csv');
   mostrarToast('⬇ Resultados descargados');
+}
+
+// =========================================================
+//  USUARIOS
+// =========================================================
+async function cargarUsuarios() {
+  var r=await supabase.from('usuarios').select('*').order('nombre');
+  if (r.error) { console.error(r.error); return; }
+  usuarios=r.data; renderizarUsuarios();
 }
 
 function renderizarUsuarios() {
@@ -600,21 +760,30 @@ async function eliminarUsuario(id, nombre) {
   await cargarUsuarios(); mostrarToast('🗑 '+nombre+' eliminado');
 }
 
+// =========================================================
+//  NAVEGACIÓN
+// =========================================================
+function mostrarVista(nombre, btn) {
+  document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('activa');});
+  document.getElementById('vista-'+nombre).classList.add('activa');
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('activo');});
+  if (btn) btn.classList.add('activo');
+  document.getElementById('titulo-vista').textContent = titulosVistas[nombre]||nombre;
+}
+
+// =========================================================
+//  UTILIDADES
+// =========================================================
 function descargarCSV(filas, nombreArchivo) {
   var csv=filas.map(function(f){return f.map(function(c){return '"'+c+'"';}).join(',');}).join('\n');
   var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  var url=URL.createObjectURL(blob);
-  var link=document.createElement('a');
-  link.href=url; link.download=nombreArchivo; link.click();
-  URL.revokeObjectURL(url);
+  var url=URL.createObjectURL(blob); var link=document.createElement('a');
+  link.href=url; link.download=nombreArchivo; link.click(); URL.revokeObjectURL(url);
 }
-
 function cerrarModal(id) { document.getElementById(id).classList.remove('abierto'); }
-
 function mostrarToast(mensaje) {
-  var toast=document.getElementById('toast');
-  toast.textContent=mensaje; toast.classList.add('visible');
-  setTimeout(function(){toast.classList.remove('visible');},2800);
+  var toast=document.getElementById('toast'); toast.textContent=mensaje;
+  toast.classList.add('visible'); setTimeout(function(){toast.classList.remove('visible');},2800);
 }
 </script>
 </body>
