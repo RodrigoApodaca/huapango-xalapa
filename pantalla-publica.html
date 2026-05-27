@@ -5,55 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Pantalla Pública — Huapango Xalapa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <style>
     :root{--negro:#0A0A0A;--verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#52B788;--dorado:#D4A017;--dorado-claro:#F4C430;--crema:#FFF8E7;--blanco:#FFFFFF;--rojo-vivo:#FF3B30;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html,body{width:100%;height:100%;overflow:hidden;background:var(--negro);color:var(--blanco);font-family:'DM Sans',sans-serif;}
     body::before{content:'';position:fixed;inset:0;z-index:0;background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(45,106,79,0.35) 0%,transparent 70%),repeating-linear-gradient(60deg,transparent 0px,transparent 60px,rgba(255,255,255,0.012) 60px,rgba(255,255,255,0.012) 61px);pointer-events:none;}
+
+    /* ===== LAYOUT PRINCIPAL =====
+       3 filas: topbar | cuerpo | barra inferior */
     .layout{position:relative;z-index:1;display:grid;grid-template-rows:auto 1fr auto;height:100vh;}
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 2.5rem;background:rgba(27,67,50,0.6);border-bottom:2px solid var(--dorado);backdrop-filter:blur(8px);}
-    .topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--dorado);letter-spacing:0.06em;}
-    .topbar-logo span{color:var(--crema);font-size:1rem;font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0;margin-left:1rem;}
-    .reloj{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--dorado);letter-spacing:0.08em;}
-    .cuerpo{display:grid;grid-template-columns:1fr 380px;gap:0;overflow:hidden;}
+
+    /* ===== TOPBAR ===== */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 2rem;background:rgba(27,67,50,0.7);border-bottom:2px solid var(--dorado);backdrop-filter:blur(8px);gap:1rem;}
+    .topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--dorado);letter-spacing:0.06em;white-space:nowrap;}
+    .topbar-logo span{color:var(--crema);font-size:0.85rem;font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:0;margin-left:0.75rem;}
+    .reloj{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--dorado);letter-spacing:0.08em;white-space:nowrap;}
+
+    /* ===== TRÍO EN TURNO (centro del topbar) ===== */
+    .trio-wrap{display:flex;align-items:center;gap:0.5rem;background:rgba(212,160,23,0.1);border:1px solid rgba(212,160,23,0.3);padding:0.35rem 1rem;border-radius:999px;}
+    .trio-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+    .trio-nombre{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--dorado-claro);letter-spacing:0.06em;}
+
+    /* ===== CUERPO =====
+       2 columnas: izquierda grande (bloque actual + siguientes) | derecha pequeña (info) */
+    .cuerpo{display:grid;grid-template-columns:1fr 260px;overflow:hidden;}
     @media(max-width:1100px){.cuerpo{grid-template-columns:1fr;}.sidebar-derecho{display:none;}}
-    .col-izq{padding:2rem 2.5rem 1.5rem;display:flex;flex-direction:column;gap:1.5rem;overflow:hidden;}
-    .etiqueta-seccion{font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--verde-claro);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.5rem;}
-    .bloque-en-curso{background:linear-gradient(135deg,rgba(45,106,79,0.5),rgba(27,67,50,0.3));border:2px solid var(--dorado);border-radius:20px;padding:2rem 2.5rem;position:relative;overflow:hidden;}
+
+    /* ===== COLUMNA IZQUIERDA ===== */
+    .col-izq{padding:1.5rem 2rem 1rem;display:flex;flex-direction:column;gap:1.25rem;overflow:hidden;}
+
+    .etiqueta-seccion{font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--verde-claro);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;}
+
+    /* ===== BLOQUE EN CURSO — muy grande para verse en TV ===== */
+    .bloque-en-curso{background:linear-gradient(135deg,rgba(45,106,79,0.5),rgba(27,67,50,0.3));border:2px solid var(--dorado);border-radius:20px;padding:1.75rem 2.5rem;position:relative;overflow:hidden;flex:1;}
     .bloque-en-curso::after{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(212,160,23,0.15),transparent 70%);pointer-events:none;}
-    .en-vivo{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,59,48,0.15);border:1px solid var(--rojo-vivo);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.78rem;font-weight:700;color:var(--rojo-vivo);margin-bottom:1rem;letter-spacing:0.08em;}
+
+    .en-vivo{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,59,48,0.15);border:1px solid var(--rojo-vivo);padding:0.3rem 0.85rem;border-radius:999px;font-size:0.75rem;font-weight:700;color:var(--rojo-vivo);margin-bottom:0.75rem;letter-spacing:0.08em;}
     .punto-vivo{width:8px;height:8px;background:var(--rojo-vivo);border-radius:50%;animation:parpadear 1s ease infinite;}
     @keyframes parpadear{0%,100%{opacity:1;}50%{opacity:0.1;}}
-    .bloque-nombre-grande{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1;color:var(--dorado-claro);margin-bottom:0.25rem;letter-spacing:0.04em;}
-    .bloque-subtitulo{font-size:1rem;color:rgba(255,255,255,0.6);margin-bottom:1.5rem;}
+
+    /* Nombre del bloque — MUY GRANDE */
+    .bloque-nombre-grande{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,6rem);line-height:1;color:var(--dorado-claro);margin-bottom:0.2rem;letter-spacing:0.04em;}
+    .bloque-subtitulo{font-size:clamp(1rem,2vw,1.4rem);color:rgba(255,255,255,0.6);margin-bottom:1.25rem;}
+
+    /* Chips de parejas — GRANDES */
     .parejas-chips{display:flex;flex-wrap:wrap;gap:0.75rem;}
-    .pareja-chip{background:var(--dorado);color:var(--negro);font-family:'Bebas Neue',sans-serif;font-size:2.2rem;padding:0.3rem 1.1rem;border-radius:12px;letter-spacing:0.06em;line-height:1.2;animation:chipEntrada 0.4s ease both;}
+    .pareja-chip{background:var(--dorado);color:var(--negro);font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3.5rem);padding:0.2rem 1rem;border-radius:12px;letter-spacing:0.06em;line-height:1.2;animation:chipEntrada 0.4s ease both;}
     @keyframes chipEntrada{from{opacity:0;transform:scale(0.8) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
-    .siguientes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
-    .bloque-siguiente{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:1.1rem 1.25rem 1.25rem;display:flex;flex-direction:column;gap:0.6rem;}
-    .siguiente-num{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;color:var(--verde-claro);letter-spacing:0.18em;}
-    .siguiente-nombre{font-size:0.9rem;font-weight:700;color:var(--crema);line-height:1.35;}
+
+    /* ===== SIGUIENTES BLOQUES — 3 tarjetas ===== */
+    .siguientes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.85rem;}
+    .bloque-siguiente{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:0.9rem 1rem 1rem;display:flex;flex-direction:column;gap:0.5rem;}
+    .siguiente-num{font-family:'Bebas Neue',sans-serif;font-size:0.75rem;color:var(--verde-claro);letter-spacing:0.18em;}
+    .siguiente-nombre{font-size:0.82rem;font-weight:700;color:var(--crema);line-height:1.3;}
     .siguiente-divisor{height:1px;background:rgba(255,255,255,0.07);}
-    .siguiente-parejas-label{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
-    .siguiente-parejas{display:flex;flex-wrap:wrap;gap:0.5rem;}
-    .siguiente-chip{background:rgba(212,160,23,0.18);border:1.5px solid rgba(212,160,23,0.45);color:var(--dorado-claro);font-family:'Bebas Neue',sans-serif;font-size:1.6rem;padding:0.05rem 0.8rem;border-radius:8px;letter-spacing:0.06em;line-height:1.4;}
-    .sidebar-derecho{border-left:1px solid rgba(255,255,255,0.08);padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;background:rgba(0,0,0,0.2);}
-    .info-evento{background:rgba(45,106,79,0.25);border:1px solid rgba(82,183,136,0.3);border-radius:14px;padding:1.25rem;}
-    .info-evento-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--dorado);margin-bottom:0.75rem;line-height:1.3;}
-    .info-fila{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .siguiente-parejas-label{font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+    .siguiente-parejas{display:flex;flex-wrap:wrap;gap:0.4rem;}
+    /* Chips de siguientes — más grandes que antes */
+    .siguiente-chip{background:rgba(212,160,23,0.18);border:1.5px solid rgba(212,160,23,0.45);color:var(--dorado-claro);font-family:'Bebas Neue',sans-serif;font-size:1.8rem;padding:0.05rem 0.7rem;border-radius:8px;letter-spacing:0.06em;line-height:1.4;}
+
+    /* ===== SIDEBAR DERECHO — información compacta ===== */
+    .sidebar-derecho{border-left:1px solid rgba(255,255,255,0.07);padding:1rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;background:rgba(0,0,0,0.25);}
+
+    .info-evento{background:rgba(45,106,79,0.2);border:1px solid rgba(82,183,136,0.25);border-radius:12px;padding:1rem;}
+    .info-evento-titulo{font-family:'Playfair Display',serif;font-size:0.85rem;color:var(--dorado);margin-bottom:0.6rem;line-height:1.3;}
+    .info-fila{display:flex;justify-content:space-between;align-items:center;font-size:0.75rem;padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.06);}
     .info-fila:last-child{border-bottom:none;}
-    .info-fila .key{color:rgba(255,255,255,0.5);}
-    .info-fila .valor{font-weight:700;color:var(--crema);}
-    .cats-lista{display:flex;flex-direction:column;gap:0.5rem;}
-    .cat-fila{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.6rem 0.9rem;font-size:0.82rem;}
+    .info-fila .key{color:rgba(255,255,255,0.45);}
+    .info-fila .valor{font-weight:700;color:var(--crema);font-size:0.78rem;}
+
+    /* Categorías */
+    .cats-lista{display:flex;flex-direction:column;gap:0.4rem;}
+    .cat-fila{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border-radius:6px;padding:0.45rem 0.7rem;font-size:0.72rem;}
     .cat-nombre{color:var(--crema);font-weight:500;}
-    .cat-num{font-family:'Bebas Neue',sans-serif;color:var(--dorado);font-size:1rem;}
-    .barra-inferior{background:var(--verde-oscuro);border-top:2px solid var(--dorado);padding:0.6rem 2.5rem;display:flex;align-items:center;gap:1rem;overflow:hidden;}
-    .barra-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--dorado);letter-spacing:0.1em;white-space:nowrap;padding-right:1rem;border-right:1px solid rgba(212,160,23,0.4);}
+    .cat-num{font-family:'Bebas Neue',sans-serif;color:var(--dorado);font-size:0.9rem;}
+
+    /* ===== BARRA INFERIOR: TICKER ===== */
+    .barra-inferior{background:var(--verde-oscuro);border-top:2px solid var(--dorado);padding:0.5rem 2rem;display:flex;align-items:center;gap:1rem;overflow:hidden;}
+    .barra-label{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--dorado);letter-spacing:0.1em;white-space:nowrap;padding-right:1rem;border-right:1px solid rgba(212,160,23,0.4);}
     .ticker-wrap{flex:1;overflow:hidden;}
-    .ticker{display:inline-flex;white-space:nowrap;animation:ticker 30s linear infinite;font-size:0.88rem;color:rgba(255,255,255,0.7);gap:4rem;}
+    .ticker{display:inline-flex;white-space:nowrap;animation:ticker 40s linear infinite;font-size:0.82rem;color:rgba(255,255,255,0.7);gap:4rem;}
     @keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+    /* Animaciones de transición de bloque */
     .fade-out{animation:fadeOut 0.4s ease forwards;}
     .fade-in{animation:fadeIn 0.5s ease forwards;}
     @keyframes fadeOut{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-10px);}}
@@ -66,13 +101,27 @@
 <div class="ornamento">♪</div>
 
 <div class="layout">
+
+  <!-- TOPBAR -->
   <header class="topbar">
     <div class="topbar-logo">Huapango Xalapa<span>1er Concurso Nacional</span></div>
+
+    <!-- TRÍO EN TURNO — se actualiza automáticamente cada 4 bloques -->
+    <div class="trio-wrap">
+      <span class="trio-label">Tocando ahora</span>
+      <span class="trio-nombre" id="trio-nombre">TRIO 1</span>
+    </div>
+
     <div class="reloj" id="reloj">00:00:00</div>
   </header>
 
+  <!-- CUERPO -->
   <div class="cuerpo">
+
+    <!-- COLUMNA IZQUIERDA -->
     <div class="col-izq">
+
+      <!-- Bloque en curso -->
       <div>
         <div class="etiqueta-seccion">
           <span class="punto-vivo" style="width:6px;height:6px;background:var(--verde-claro);"></span>
@@ -82,22 +131,26 @@
           <div class="en-vivo"><div class="punto-vivo"></div>EN VIVO</div>
           <div class="bloque-nombre-grande" id="actual-nombre">EN ESPERA</div>
           <div class="bloque-subtitulo" id="actual-subtitulo">El encargado activará el primer bloque en breve</div>
-          <div class="etiqueta-seccion" style="margin-bottom:0.75rem;">Parejas en pista</div>
+          <div class="etiqueta-seccion" style="margin-bottom:0.6rem;">Parejas en pista</div>
           <div class="parejas-chips" id="actual-chips"></div>
         </div>
       </div>
+
+      <!-- Siguientes bloques -->
       <div>
         <div class="etiqueta-seccion">⏭ Próximos bloques</div>
         <div class="siguientes-grid" id="siguientes-grid"></div>
       </div>
+
     </div>
 
+    <!-- SIDEBAR DERECHO — información compacta -->
     <div class="sidebar-derecho">
       <div class="info-evento">
-        <div class="info-evento-titulo">1er Concurso Nacional<br>de Huapango de Xalapa</div>
-        <div class="info-fila"><span class="key">Sede</span><span class="valor">Xalapa, Veracruz</span></div>
-        <div class="info-fila"><span class="key">Ronda actual</span><span class="valor" id="info-ronda">—</span></div>
-        <div class="info-fila"><span class="key">Parejas totales</span><span class="valor" id="info-total">—</span></div>
+        <div class="info-evento-titulo">1er Concurso Nacional de Huapango · Xalapa</div>
+        <div class="info-fila"><span class="key">Sede</span><span class="valor">Xalapa, Ver.</span></div>
+        <div class="info-fila"><span class="key">Ronda</span><span class="valor" id="info-ronda">—</span></div>
+        <div class="info-fila"><span class="key">Parejas</span><span class="valor" id="info-total">—</span></div>
         <div class="info-fila"><span class="key">Confirmadas</span><span class="valor" id="info-confirmadas" style="color:var(--verde-claro)">—</span></div>
       </div>
       <div>
@@ -105,34 +158,60 @@
         <div class="cats-lista" id="cats-lista"></div>
       </div>
     </div>
+
   </div>
 
+  <!-- BARRA INFERIOR: TICKER con sponsors -->
   <footer class="barra-inferior">
-    <div class="barra-label">AVISO</div>
+    <div class="barra-label">AVISOS</div>
     <div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
   </footer>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// =========================================================
-//  CONFIGURACIÓN DE SUPABASE — usando var para evitar errores
-// =========================================================
 var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Estado global — todo con var
-var bloqueActivoActual = { nombre:'', subtitulo:'', parejas:[] };
-var bloquesSiguientes  = [];
+// =========================================================
+//  TRÍOS — cambia los nombres aquí cuando los tengas
+//  Rotan automáticamente cada 4 bloques terminados
+// =========================================================
+var TRIOS = [
+  'TRIO 1',   // ← cambia por el nombre real del primer trío
+  'TRIO 2',   // ← cambia por el nombre real del segundo trío
+  'TRIO 3',   // ← cambia por el nombre real del tercer trío
+];
 
-var mensajesTicker = [
+// =========================================================
+//  SPONSORS / PATROCINADORES — agrega o quita aquí
+//  Aparecen en la barra inferior rotando
+// =========================================================
+var SPONSORS = [
+  'SPONSOR 1',   // ← cambia por el nombre real del patrocinador 1
+  'SPONSOR 2',   // ← cambia por el nombre real del patrocinador 2
+  'SPONSOR 3',   // ← cambia por el nombre real del patrocinador 3
+];
+
+// =========================================================
+//  MENSAJES DEL TICKER INFERIOR
+//  Aquí van los avisos generales del evento
+//  Los sponsors se agregan automáticamente al final
+// =========================================================
+var MENSAJES_TICKER = [
   '🎶 Recuerda estar atento al número de tu pareja para subir a pista a tiempo.',
   '💃 Los bloques se activarán en orden — estate pendiente de la pantalla.',
   '📵 Por favor mantén el teléfono en silencio durante las presentaciones.',
-  '🏆 Los resultados finales se publicarán en pantalla al terminar cada ronda.',
+  '🏆 Los resultados finales se publicarán al terminar cada ronda.',
   '👋 ¡Bienvenidos al 1er Concurso Nacional de Huapango de Xalapa!',
 ];
+
+// Estado global
+var bloqueActivoActual = {nombre:'', subtitulo:'', parejas:[]};
+var bloquesSiguientes  = [];
+var bloquesTerminados  = 0; // contador de bloques terminados para rotar trío
 
 // =========================================================
 //  INICIALIZACIÓN
@@ -143,33 +222,36 @@ window.addEventListener('DOMContentLoaded', async function() {
   await cargarStats();
   iniciarTicker();
 
-  // Realtime — la pantalla se actualiza sola cuando cambia un bloque
+  // Realtime — pantalla se actualiza sola cuando cambia un bloque
   supabase.channel('pantalla-publica')
-    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'bloques' },
+    .on('postgres_changes', {event:'UPDATE', schema:'public', table:'bloques'},
       async function() { await cargarDatos(); })
     .subscribe();
 });
 
 // =========================================================
-//  CARGAR DATOS DESDE SUPABASE
+//  CARGAR DATOS DE BLOQUES
 // =========================================================
 async function cargarDatos() {
-  var r = await supabase
-    .from('bloques')
-    .select('id, nombre, categoria, estilo, ronda, estado, orden, bloque_parejas(pareja_num)')
-    .order('orden', { ascending: true });
+  var r = await supabase.from('bloques')
+    .select('id,nombre,categoria,estilo,ronda,estado,orden,bloque_parejas(pareja_num)')
+    .order('orden', {ascending:true});
 
-  if (r.error) { console.error('Error cargando bloques:', r.error); return; }
+  if (r.error) { console.error(r.error); return; }
 
   var data      = r.data || [];
-  var enCurso   = data.find(function(b){ return b.estado === 'en_curso'; });
-  var pendientes = data.filter(function(b){ return b.estado === 'pendiente'; });
+  var enCurso   = data.find(function(b){return b.estado==='en_curso';});
+  var pendientes = data.filter(function(b){return b.estado==='pendiente';});
+
+  // Contar terminados para saber qué trío toca
+  bloquesTerminados = data.filter(function(b){return b.estado==='terminado';}).length;
+  actualizarTrio();
 
   if (enCurso) {
     var nuevo = {
       nombre:    enCurso.nombre,
       subtitulo: enCurso.categoria + ' · ' + enCurso.estilo + ' — ' + (enCurso.ronda||'').replace(/_/g,' '),
-      parejas:   enCurso.bloque_parejas.map(function(bp){ return bp.pareja_num; }),
+      parejas:   enCurso.bloque_parejas.map(function(bp){return bp.pareja_num;}),
     };
     cambiarBloque(nuevo);
     document.getElementById('info-ronda').textContent = (enCurso.ronda||'').replace(/_/g,' ');
@@ -182,12 +264,12 @@ async function cargarDatos() {
 
   // Próximos 3 bloques
   bloquesSiguientes = [];
-  var etiquetas = ['Siguiente →', 'Después', 'Más tarde'];
-  pendientes.slice(0, 3).forEach(function(b, i) {
+  var etiquetas = ['Siguiente →','Después','Más tarde'];
+  pendientes.slice(0,3).forEach(function(b,i){
     bloquesSiguientes.push({
-      etiqueta: etiquetas[i] || 'En breve',
+      etiqueta: etiquetas[i]||'En breve',
       nombre:   b.nombre + ' — ' + b.categoria + ' / ' + b.estilo,
-      parejas:  b.bloque_parejas.map(function(bp){ return bp.pareja_num; }),
+      parejas:  b.bloque_parejas.map(function(bp){return bp.pareja_num;}),
     });
   });
   renderizarSiguientes();
@@ -197,32 +279,31 @@ async function cargarDatos() {
 //  CARGAR ESTADÍSTICAS DEL SIDEBAR
 // =========================================================
 async function cargarStats() {
-  // Total y confirmadas
-  var r = await supabase.from('parejas').select('confirmado');
+  var r = await supabase.from('parejas').select('confirmado,categoria_nombre');
   if (!r.error && r.data) {
     document.getElementById('info-total').textContent        = r.data.length;
-    document.getElementById('info-confirmadas').textContent  = r.data.filter(function(p){ return p.confirmado; }).length;
-  }
-
-  // Categorías
-  var r2 = await supabase
-    .from('parejas')
-    .select('categoria_nombre')
-    .eq('confirmado', true);
-
-  if (!r2.error && r2.data) {
+    document.getElementById('info-confirmadas').textContent  = r.data.filter(function(p){return p.confirmado;}).length;
     var conteo = {};
-    r2.data.forEach(function(p) {
-      conteo[p.categoria_nombre] = (conteo[p.categoria_nombre] || 0) + 1;
+    r.data.filter(function(p){return p.confirmado;}).forEach(function(p){
+      conteo[p.categoria_nombre] = (conteo[p.categoria_nombre]||0)+1;
     });
     var lista = document.getElementById('cats-lista');
-    lista.innerHTML = Object.entries(conteo).map(function(entry) {
-      return '<div class="cat-fila">' +
-        '<span class="cat-nombre">' + entry[0] + '</span>' +
-        '<span class="cat-num">' + entry[1] + ' parejas</span>' +
-        '</div>';
-    }).join('') || '<div class="cat-fila"><span class="cat-nombre" style="opacity:0.5">Sin datos aún</span></div>';
+    lista.innerHTML = Object.entries(conteo).map(function(e){
+      return '<div class="cat-fila"><span class="cat-nombre">'+e[0]+'</span><span class="cat-num">'+e[1]+'</span></div>';
+    }).join('') || '<div class="cat-fila"><span class="cat-nombre" style="opacity:0.5">Sin datos</span></div>';
   }
+}
+
+// =========================================================
+//  TRIO — rota automáticamente cada 4 bloques terminados
+//  También se puede cambiar manualmente desde el panel admin
+//  (esa función se agrega en el punto de admin)
+// =========================================================
+function actualizarTrio() {
+  // Cada 4 bloques terminados cambia al siguiente trío
+  // Ejemplo: 0-3 terminados → TRIO 1, 4-7 → TRIO 2, 8-11 → TRIO 3, etc.
+  var indice = Math.floor(bloquesTerminados / 4) % TRIOS.length;
+  document.getElementById('trio-nombre').textContent = TRIOS[indice];
 }
 
 // =========================================================
@@ -231,9 +312,8 @@ async function cargarStats() {
 function renderizarBloqueActivo() {
   document.getElementById('actual-nombre').textContent    = bloqueActivoActual.nombre;
   document.getElementById('actual-subtitulo').textContent = bloqueActivoActual.subtitulo;
-
-  document.getElementById('actual-chips').innerHTML = bloqueActivoActual.parejas.map(function(num, i) {
-    return '<div class="pareja-chip" style="animation-delay:' + (i * 0.08) + 's">#' + num + '</div>';
+  document.getElementById('actual-chips').innerHTML = bloqueActivoActual.parejas.map(function(num,i){
+    return '<div class="pareja-chip" style="animation-delay:'+(i*0.08)+'s">#'+num+'</div>';
   }).join('');
 }
 
@@ -242,20 +322,18 @@ function renderizarBloqueActivo() {
 // =========================================================
 function renderizarSiguientes() {
   var grid = document.getElementById('siguientes-grid');
-
   if (!bloquesSiguientes.length) {
     grid.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;grid-column:1/-1;">No hay más bloques pendientes</div>';
     return;
   }
-
-  grid.innerHTML = bloquesSiguientes.slice(0, 3).map(function(b) {
+  grid.innerHTML = bloquesSiguientes.slice(0,3).map(function(b){
     return '<div class="bloque-siguiente">' +
-      '<div class="siguiente-num">' + b.etiqueta + '</div>' +
-      '<div class="siguiente-nombre">' + b.nombre + '</div>' +
+      '<div class="siguiente-num">'+b.etiqueta+'</div>' +
+      '<div class="siguiente-nombre">'+b.nombre+'</div>' +
       '<div class="siguiente-divisor"></div>' +
       '<div class="siguiente-parejas-label">Parejas</div>' +
       '<div class="siguiente-parejas">' +
-        b.parejas.map(function(n){ return '<span class="siguiente-chip">#' + n + '</span>'; }).join('') +
+        b.parejas.map(function(n){return '<span class="siguiente-chip">#'+n+'</span>';}).join('') +
       '</div>' +
     '</div>';
   }).join('');
@@ -267,42 +345,49 @@ function renderizarSiguientes() {
 function cambiarBloque(nuevoBloqueData) {
   var contenedor = document.getElementById('bloque-actual');
   contenedor.classList.add('fade-out');
-
-  setTimeout(function() {
+  setTimeout(function(){
     bloqueActivoActual.nombre    = nuevoBloqueData.nombre;
     bloqueActivoActual.subtitulo = nuevoBloqueData.subtitulo;
     bloqueActivoActual.parejas   = nuevoBloqueData.parejas;
-
     renderizarBloqueActivo();
-
     contenedor.classList.remove('fade-out');
     contenedor.classList.add('fade-in');
-    setTimeout(function(){ contenedor.classList.remove('fade-in'); }, 500);
-  }, 400);
+    setTimeout(function(){contenedor.classList.remove('fade-in');},500);
+  },400);
 }
 
 // =========================================================
 //  RELOJ
 // =========================================================
 function iniciarReloj() {
-  function actualizar() {
-    var ahora = new Date();
-    var h = String(ahora.getHours()).padStart(2,'0');
-    var m = String(ahora.getMinutes()).padStart(2,'0');
-    var s = String(ahora.getSeconds()).padStart(2,'0');
-    document.getElementById('reloj').textContent = h + ':' + m + ':' + s;
+  function actualizar(){
+    var ahora=new Date();
+    var h=String(ahora.getHours()).padStart(2,'0');
+    var m=String(ahora.getMinutes()).padStart(2,'0');
+    var s=String(ahora.getSeconds()).padStart(2,'0');
+    document.getElementById('reloj').textContent=h+':'+m+':'+s;
   }
   actualizar();
-  setInterval(actualizar, 1000);
+  setInterval(actualizar,1000);
 }
 
 // =========================================================
-//  TICKER INFERIOR
+//  TICKER — mensajes + sponsors
 // =========================================================
 function iniciarTicker() {
-  var texto  = mensajesTicker.join('      ✦      ');
+  // Construir el texto del ticker combinando mensajes y sponsors
+  var mensajes = MENSAJES_TICKER.slice(); // copia de los mensajes
+
+  // Agregar sponsors con formato especial
+  // Si tienes sponsors, aparecen como: "✦ Patrocinado por: SPONSOR 1 ✦"
+  if (SPONSORS.length) {
+    mensajes.push('✦ Patrocinadores: ' + SPONSORS.join(' · ') + ' ✦');
+  }
+
+  var texto  = mensajes.join('      ✦      ');
   var ticker = document.getElementById('ticker');
-  ticker.innerHTML = '<span>' + texto + '</span><span>' + texto + '</span>';
+  // Duplicar para loop continuo
+  ticker.innerHTML = '<span>'+texto+'</span><span>'+texto+'</span>';
 }
 </script>
 </body>
