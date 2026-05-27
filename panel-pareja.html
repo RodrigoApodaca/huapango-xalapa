@@ -6,427 +6,93 @@
   <title>Mis Resultados — Huapango Xalapa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-
   <style>
-    :root {
-      --verde-oscuro:  #1B4332;
-      --verde-medio:   #2D6A4F;
-      --verde-claro:   #40916C;
-      --dorado:        #D4A017;
-      --dorado-claro:  #F4C430;
-      --crema:         #FFF8E7;
-      --blanco:        #FFFFFF;
-      --gris-fondo:    #F4F6F4;
-      --gris-borde:    #D8E0D8;
-      --texto:         #1A1A1A;
-      --texto-suave:   #5A6A5A;
-      --exito:         #27AE60;
-      --error:         #C0392B;
-    }
+    :root{--verde-oscuro:#1B4332;--verde-medio:#2D6A4F;--verde-claro:#40916C;--dorado:#D4A017;--dorado-claro:#F4C430;--crema:#FFF8E7;--blanco:#FFFFFF;--gris-fondo:#F4F6F4;--gris-borde:#D8E0D8;--texto:#1A1A1A;--texto-suave:#5A6A5A;--exito:#27AE60;--error:#C0392B;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--gris-fondo);color:var(--texto);min-height:100vh;padding-bottom:3rem;}
+    .header{background:var(--verde-oscuro);border-bottom:2px solid var(--dorado);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+    .header-titulo{font-family:'Playfair Display',serif;color:var(--dorado);font-size:1rem;}
+    .btn-salir{background:none;border:1px solid rgba(212,160,23,0.4);border-radius:6px;padding:0.3rem 0.8rem;color:rgba(255,255,255,0.6);font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-salir:hover{border-color:var(--dorado);color:var(--dorado);}
+    .contenedor{max-width:600px;margin:0 auto;padding:1.5rem 1rem;}
+    .tarjeta-pareja{background:var(--verde-oscuro);border-radius:20px;padding:2rem;text-align:center;border:2px solid var(--dorado);margin-bottom:1.25rem;position:relative;overflow:hidden;}
+    .tarjeta-pareja::before{content:'♪';position:absolute;font-size:8rem;color:rgba(255,255,255,0.03);bottom:-1.5rem;right:1rem;pointer-events:none;}
+    .pareja-label{font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:0.5rem;}
+    .pareja-numero{font-family:'Playfair Display',serif;font-size:5rem;font-weight:900;color:var(--dorado);line-height:1;margin-bottom:0.75rem;}
+    .pareja-nombres{font-size:1rem;font-weight:700;color:var(--crema);margin-bottom:0.4rem;}
+    .pareja-cat-estilo{font-size:0.82rem;color:rgba(255,255,255,0.5);}
+    .pareja-confirmado{display:inline-block;margin-top:1rem;padding:0.3rem 1rem;border-radius:999px;font-size:0.78rem;font-weight:700;}
+    .confirmado-si{background:rgba(39,174,96,0.2);border:1px solid #27AE60;color:#5CDB95;}
+    .confirmado-no{background:rgba(230,126,34,0.2);border:1px solid #E67E22;color:#F39C12;}
+    .tarjeta{background:var(--blanco);border-radius:16px;border:1px solid var(--gris-borde);padding:1.5rem;margin-bottom:1.25rem;}
+    .tarjeta-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--verde-oscuro);margin-bottom:1.1rem;display:flex;align-items:center;gap:0.5rem;padding-bottom:0.6rem;border-bottom:1px solid var(--gris-borde);}
+    .rubro-fila{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--gris-fondo);gap:1rem;}
+    .rubro-fila:last-child{border-bottom:none;}
+    .rubro-nombre{font-size:0.88rem;color:var(--texto);font-weight:500;display:flex;align-items:center;gap:0.5rem;}
+    .rubro-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .estrellas-lectura{display:flex;gap:3px;}
+    .estrella-llena{color:var(--dorado);font-size:1.1rem;}
+    .estrella-vacia{color:#DDD;font-size:1.1rem;}
+    .rubro-valor{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--verde-oscuro);min-width:28px;text-align:right;}
+    .total-box{background:var(--gris-fondo);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;margin-top:1rem;}
+    .total-label{font-size:0.82rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;}
+    .total-valor{font-family:'Playfair Display',serif;font-size:2rem;color:var(--verde-oscuro);font-weight:900;}
+    .total-max{font-size:0.78rem;color:var(--texto-suave);}
+    .posicion-fila{display:flex;align-items:center;padding:0.65rem 0.75rem;border-radius:10px;gap:0.75rem;margin-bottom:0.4rem;transition:background 0.15s;}
+    .posicion-fila.mi-pareja{background:rgba(64,145,108,0.12);border:1.5px solid var(--verde-claro);}
+    .posicion-fila:not(.mi-pareja):hover{background:var(--gris-fondo);}
+    .pos-numero{font-family:'Playfair Display',serif;font-size:1.3rem;min-width:32px;text-align:center;color:var(--texto-suave);}
+    .pos-numero.oro{color:#DAA520;}.pos-numero.plata{color:#A8A9AD;}.pos-numero.bronce{color:#CD7F32;}
+    .pos-pareja{flex:1;font-family:'Playfair Display',serif;font-size:1rem;color:var(--verde-oscuro);font-weight:700;}
+    .pos-pareja.mi-num{color:var(--verde-claro);}
+    .pos-total{font-weight:700;font-size:0.95rem;color:var(--texto);}
+    .pos-barra-wrap{width:60px;height:5px;background:var(--gris-borde);border-radius:999px;overflow:hidden;}
+    .pos-barra{height:100%;background:var(--verde-claro);border-radius:999px;}
+    .posicion-fila.mi-pareja .pos-barra{background:var(--dorado);}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ===== TARJETA DE ESTADO DEL CONCURSO ===== */
+    /* Cuando NO es el turno de esta categoría-estilo */
+    .espera-card{background:var(--verde-oscuro);border-radius:14px;padding:1.5rem;text-align:center;border:1.5px solid rgba(212,160,23,0.3);}
+    .espera-card .icono-espera{font-size:2.5rem;margin-bottom:0.75rem;}
+    .espera-card .espera-titulo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--dorado);margin-bottom:0.5rem;}
+    .espera-card .espera-actual{font-size:0.88rem;color:rgba(255,255,255,0.7);margin-bottom:0.75rem;line-height:1.5;}
+    .espera-card .espera-turno{font-size:0.82rem;color:rgba(255,255,255,0.45);font-style:italic;}
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--gris-fondo);
-      color: var(--texto);
-      min-height: 100vh;
-      padding-bottom: 3rem;
-    }
+    /* Bloque activo (cuando SÍ es su turno o su grupo está bailando) */
+    .bloque-activo-card{background:var(--verde-oscuro);border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem;border:1.5px solid var(--dorado);}
+    .bloque-activo-label{font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:0.3rem;}
+    .bloque-activo-nombre{font-family:'Playfair Display',serif;font-size:1rem;color:var(--dorado);margin-bottom:0.5rem;}
+    .bloque-mi-turno{display:inline-block;background:rgba(39,174,96,0.2);border:1px solid #27AE60;color:#5CDB95;font-size:0.78rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;}
+    .bloque-esperar{font-size:0.82rem;color:rgba(255,255,255,0.6);line-height:1.5;}
+    .siguiente-bloque-fila{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--gris-fondo);font-size:0.85rem;}
+    .siguiente-bloque-fila:last-child{border-bottom:none;}
+    .siguiente-orden{font-family:'Playfair Display',serif;font-size:1rem;color:var(--texto-suave);min-width:24px;}
+    .siguiente-info{flex:1;color:var(--texto);}
+    .siguiente-mi-bloque{background:#D4EDDA;color:#155724;font-size:0.7rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:999px;}
 
-    /* ===== HEADER ===== */
-    .header {
-      background: var(--verde-oscuro);
-      border-bottom: 2px solid var(--dorado);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .header-titulo {
-      font-family: 'Playfair Display', serif;
-      color: var(--dorado);
-      font-size: 1rem;
-    }
-    .btn-salir {
-      background: none;
-      border: 1px solid rgba(212,160,23,0.4);
-      border-radius: 6px;
-      padding: 0.3rem 0.8rem;
-      color: rgba(255,255,255,0.6);
-      font-size: 0.78rem;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .btn-salir:hover { border-color: var(--dorado); color: var(--dorado); }
-
-    /* ===== CONTENEDOR ===== */
-    .contenedor {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-    }
-
-    /* ===== TARJETA DE IDENTIDAD DE LA PAREJA ===== */
-    .tarjeta-pareja {
-      background: var(--verde-oscuro);
-      border-radius: 20px;
-      padding: 2rem;
-      text-align: center;
-      border: 2px solid var(--dorado);
-      margin-bottom: 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-    /* Decoración de fondo */
-    .tarjeta-pareja::before {
-      content: '♪';
-      position: absolute;
-      font-size: 8rem;
-      color: rgba(255,255,255,0.03);
-      bottom: -1.5rem;
-      right: 1rem;
-      pointer-events: none;
-    }
-
-    .pareja-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 0.5rem;
-    }
-    /* Número de pareja grande */
-    .pareja-numero {
-      font-family: 'Playfair Display', serif;
-      font-size: 5rem;
-      font-weight: 900;
-      color: var(--dorado);
-      line-height: 1;
-      margin-bottom: 0.75rem;
-    }
-    .pareja-nombres {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--crema);
-      margin-bottom: 0.4rem;
-    }
-    .pareja-cat-estilo {
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.5);
-    }
-    /* Badge de confirmación */
-    .pareja-confirmado {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.3rem 1rem;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-    .confirmado-si  { background: rgba(39,174,96,0.2); border: 1px solid #27AE60; color: #5CDB95; }
-    .confirmado-no  { background: rgba(230,126,34,0.2); border: 1px solid #E67E22; color: #F39C12; }
-
-    /* ===== TARJETA GENÉRICA ===== */
-    .tarjeta {
-      background: var(--blanco);
-      border-radius: 16px;
-      border: 1px solid var(--gris-borde);
-      padding: 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-    .tarjeta-titulo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--verde-oscuro);
-      margin-bottom: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 1px solid var(--gris-borde);
-    }
-
-    /* ===== RUBROS DE CALIFICACIÓN ===== */
-    .rubro-fila {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--gris-fondo);
-      gap: 1rem;
-    }
-    .rubro-fila:last-child { border-bottom: none; }
-    .rubro-nombre {
-      font-size: 0.88rem;
-      color: var(--texto);
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .rubro-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Estrellas (solo lectura) */
-    .estrellas-lectura {
-      display: flex;
-      gap: 3px;
-    }
-    .estrella-llena  { color: var(--dorado); font-size: 1.1rem; }
-    .estrella-vacia  { color: #DDD; font-size: 1.1rem; }
-
-    .rubro-valor {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--verde-oscuro);
-      min-width: 28px;
-      text-align: right;
-    }
-
-    /* ===== TOTAL ===== */
-    .total-box {
-      background: var(--gris-fondo);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 1rem;
-    }
-    .total-label { font-size: 0.82rem; font-weight: 700; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.05em; }
-    .total-valor {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: var(--verde-oscuro);
-      font-weight: 900;
-    }
-    .total-max { font-size: 0.78rem; color: var(--texto-suave); }
-
-    /* ===== TABLA DE POSICIONES ===== */
-    .posicion-fila {
-      display: flex;
-      align-items: center;
-      padding: 0.65rem 0.75rem;
-      border-radius: 10px;
-      gap: 0.75rem;
-      margin-bottom: 0.4rem;
-      transition: background 0.15s;
-    }
-    /* Resaltar la fila de la pareja actual */
-    .posicion-fila.mi-pareja {
-      background: rgba(64,145,108,0.12);
-      border: 1.5px solid var(--verde-claro);
-    }
-    .posicion-fila:not(.mi-pareja):hover { background: var(--gris-fondo); }
-
-    .pos-numero {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      min-width: 32px;
-      text-align: center;
-      color: var(--texto-suave);
-    }
-    .pos-numero.oro    { color: #DAA520; }
-    .pos-numero.plata  { color: #A8A9AD; }
-    .pos-numero.bronce { color: #CD7F32; }
-
-    .pos-pareja {
-      flex: 1;
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--verde-oscuro);
-      font-weight: 700;
-    }
-    .pos-pareja.mi-num { color: var(--verde-claro); }
-
-    .pos-total {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--texto);
-    }
-
-    /* Barra de progreso de puntuación */
-    .pos-barra-wrap {
-      width: 60px;
-      height: 5px;
-      background: var(--gris-borde);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .pos-barra {
-      height: 100%;
-      background: var(--verde-claro);
-      border-radius: 999px;
-    }
-    .posicion-fila.mi-pareja .pos-barra { background: var(--dorado); }
-
-    /* ===== BLOQUE ESTADO ===== */
-    .bloque-estado {
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
-    }
-    .bloque-estado.en-vivo {
-      background: rgba(27,67,50,0.08);
-      border: 1.5px solid var(--verde-claro);
-    }
-    .bloque-estado.mi-bloque {
-      background: rgba(212,160,23,0.08);
-      border: 1.5px solid var(--dorado);
-    }
-    .bloque-estado.siguiente {
-      background: var(--gris-fondo);
-      border: 1px solid var(--gris-borde);
-    }
-    .bloque-estado-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
-    }
-    .bloque-estado.en-vivo .bloque-estado-label  { color: var(--verde-claro); }
-    .bloque-estado.mi-bloque .bloque-estado-label { color: var(--dorado); }
-    .bloque-estado.siguiente .bloque-estado-label { color: var(--texto-suave); }
-    .bloque-estado-nombre {
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--texto);
-      margin-bottom: 0.25rem;
-    }
-    .bloque-estado-parejas {
-      font-size: 0.82rem;
-      color: var(--texto-suave);
-    }
-
-    /* ===== BLOQUE EN CURSO ===== */
-    .bloque-activo-card {
-      background: var(--verde-oscuro);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.75rem;
-      border: 1.5px solid var(--dorado);
-    }
-    .bloque-activo-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 0.3rem;
-    }
-    .bloque-activo-nombre {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--dorado);
-      margin-bottom: 0.5rem;
-    }
-    .bloque-mi-turno {
-      display: inline-block;
-      background: rgba(39,174,96,0.2);
-      border: 1px solid #27AE60;
-      color: #5CDB95;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-    }
-    .bloque-esperar {
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.5;
-    }
-    /* Fila de siguiente bloque */
-    .siguiente-bloque-fila {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--gris-fondo);
-      font-size: 0.85rem;
-    }
-    .siguiente-bloque-fila:last-child { border-bottom: none; }
-    .siguiente-orden {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--texto-suave);
-      min-width: 24px;
-    }
-    .siguiente-info { flex: 1; color: var(--texto); }
-    .siguiente-mi-bloque {
-      background: #D4EDDA;
-      color: #155724;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-    }
-
-    /* ===== MENSAJE SIN CALIFICACIONES ===== */
-    .sin-datos {
-      text-align: center;
-      padding: 2.5rem 1rem;
-      color: var(--texto-suave);
-    }
-    .sin-datos .icono { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .sin-datos p { font-size: 0.9rem; line-height: 1.6; }
-
-    /* ===== SPINNER ===== */
-    .spinner-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem;
-    }
-    .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid var(--gris-borde);
-      border-top-color: var(--verde-claro);
-      border-radius: 50%;
-      animation: girar 0.8s linear infinite;
-    }
-    @keyframes girar { to { transform: rotate(360deg); } }
-
-    /* ===== BADGE AVANZA / ELIMINADA ===== */
-    .badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
-    }
-    .badge-verde  { background: #D4EDDA; color: #155724; }
-    .badge-rojo   { background: #F8D7DA; color: #721C24; }
-    .badge-gris   { background: #E2E8E2; color: #4A5A4A; }
+    .sin-datos{text-align:center;padding:2.5rem 1rem;color:var(--texto-suave);}
+    .sin-datos .icono{font-size:2.5rem;margin-bottom:0.75rem;}
+    .sin-datos p{font-size:0.9rem;line-height:1.6;}
+    .spinner-wrap{display:flex;align-items:center;justify-content:center;padding:3rem;}
+    .spinner{width:36px;height:36px;border:3px solid var(--gris-borde);border-top-color:var(--verde-claro);border-radius:50%;animation:girar 0.8s linear infinite;}
+    @keyframes girar{to{transform:rotate(360deg);}}
+    .badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:0.2rem 0.65rem;border-radius:999px;}
+    .badge-verde{background:#D4EDDA;color:#155724;}.badge-rojo{background:#F8D7DA;color:#721C24;}.badge-gris{background:#E2E8E2;color:#4A5A4A;}
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <span class="header-titulo">🎶 Huapango Xalapa — Mis resultados</span>
   <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
 </header>
 
 <div class="contenedor">
+  <div class="spinner-wrap" id="spinner"><div class="spinner"></div></div>
 
-  <!-- Spinner mientras carga -->
-  <div class="spinner-wrap" id="spinner">
-    <div class="spinner"></div>
-  </div>
-
-  <!-- Contenido principal (oculto hasta que cargue) -->
   <div id="contenido-principal" style="display:none;">
 
-    <!-- ====================================================
-         TARJETA DE IDENTIDAD DE LA PAREJA
-    ==================================================== -->
+    <!-- Tarjeta de identidad -->
     <div class="tarjeta-pareja">
       <div class="pareja-label">Tu número de pareja</div>
       <div class="pareja-numero" id="p-numero">—</div>
@@ -435,61 +101,35 @@
       <div class="pareja-confirmado" id="p-confirmado">—</div>
     </div>
 
-    <!-- ====================================================
-         BLOQUE ACTUAL Y PRÓXIMOS
-    ==================================================== -->
-    <div class="tarjeta" id="tarjeta-bloques">
-      <div class="tarjeta-titulo">🎵 Estado del concurso</div>
-      <div id="contenido-bloques">
-        <div class="sin-datos"><div class="icono">⏳</div><p>Cargando información...</p></div>
-      </div>
-    </div>
-
-    <!-- ====================================================
-         BLOQUE ACTUAL Y PRÓXIMOS
-    ==================================================== -->
-    <div class="tarjeta" id="tarjeta-bloques">
+    <!-- Estado del concurso -->
+    <div class="tarjeta">
       <div class="tarjeta-titulo">🎵 Estado del concurso</div>
       <div id="contenido-bloques">
         <div class="sin-datos"><div class="icono">⏳</div><p>Cargando...</p></div>
       </div>
     </div>
 
-    <!-- ====================================================
-         CALIFICACIONES
-    ==================================================== -->
-    <div class="tarjeta" id="tarjeta-calificaciones">
+    <!-- Calificaciones -->
+    <div class="tarjeta">
       <div class="tarjeta-titulo">⭐ Mis calificaciones</div>
-      <div id="contenido-calificaciones">
-        <!-- Se llena con JS -->
-      </div>
+      <div id="contenido-calificaciones"></div>
     </div>
 
-    <!-- ====================================================
-         TABLA DE POSICIONES (mismo grupo)
-    ==================================================== -->
-    <div class="tarjeta" id="tarjeta-posiciones">
+    <!-- Tabla de posiciones -->
+    <div class="tarjeta">
       <div class="tarjeta-titulo">🏆 Tabla de posiciones — <span id="titulo-grupo">mi grupo</span></div>
-      <div id="contenido-posiciones">
-        <!-- Se llena con JS -->
-      </div>
+      <div id="contenido-posiciones"></div>
     </div>
 
-  </div><!-- fin contenido-principal -->
-
-</div><!-- fin contenedor -->
-
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// =========================================================
-//  CONFIGURACIÓN DE SUPABASE
-// =========================================================
 var SUPABASE_URL = 'https://uicdxokikzhhqnjcjbyz.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpY2R4b2tpa3poaHFuamNqYnl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NTc5NDksImV4cCI6MjA5NDIzMzk0OX0.GfT1awkKGorrgxMImW2uwxo1wYcnllDb7ONT7A9mpYA';
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Colores de los 5 rubros
 var COLORES_RUBROS = ['#8E44AD','#2980B9','#16A085','#D35400','#C0392B'];
 var NOMBRES_RUBROS = ['Vestuario','Estilo','Creatividad en secuencia','Limpieza en secuencia','Porte'];
 var CAMPOS_RUBROS  = ['prom_vestuario','prom_estilo','prom_creatividad','prom_limpieza','prom_porte'];
@@ -498,172 +138,54 @@ var CAMPOS_RUBROS  = ['prom_vestuario','prom_estilo','prom_creatividad','prom_li
 //  INICIALIZACIÓN
 // =========================================================
 window.addEventListener('DOMContentLoaded', async function() {
-  // Verificar sesión
   var session = (await supabase.auth.getSession()).data.session;
   if (!session) { window.location.href = 'login.html'; return; }
 
-  // Buscar la pareja por correo
-  var r = await supabase
-    .from('parejas')
-    .select('*')
-    .eq('correo', session.user.email)
-    .maybeSingle();
-
+  var r = await supabase.from('parejas').select('*').eq('correo', session.user.email).maybeSingle();
   if (r.error || !r.data) {
-    // No encontró pareja — puede ser staff entrando aquí por error
     document.getElementById('spinner').innerHTML =
-      '<div style="text-align:center;color:var(--texto-suave);"><p style="font-size:1rem;margin-bottom:0.5rem;">No encontramos tu pareja registrada.</p><p style="font-size:0.85rem;">Verifica que usaste el correo con el que te registraste.</p></div>';
+      '<div style="text-align:center;color:var(--texto-suave);"><p>No encontramos tu pareja registrada.</p></div>';
     return;
   }
 
   var pareja = r.data;
-
-  // Llenar tarjeta de identidad
-  document.getElementById('p-numero').textContent    = '#' + pareja.numero;
-  document.getElementById('p-nombres').textContent   = pareja.nombre1 + ' & ' + pareja.nombre2;
+  document.getElementById('p-numero').textContent     = '#' + pareja.numero;
+  document.getElementById('p-nombres').textContent    = pareja.nombre1 + ' & ' + pareja.nombre2;
   document.getElementById('p-cat-estilo').textContent = pareja.categoria_nombre + ' · ' + pareja.estilo;
 
   var confEl = document.getElementById('p-confirmado');
-  if (pareja.confirmado) {
-    confEl.textContent = '✓ Presencia confirmada';
-    confEl.className   = 'pareja-confirmado confirmado-si';
-  } else {
-    confEl.textContent = '⏳ Pendiente de confirmar el día del evento';
-    confEl.className   = 'pareja-confirmado confirmado-no';
-  }
+  confEl.textContent = pareja.confirmado ? '✓ Presencia confirmada' : '⏳ Pendiente de confirmar el día del evento';
+  confEl.className   = 'pareja-confirmado ' + (pareja.confirmado ? 'confirmado-si' : 'confirmado-no');
 
-  // Cargar calificaciones y bloques
-  await cargarCalificaciones(pareja.numero, pareja.categoria_nombre, pareja.estilo);
-  await cargarBloques(pareja.numero, pareja.categoria_nombre, pareja.estilo);
+  await Promise.all([
+    cargarBloques(pareja.numero, pareja.categoria_nombre, pareja.estilo),
+    cargarCalificaciones(pareja.numero, pareja.categoria_nombre, pareja.estilo),
+  ]);
 
-  // Ocultar spinner y mostrar contenido
-  document.getElementById('spinner').style.display            = 'none';
+  document.getElementById('spinner').style.display             = 'none';
   document.getElementById('contenido-principal').style.display = 'block';
 
-  // Escuchar nuevas calificaciones en tiempo real
-  supabase.channel('califs-pareja-' + pareja.numero)
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'calificaciones',
-      filter: 'pareja_num=eq.' + pareja.numero }, function() {
-      cargarCalificaciones(pareja.numero, pareja.categoria_nombre, pareja.estilo);
-    })
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'bloques' }, function() {
+  // Tiempo real
+  supabase.channel('pareja-rt-' + pareja.numero)
+    .on('postgres_changes', {event:'*', schema:'public', table:'bloques'}, function() {
       cargarBloques(pareja.numero, pareja.categoria_nombre, pareja.estilo);
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'calificaciones',
+      filter:'pareja_num=eq.' + pareja.numero}, function() {
+      cargarCalificaciones(pareja.numero, pareja.categoria_nombre, pareja.estilo);
     })
     .subscribe();
 });
 
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarCalificaciones(numero, categoria, estilo)
-//  Lee la vista resultados_por_pareja para esta pareja
-//  y también las posiciones de todo su grupo
-// ---------------------------------------------------------
-async function cargarCalificaciones(numero, categoria, estilo) {
-
-  // 1. Calificaciones de ESTA pareja
-  var r = await supabase
-    .from('resultados_por_pareja')
-    .select('*')
-    .eq('pareja_num', numero);
-
-  var contenedorCalifs = document.getElementById('contenido-calificaciones');
-
-  if (r.error || !r.data || !r.data.length) {
-    // Aún no hay calificaciones
-    contenedorCalifs.innerHTML =
-      '<div class="sin-datos">' +
-      '<div class="icono">⏳</div>' +
-      '<p>Tus calificaciones aparecerán aquí<br>cuando los jueces terminen de evaluar tu bloque.</p>' +
-      '</div>';
-  } else {
-    // Mostrar calificaciones por rubro
-    var calif = r.data[0]; // tomar el bloque más reciente
-    var total = parseFloat(calif.prom_total) || 0;
-
-    var html = NOMBRES_RUBROS.map(function(nombre, i) {
-      var campo = CAMPOS_RUBROS[i];
-      var valor = parseFloat(calif[campo]) || 0;
-      var estrellasLlenas = Math.round(valor);
-      var estrellas = '';
-      for (var s = 1; s <= 5; s++) {
-        estrellas += '<span class="' + (s <= estrellasLlenas ? 'estrella-llena' : 'estrella-vacia') + '">★</span>';
-      }
-      return '<div class="rubro-fila">' +
-        '<div class="rubro-nombre">' +
-          '<span class="rubro-dot" style="background:' + COLORES_RUBROS[i] + '"></span>' +
-          nombre +
-        '</div>' +
-        '<div class="estrellas-lectura">' + estrellas + '</div>' +
-        '<div class="rubro-valor">' + valor.toFixed(1) + '</div>' +
-        '</div>';
-    }).join('');
-
-    // Total
-    html += '<div class="total-box">' +
-      '<div><div class="total-label">Puntuación total</div>' +
-      '<div class="total-max">Promedio de ' + calif.num_jueces + ' juez' + (calif.num_jueces > 1 ? 'ces' : '') + '</div></div>' +
-      '<div><span class="total-valor">' + total.toFixed(1) + '</span>' +
-      '<span class="total-max"> / 25 pts</span></div>' +
-      '</div>';
-
-    contenedorCalifs.innerHTML = html;
-  }
-
-  // 2. Tabla de posiciones del grupo (misma categoría + estilo)
-  var r2 = await supabase
-    .from('resultados_por_pareja')
-    .select('*')
-    .eq('categoria', categoria)
-    .eq('estilo', estilo)
-    .order('prom_total', { ascending: false });
-
-  document.getElementById('titulo-grupo').textContent = categoria + ' / ' + estilo;
-  var contenedorPos = document.getElementById('contenido-posiciones');
-
-  if (r2.error || !r2.data || !r2.data.length) {
-    contenedorPos.innerHTML =
-      '<div class="sin-datos">' +
-      '<div class="icono">🏆</div>' +
-      '<p>Las posiciones de tu grupo aparecerán<br>cuando todos hayan sido calificados.</p>' +
-      '</div>';
-    return;
-  }
-
-  var emojis = ['🥇','🥈','🥉'];
-  var maxTotal = 25;
-
-  contenedorPos.innerHTML = r2.data.map(function(p, i) {
-    var pos    = i + 1;
-    var esMia  = p.pareja_num === numero;
-    var clsPos = pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
-    var total  = parseFloat(p.prom_total) || 0;
-    var pct    = (total / maxTotal * 100).toFixed(0);
-
-    return '<div class="posicion-fila' + (esMia?' mi-pareja':'') + '">' +
-      '<div class="pos-numero ' + clsPos + '">' + (pos<=3?emojis[pos-1]:pos) + '</div>' +
-      '<div class="pos-pareja' + (esMia?' mi-num':'') + '">' +
-        '#' + p.pareja_num + (esMia ? ' ← Tú' : '') +
-      '</div>' +
-      '<div class="pos-barra-wrap"><div class="pos-barra" style="width:' + pct + '%"></div></div>' +
-      '<div class="pos-total">' + total.toFixed(1) + ' pts</div>' +
-      '</div>';
-  }).join('');
-}
-
-
-// ---------------------------------------------------------
-//  FUNCIÓN: cargarBloques(numero, categoria, estilo)
-//  Muestra el bloque activo y los próximos bloques
-//  Indica si es el turno de esta pareja o no
-// ---------------------------------------------------------
+// =========================================================
+//  CARGAR BLOQUES — lógica mejorada
+// =========================================================
 async function cargarBloques(numero, categoria, estilo) {
-  var r = await supabase
-    .from('bloques')
+  var r = await supabase.from('bloques')
     .select('id, nombre, categoria, estilo, ronda, estado, orden, bloque_parejas(pareja_num)')
-    .order('orden', { ascending: true });
+    .order('orden', {ascending: true});
 
   var contenedor = document.getElementById('contenido-bloques');
-
   if (r.error || !r.data || !r.data.length) {
     contenedor.innerHTML = '<div class="sin-datos"><div class="icono">⏳</div><p>Los bloques aún no han sido generados.</p></div>';
     return;
@@ -673,6 +195,9 @@ async function cargarBloques(numero, categoria, estilo) {
   var enCurso   = data.find(function(b){ return b.estado === 'en_curso'; });
   var pendientes = data.filter(function(b){ return b.estado === 'pendiente'; });
 
+  // ¿El bloque activo es del MISMO grupo (categoría + estilo) de esta pareja?
+  var esGrupoActivo = enCurso && enCurso.categoria === categoria && enCurso.estilo === estilo;
+
   // ¿Esta pareja está en el bloque activo?
   var esMiTurno = enCurso && enCurso.bloque_parejas.some(function(bp){ return bp.pareja_num === numero; });
 
@@ -681,10 +206,49 @@ async function cargarBloques(numero, categoria, estilo) {
     return b.bloque_parejas.some(function(bp){ return bp.pareja_num === numero; });
   });
 
+  // Pendientes de MI grupo
+  var pendientesMiGrupo = pendientes.filter(function(b){ return b.categoria === categoria && b.estilo === estilo; });
+
   var html = '';
 
-  // --- Bloque activo ---
-  if (enCurso) {
+  // ---------------------------------------------------------
+  //  CASO 1: No hay bloque activo
+  // ---------------------------------------------------------
+  if (!enCurso) {
+    html += '<div class="bloque-activo-card">' +
+      '<div class="bloque-activo-label">Estado actual</div>' +
+      '<div class="bloque-activo-nombre">En espera — el encargado activará el primer bloque en breve</div>' +
+      '</div>';
+  }
+
+  // ---------------------------------------------------------
+  //  CASO 2: Hay bloque activo pero NO es de mi grupo
+  //  → Mostrar mensaje de espera prominente
+  // ---------------------------------------------------------
+  else if (!esGrupoActivo) {
+    html += '<div class="espera-card">' +
+      '<div class="icono-espera">⏳</div>' +
+      '<div class="espera-titulo">Aún no es tu turno</div>' +
+      '<div class="espera-actual">Ahora están bailando:<br><strong style="color:var(--dorado-claro);">' +
+        enCurso.categoria + ' / ' + enCurso.estilo +
+      '</strong></div>';
+
+    // Decir cuándo va su grupo
+    if (pendientesMiGrupo.length > 0) {
+      var posGrupo = pendientes.indexOf(pendientesMiGrupo[0]) + 1;
+      html += '<div class="espera-turno">Tu categoría (' + categoria + ' / ' + estilo + ') comenzará en ' + pendientesMiGrupo.length + ' bloque' + (pendientesMiGrupo.length !== 1 ? 's' : '') + ' más.</div>';
+    } else {
+      html += '<div class="espera-turno">Tu categoría (' + categoria + ' / ' + estilo + ') comenzará próximamente.</div>';
+    }
+    html += '</div>';
+  }
+
+  // ---------------------------------------------------------
+  //  CASO 3: El bloque activo SÍ es de mi grupo
+  //  → Mostrar info completa de bloques
+  // ---------------------------------------------------------
+  else {
+    // Bloque activo
     html += '<div class="bloque-activo-card">' +
       '<div class="bloque-activo-label">🔴 Bailando ahorita</div>' +
       '<div class="bloque-activo-nombre">' + enCurso.nombre + ' — ' + enCurso.categoria + ' / ' + enCurso.estilo + '</div>';
@@ -692,54 +256,96 @@ async function cargarBloques(numero, categoria, estilo) {
     if (esMiTurno) {
       html += '<span class="bloque-mi-turno">🎵 ¡Es tu turno! Súbete a la pista</span>';
     } else {
-      html += '<p class="bloque-esperar">Ahorita está bailando <strong>' + enCurso.categoria + ' / ' + enCurso.estilo + '</strong>.<br>Por favor espera tu turno.</p>';
+      html += '<p class="bloque-esperar">Este bloque de tu grupo está en pista. Tu bloque viene pronto.</p>';
     }
     html += '</div>';
-  } else {
-    html += '<div class="bloque-activo-card">' +
-      '<div class="bloque-activo-label">Estado actual</div>' +
-      '<div class="bloque-activo-nombre">En espera — el encargado activará el primer bloque en breve</div>' +
-      '</div>';
-  }
 
-  // --- Mi bloque (si está en pendientes) ---
-  if (miBloquePendiente) {
-    var posicion = pendientes.indexOf(miBloquePendiente) + 1;
-    html += '<div style="margin:0.75rem 0 0.5rem;font-size:0.78rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;">Tu bloque</div>';
-    html += '<div class="siguiente-bloque-fila" style="background:rgba(64,145,108,0.08);border-radius:8px;padding:0.6rem 0.75rem;">' +
-      '<div class="siguiente-orden" style="color:var(--verde-claro);">' + posicion + '</div>' +
-      '<div class="siguiente-info">' +
-        '<strong>' + miBloquePendiente.nombre + '</strong> — ' + miBloquePendiente.categoria + ' / ' + miBloquePendiente.estilo +
-        '<br><span style="font-size:0.78rem;color:var(--texto-suave);">Tus parejas: ' +
-        miBloquePendiente.bloque_parejas.map(function(bp){ return '#' + bp.pareja_num; }).join(', ') +
-        '</span>' +
-      '</div>' +
-      '<span class="siguiente-mi-bloque">Tu bloque</span>' +
-      '</div>';
-  }
+    // Mi bloque pendiente
+    if (miBloquePendiente) {
+      html += '<div style="margin:0.75rem 0 0.5rem;font-size:0.78rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;">Tu bloque</div>';
+      html += '<div class="siguiente-bloque-fila" style="background:rgba(64,145,108,0.08);border-radius:8px;padding:0.6rem 0.75rem;">' +
+        '<div class="siguiente-orden" style="color:var(--verde-claro);">' + (pendientes.indexOf(miBloquePendiente)+1) + '</div>' +
+        '<div class="siguiente-info"><strong>' + miBloquePendiente.nombre + '</strong><br>' +
+          '<span style="font-size:0.78rem;color:var(--texto-suave);">Parejas: ' +
+          miBloquePendiente.bloque_parejas.map(function(bp){return '#'+bp.pareja_num;}).join(', ') +
+          '</span></div>' +
+        '<span class="siguiente-mi-bloque">Tu bloque</span></div>';
+    }
 
-  // --- Próximos 3 bloques pendientes ---
-  if (pendientes.length) {
-    html += '<div style="margin:0.75rem 0 0.5rem;font-size:0.78rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;">Próximos bloques</div>';
-    html += pendientes.slice(0, 5).map(function(b, i) {
-      var esMio = miBloquePendiente && b.id === miBloquePendiente.id;
-      return '<div class="siguiente-bloque-fila">' +
-        '<div class="siguiente-orden">' + (i + 1) + '</div>' +
-        '<div class="siguiente-info">' +
-          b.nombre + ' — ' + b.categoria + ' / ' + b.estilo +
-        '</div>' +
-        (esMio ? '<span class="siguiente-mi-bloque">Tú</span>' : '') +
-        '</div>';
-    }).join('');
+    // Próximos bloques del grupo
+    if (pendientesMiGrupo.length) {
+      html += '<div style="margin:0.75rem 0 0.5rem;font-size:0.78rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;">Próximos de tu grupo</div>';
+      html += pendientesMiGrupo.slice(0,5).map(function(b,i){
+        var esMio = miBloquePendiente && b.id === miBloquePendiente.id;
+        return '<div class="siguiente-bloque-fila">' +
+          '<div class="siguiente-orden">'+(i+1)+'</div>' +
+          '<div class="siguiente-info">'+b.nombre+'</div>' +
+          (esMio?'<span class="siguiente-mi-bloque">Tú</span>':'') +
+          '</div>';
+      }).join('');
+    }
   }
 
   contenedor.innerHTML = html;
 }
 
+// =========================================================
+//  CARGAR CALIFICACIONES
+// =========================================================
+async function cargarCalificaciones(numero, categoria, estilo) {
+  var r = await supabase.from('resultados_por_pareja').select('*').eq('pareja_num', numero);
+  var contenedorCalifs = document.getElementById('contenido-calificaciones');
 
-// ---------------------------------------------------------
-//  FUNCIÓN: cerrarSesion()
-// ---------------------------------------------------------
+  if (r.error || !r.data || !r.data.length) {
+    contenedorCalifs.innerHTML = '<div class="sin-datos"><div class="icono">⏳</div><p>Tus calificaciones aparecerán aquí cuando los jueces evalúen tu bloque.</p></div>';
+  } else {
+    var calif = r.data[0];
+    var total = parseFloat(calif.prom_total) || 0;
+    var html = NOMBRES_RUBROS.map(function(nombre, i) {
+      var valor = parseFloat(calif[CAMPOS_RUBROS[i]]) || 0;
+      var llenas = Math.round(valor);
+      var estrellas = '';
+      for (var s=1; s<=5; s++) estrellas += '<span class="'+(s<=llenas?'estrella-llena':'estrella-vacia')+'">★</span>';
+      return '<div class="rubro-fila">' +
+        '<div class="rubro-nombre"><span class="rubro-dot" style="background:'+COLORES_RUBROS[i]+'"></span>'+nombre+'</div>' +
+        '<div class="estrellas-lectura">'+estrellas+'</div>' +
+        '<div class="rubro-valor">'+valor.toFixed(1)+'</div>' +
+        '</div>';
+    }).join('');
+    html += '<div class="total-box">' +
+      '<div><div class="total-label">Puntuación total</div>' +
+      '<div class="total-max">Promedio de '+calif.num_jueces+' juez'+(calif.num_jueces>1?'ces':'')+'</div></div>' +
+      '<div><span class="total-valor">'+total.toFixed(1)+'</span><span class="total-max"> / 25 pts</span></div>' +
+      '</div>';
+    contenedorCalifs.innerHTML = html;
+  }
+
+  // Tabla de posiciones
+  var r2 = await supabase.from('resultados_por_pareja').select('*')
+    .eq('categoria', categoria).eq('estilo', estilo).order('prom_total',{ascending:false});
+  document.getElementById('titulo-grupo').textContent = categoria + ' / ' + estilo;
+  var contenedorPos = document.getElementById('contenido-posiciones');
+
+  if (r2.error || !r2.data || !r2.data.length) {
+    contenedorPos.innerHTML = '<div class="sin-datos"><div class="icono">🏆</div><p>Las posiciones aparecerán cuando todos hayan sido calificados.</p></div>';
+    return;
+  }
+
+  var emojis = ['🥇','🥈','🥉'];
+  contenedorPos.innerHTML = r2.data.map(function(p,i) {
+    var pos = i+1, esMia = p.pareja_num===numero;
+    var cls = pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
+    var tot = parseFloat(p.prom_total)||0;
+    var pct = (tot/25*100).toFixed(0);
+    return '<div class="posicion-fila'+(esMia?' mi-pareja':'')+'">' +
+      '<div class="pos-numero '+cls+'">'+(pos<=3?emojis[pos-1]:pos)+'</div>' +
+      '<div class="pos-pareja'+(esMia?' mi-num':'')+'>#'+p.pareja_num+(esMia?' ← Tú':'')+'</div>' +
+      '<div class="pos-barra-wrap"><div class="pos-barra" style="width:'+pct+'%"></div></div>' +
+      '<div class="pos-total">'+tot.toFixed(1)+' pts</div>' +
+      '</div>';
+  }).join('');
+}
+
 async function cerrarSesion() {
   await supabase.auth.signOut();
   window.location.href = 'login.html';
