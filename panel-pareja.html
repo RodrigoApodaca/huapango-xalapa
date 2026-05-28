@@ -30,10 +30,17 @@
     .rubro-fila:last-child{border-bottom:none;}
     .rubro-nombre{font-size:0.88rem;color:var(--texto);font-weight:500;display:flex;align-items:center;gap:0.5rem;}
     .rubro-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-    .estrellas-lectura{display:flex;gap:3px;}
-    .estrella-llena{color:var(--dorado);font-size:1.1rem;}
-    .estrella-vacia{color:#DDD;font-size:1.1rem;}
-    .rubro-valor{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--verde-oscuro);min-width:28px;text-align:right;}
+    .estrellas-lectura{display:flex;gap:3px;align-items:center;line-height:1;}
+    .estrella-llena{color:var(--dorado);font-size:1.1rem;line-height:1;display:inline-block;}
+    .estrella-vacia{color:#DDD;font-size:1.1rem;line-height:1;display:inline-block;}
+    .rubro-valor{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--verde-oscuro);min-width:32px;text-align:right;}
+    /* Secciones de ronda en calificaciones */
+    .ronda-seccion{margin-bottom:1.25rem;}
+    .ronda-badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;margin-bottom:0.75rem;}
+    .ronda-badge.primera{background:#D4EDDA;color:#155724;}
+    .ronda-badge.semifinal{background:#D1ECF1;color:#0C5460;}
+    .ronda-badge.final{background:#FFF3CD;color:#856404;}
+    .ronda-badge.campeon{background:#E8D5F5;color:#6C3483;}
     .total-box{background:var(--gris-fondo);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;margin-top:1rem;}
     .total-label{font-size:0.82rem;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:0.05em;}
     .total-valor{font-family:'Playfair Display',serif;font-size:2rem;color:var(--verde-oscuro);font-weight:900;}
@@ -132,7 +139,6 @@ var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 var COLORES_RUBROS = ['#8E44AD','#2980B9','#16A085','#D35400','#C0392B'];
 var NOMBRES_RUBROS = ['Vestuario','Estilo','Creatividad en secuencia','Limpieza en secuencia','Porte'];
-var CAMPOS_RUBROS  = ['prom_vestuario','prom_estilo','prom_creatividad','prom_limpieza','prom_porte'];
 
 // =========================================================
 //  INICIALIZACIÓN
@@ -290,39 +296,80 @@ async function cargarBloques(numero, categoria, estilo) {
 }
 
 // =========================================================
-//  CARGAR CALIFICACIONES
+//  CARGAR CALIFICACIONES — separadas por ronda
 // =========================================================
 async function cargarCalificaciones(numero, categoria, estilo) {
-  var r = await supabase.from('resultados_por_pareja').select('*').eq('pareja_num', numero);
+  // Traer calificaciones con info del bloque para saber la ronda
+  var r = await supabase
+    .from('calificaciones')
+    .select('*, bloques(ronda, nombre)')
+    .eq('pareja_num', numero);
+
   var contenedorCalifs = document.getElementById('contenido-calificaciones');
 
   if (r.error || !r.data || !r.data.length) {
-    contenedorCalifs.innerHTML = '<div class="sin-datos"><div class="icono">⏳</div><p>Tus calificaciones aparecerán aquí cuando los jueces evalúen tu bloque.</p></div>';
+    contenedorCalifs.innerHTML =
+      '<div class="sin-datos"><div class="icono">⏳</div><p>Tus calificaciones aparecerán aquí cuando los jueces evalúen tu bloque.</p></div>';
   } else {
-    var calif = r.data[0];
-    var total = parseFloat(calif.prom_total) || 0;
-    var html = NOMBRES_RUBROS.map(function(nombre, i) {
-      var valor = parseFloat(calif[CAMPOS_RUBROS[i]]) || 0;
-      var llenas = Math.round(valor);
-      var estrellas = '';
-      for (var s=1; s<=5; s++) estrellas += '<span class="'+(s<=llenas?'estrella-llena':'estrella-vacia')+'">★</span>';
-      return '<div class="rubro-fila">' +
-        '<div class="rubro-nombre"><span class="rubro-dot" style="background:'+COLORES_RUBROS[i]+'"></span>'+nombre+'</div>' +
-        '<div class="estrellas-lectura">'+estrellas+'</div>' +
-        '<div class="rubro-valor">'+valor.toFixed(1)+'</div>' +
-        '</div>';
-    }).join('');
-    html += '<div class="total-box">' +
-      '<div><div class="total-label">Puntuación total</div>' +
-      '<div class="total-max">Promedio de '+calif.num_jueces+' juez'+(calif.num_jueces>1?'ces':'')+'</div></div>' +
-      '<div><span class="total-valor">'+total.toFixed(1)+'</span><span class="total-max"> / 25 pts</span></div>' +
-      '</div>';
+    // Agrupar por ronda
+    var porRonda = {};
+    r.data.forEach(function(c) {
+      var ronda = c.bloques ? c.bloques.ronda : 'primera_ronda';
+      if (!porRonda[ronda]) porRonda[ronda] = [];
+      porRonda[ronda].push(c);
+    });
+
+    var rondaOrden = ['primera_ronda','semifinal','final','campeon_de_campeones'];
+    var rondaNombres = {primera_ronda:'🎯 Primera Ronda', semifinal:'🏅 Semifinal', final:'🥇 Final', campeon_de_campeones:'👑 Campeón de Campeones'};
+    var rondaClase  = {primera_ronda:'primera', semifinal:'semifinal', final:'final', campeon_de_campeones:'campeon'};
+
+    var prom = function(arr){ return arr.length ? arr.reduce(function(a,b){return a+b;},0)/arr.length : 0; };
+
+    var html = '';
+    rondaOrden.forEach(function(ronda) {
+      if (!porRonda[ronda]) return;
+      var cals = porRonda[ronda];
+
+      // Promediar los 5 rubros de todos los jueces en esta ronda
+      var ves=[], est=[], cre=[], lim=[], por=[];
+      cals.forEach(function(c){ ves.push(c.vestuario||0); est.push(c.estilo||0); cre.push(c.creatividad||0); lim.push(c.limpieza||0); por.push(c.porte||0); });
+      var promedios = [prom(ves), prom(est), prom(cre), prom(lim), prom(por)];
+      var total = promedios.reduce(function(a,b){return a+b;}, 0);
+      var numJueces = cals.length;
+
+      html += '<div class="ronda-seccion">' +
+        '<div class="ronda-badge '+rondaClase[ronda]+'">'+rondaNombres[ronda]+'</div>';
+
+      html += NOMBRES_RUBROS.map(function(nombre, i) {
+        var valor = promedios[i];
+        var llenas = Math.round(valor);
+        var estrellas = '';
+        for (var s=1; s<=5; s++) estrellas += '<span class="'+(s<=llenas?'estrella-llena':'estrella-vacia')+'">★</span>';
+        return '<div class="rubro-fila">' +
+          '<div class="rubro-nombre"><span class="rubro-dot" style="background:'+COLORES_RUBROS[i]+'"></span>'+nombre+'</div>' +
+          '<div class="estrellas-lectura">'+estrellas+'</div>' +
+          '<div class="rubro-valor">'+valor.toFixed(1)+'</div>' +
+          '</div>';
+      }).join('');
+
+      html += '<div class="total-box">' +
+        '<div><div class="total-label">Total '+rondaNombres[ronda]+'</div>' +
+        '<div class="total-max">Promedio de '+numJueces+' juez'+(numJueces>1?'ces':'')+'</div></div>' +
+        '<div><span class="total-valor">'+total.toFixed(1)+'</span><span class="total-max"> / 25 pts</span></div>' +
+        '</div></div>';
+    });
+
     contenedorCalifs.innerHTML = html;
   }
 
-  // Tabla de posiciones
-  var r2 = await supabase.from('resultados_por_pareja').select('*')
-    .eq('categoria', categoria).eq('estilo', estilo).order('prom_total',{ascending:false});
+  // Tabla de posiciones del grupo (última ronda disponible)
+  var r2 = await supabase
+    .from('resultados_por_pareja')
+    .select('*')
+    .eq('categoria', categoria)
+    .eq('estilo', estilo)
+    .order('prom_total', {ascending: false});
+
   document.getElementById('titulo-grupo').textContent = categoria + ' / ' + estilo;
   var contenedorPos = document.getElementById('contenido-posiciones');
 
@@ -332,7 +379,7 @@ async function cargarCalificaciones(numero, categoria, estilo) {
   }
 
   var emojis = ['🥇','🥈','🥉'];
-  contenedorPos.innerHTML = r2.data.map(function(p,i) {
+  contenedorPos.innerHTML = r2.data.map(function(p, i) {
     var pos = i+1, esMia = p.pareja_num===numero;
     var cls = pos===1?'oro':pos===2?'plata':pos===3?'bronce':'';
     var tot = parseFloat(p.prom_total)||0;
