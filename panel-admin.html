@@ -162,6 +162,18 @@
         <div id="badges-bloque-actual"></div>
       </div>
       <div class="seccion-header"><div class="seccion-titulo">Progreso por grupo</div></div>
+      <!-- Control de tríos -->
+      <div class="form-card" style="border-left:4px solid var(--dorado);margin-bottom:1.5rem;">
+        <p style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--verde-oscuro);margin-bottom:0.75rem;">🎺 Trío en turno</p>
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-ghost btn-sm" id="btn-trio-0" onclick="cambiarTrio(0)">TRIO 1</button>
+            <button class="btn btn-ghost btn-sm" id="btn-trio-1" onclick="cambiarTrio(1)">TRIO 2</button>
+            <button class="btn btn-ghost btn-sm" id="btn-trio-2" onclick="cambiarTrio(2)">TRIO 3</button>
+          </div>
+          <span style="font-size:0.82rem;color:var(--texto-suave);">Trío activo: <strong id="trio-activo-nombre">—</strong></span>
+        </div>
+      </div>
       <div class="tabla-wrap">
         <table>
           <thead><tr><th>Categoría / Estilo</th><th>Confirmadas</th><th>1ª Ronda</th><th>Avance</th><th>Estado</th></tr></thead>
@@ -364,6 +376,7 @@ window.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('nombre-admin').textContent=res.data.nombre||'Admin';
   document.getElementById('fecha-topbar').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   await cargarTodo();
+  await cargarTrioActivo();
   supabase.channel('admin-rt')
     .on('postgres_changes',{event:'*',schema:'public',table:'parejas'},cargarParejas)
     .on('postgres_changes',{event:'*',schema:'public',table:'bloques'},cargarBloques)
@@ -748,8 +761,52 @@ async function eliminarUsuario(id,nombre){
 }
 
 // =========================================================
-//  NAVEGACIÓN
+//  TRÍOS — control manual desde admin
+//  Cambia los nombres aquí cuando los tengas confirmados
 // =========================================================
+var NOMBRES_TRIOS = [
+  'TRIO 1',   // ← cambia por el nombre real
+  'TRIO 2',   // ← cambia por el nombre real
+  'TRIO 3',   // ← cambia por el nombre real
+];
+
+async function cargarTrioActivo() {
+  var r = await supabase.from('configuracion')
+    .select('clave, valor')
+    .in('clave', ['trio_activo','trio_0','trio_1','trio_2']);
+  if (r.error || !r.data) return;
+
+  var config = {};
+  r.data.forEach(function(row){ config[row.clave] = row.valor; });
+
+  // Actualizar nombres de botones con los nombres reales
+  [0,1,2].forEach(function(i){
+    var btn = document.getElementById('btn-trio-'+i);
+    if (btn) btn.textContent = config['trio_'+i] || NOMBRES_TRIOS[i];
+  });
+
+  var indice = parseInt(config['trio_activo']) || 0;
+  var nombre = config['trio_'+indice] || NOMBRES_TRIOS[indice];
+  document.getElementById('trio-activo-nombre').textContent = nombre;
+
+  // Resaltar botón activo
+  [0,1,2].forEach(function(i){
+    var btn = document.getElementById('btn-trio-'+i);
+    if (btn) btn.className = 'btn btn-sm ' + (i===indice ? 'btn-dorado' : 'btn-ghost');
+  });
+}
+
+async function cambiarTrio(indice) {
+  var r = await supabase.from('configuracion')
+    .update({valor: indice.toString()})
+    .eq('clave', 'trio_activo');
+
+  if (r.error) { mostrarToast('⚠ Error al cambiar trío'); return; }
+
+  await cargarTrioActivo();
+  var nombre = NOMBRES_TRIOS[indice];
+  mostrarToast('🎺 Ahora toca: ' + nombre);
+}
 function mostrarVista(nombre,btn){
   document.querySelectorAll('.vista').forEach(function(v){v.classList.remove('activa');});
   document.getElementById('vista-'+nombre).classList.add('activa');
