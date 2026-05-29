@@ -220,12 +220,15 @@ window.addEventListener('DOMContentLoaded', async function() {
   iniciarReloj();
   await cargarDatos();
   await cargarStats();
+  await cargarTrio();
   iniciarTicker();
 
-  // Realtime — pantalla se actualiza sola cuando cambia un bloque
+  // Realtime — pantalla se actualiza sola cuando cambia un bloque o el trío
   supabase.channel('pantalla-publica')
     .on('postgres_changes', {event:'UPDATE', schema:'public', table:'bloques'},
       async function() { await cargarDatos(); })
+    .on('postgres_changes', {event:'*', schema:'public', table:'configuracion'},
+      async function() { await cargarTrio(); })
     .subscribe();
 });
 
@@ -374,15 +377,43 @@ async function cargarStats() {
 }
 
 // =========================================================
-//  TRIO — rota automáticamente cada 4 bloques terminados
-//  También se puede cambiar manualmente desde el panel admin
-//  (esa función se agrega en el punto de admin)
+//  CARGAR TRÍO ACTIVO DESDE SUPABASE
 // =========================================================
-function actualizarTrio() {
-  // Cada 4 bloques terminados cambia al siguiente trío
-  // Ejemplo: 0-3 terminados → TRIO 1, 4-7 → TRIO 2, 8-11 → TRIO 3, etc.
-  var indice = Math.floor(bloquesTerminados / 4) % TRIOS.length;
-  document.getElementById('trio-nombre').textContent = TRIOS[indice];
+async function cargarTrio() {
+  var r = await supabase.from('configuracion')
+    .select('clave, valor')
+    .in('clave', ['trio_activo', 'trio_0', 'trio_1', 'trio_2']);
+
+  if (r.error || !r.data) return;
+
+  var config = {};
+  r.data.forEach(function(row){ config[row.clave] = row.valor; });
+
+  var indice = parseInt(config['trio_activo']) || 0;
+  var nombre = config['trio_' + indice] || TRIOS[indice] || 'TRIO ' + (indice+1);
+  document.getElementById('trio-nombre').textContent = nombre;
+}
+
+// =========================================================
+//  TRIO — rota automáticamente cada 4 bloques terminados
+// =========================================================
+async function actualizarTrio() {
+  // Primero intentar leer desde Supabase
+  var r = await supabase.from('configuracion')
+    .select('clave, valor')
+    .in('clave', ['trio_activo', 'trio_0', 'trio_1', 'trio_2']);
+
+  if (!r.error && r.data && r.data.length) {
+    var config = {};
+    r.data.forEach(function(row){ config[row.clave] = row.valor; });
+    var indice = parseInt(config['trio_activo']) || 0;
+    var nombre = config['trio_' + indice] || TRIOS[indice] || 'TRIO ' + (indice+1);
+    document.getElementById('trio-nombre').textContent = nombre;
+  } else {
+    // Fallback a rotación automática local
+    var indice = Math.floor(bloquesTerminados / 4) % TRIOS.length;
+    document.getElementById('trio-nombre').textContent = TRIOS[indice];
+  }
 }
 
 // =========================================================
