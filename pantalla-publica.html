@@ -243,7 +243,7 @@ async function cargarDatos() {
   var enCurso   = data.find(function(b){return b.estado==='en_curso';});
   var pendientes = data.filter(function(b){return b.estado==='pendiente';});
 
-  // Contar terminados para saber qué trío toca
+  // Contar terminados para rotar trío
   bloquesTerminados = data.filter(function(b){return b.estado==='terminado';}).length;
   actualizarTrio();
 
@@ -255,23 +255,102 @@ async function cargarDatos() {
     };
     cambiarBloque(nuevo);
     document.getElementById('info-ronda').textContent = (enCurso.ronda||'').replace(/_/g,' ');
+
+    // -------------------------------------------------------
+    //  PRÓXIMOS BLOQUES — solo del grupo activo, en orden:
+    //  primera ronda → semifinal → final
+    //  Si la ronda siguiente no existe aún, mostrar placeholder
+    // -------------------------------------------------------
+    var cat    = enCurso.categoria;
+    var estilo = enCurso.estilo;
+    var rondaActual = enCurso.ronda;
+
+    // Pendientes del mismo grupo
+    var pendientesGrupo = pendientes.filter(function(b){
+      return b.categoria === cat && b.estilo === estilo;
+    });
+
+    // Pendientes de primera ronda del grupo
+    var pendientesPrimera = pendientesGrupo.filter(function(b){return b.ronda==='primera_ronda';});
+    // Pendientes de semifinal del grupo
+    var pendientesSemi    = pendientesGrupo.filter(function(b){return b.ronda==='semifinal';});
+    // Pendientes de final del grupo
+    var pendientesFinal   = pendientesGrupo.filter(function(b){return b.ronda==='final';});
+
+    // ¿Ya existen bloques de semifinal para este grupo?
+    var haySemi  = data.some(function(b){return b.categoria===cat&&b.estilo===estilo&&b.ronda==='semifinal';});
+    var hayFinal = data.some(function(b){return b.categoria===cat&&b.estilo===estilo&&b.ronda==='final';});
+
+    // Construir lista de próximos en orden
+    bloquesSiguientes = [];
+
+    // Agregar pendientes de primera ronda (máx 3)
+    pendientesPrimera.slice(0,3).forEach(function(b,i){
+      bloquesSiguientes.push({
+        etiqueta: 'Siguiente →',
+        nombre:   b.nombre + ' — ' + b.categoria + ' / ' + b.estilo,
+        parejas:  b.bloque_parejas.map(function(bp){return bp.pareja_num;}),
+        placeholder: false,
+      });
+    });
+
+    // Si no hay más primera ronda pendiente, agregar semifinal o placeholder
+    if (pendientesPrimera.length === 0 || rondaActual === 'primera_ronda') {
+      if (pendientesSemi.length > 0) {
+        // Mostrar bloques de semifinal reales
+        pendientesSemi.slice(0, 3 - bloquesSiguientes.length).forEach(function(b){
+          bloquesSiguientes.push({
+            etiqueta: '🏅 Semifinal',
+            nombre:   b.nombre + ' — ' + b.categoria + ' / ' + b.estilo,
+            parejas:  b.bloque_parejas.map(function(bp){return bp.pareja_num;}),
+            placeholder: false,
+          });
+        });
+      } else if (!haySemi && pendientesPrimera.length <= 1) {
+        // Placeholder de semifinal
+        bloquesSiguientes.push({
+          etiqueta: '🏅 A continuación',
+          nombre:   'Semifinal — ' + cat + ' / ' + estilo,
+          parejas:  [],
+          placeholder: true,
+          placeholderTexto: 'Las parejas se definirán al terminar la primera ronda',
+        });
+      }
+    }
+
+    // Si ya está en semifinal, agregar final o placeholder
+    if (rondaActual === 'semifinal') {
+      if (pendientesFinal.length > 0) {
+        pendientesFinal.forEach(function(b){
+          bloquesSiguientes.push({
+            etiqueta: '🥇 Final',
+            nombre:   b.nombre + ' — ' + b.categoria + ' / ' + b.estilo,
+            parejas:  b.bloque_parejas.map(function(bp){return bp.pareja_num;}),
+            placeholder: false,
+          });
+        });
+      } else if (!hayFinal) {
+        bloquesSiguientes.push({
+          etiqueta: '🥇 A continuación',
+          nombre:   'Final — ' + cat + ' / ' + estilo,
+          parejas:  [],
+          placeholder: true,
+          placeholderTexto: 'Las 6 finalistas se definirán al terminar la semifinal',
+        });
+      }
+    }
+
+    // Limitar a 3
+    bloquesSiguientes = bloquesSiguientes.slice(0,3);
+
   } else {
     document.getElementById('actual-nombre').textContent    = 'EN ESPERA';
     document.getElementById('actual-subtitulo').textContent = 'El encargado activará el primer bloque en breve';
     document.getElementById('actual-chips').innerHTML       = '';
     document.getElementById('info-ronda').textContent       = '—';
+    bloquesSiguientes = [];
   }
 
-  // Próximos 3 bloques
-  bloquesSiguientes = [];
-  var etiquetas = ['Siguiente →','Después','Más tarde'];
-  pendientes.slice(0,3).forEach(function(b,i){
-    bloquesSiguientes.push({
-      etiqueta: etiquetas[i]||'En breve',
-      nombre:   b.nombre + ' — ' + b.categoria + ' / ' + b.estilo,
-      parejas:  b.bloque_parejas.map(function(bp){return bp.pareja_num;}),
-    });
-  });
   renderizarSiguientes();
 }
 
@@ -323,17 +402,30 @@ function renderizarBloqueActivo() {
 function renderizarSiguientes() {
   var grid = document.getElementById('siguientes-grid');
   if (!bloquesSiguientes.length) {
-    grid.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;grid-column:1/-1;">No hay más bloques pendientes</div>';
+    grid.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:0.9rem;grid-column:1/-1;text-align:center;padding:1rem;">No hay más bloques pendientes en este grupo</div>';
     return;
   }
-  grid.innerHTML = bloquesSiguientes.slice(0,3).map(function(b){
+  grid.innerHTML = bloquesSiguientes.map(function(b){
+    if (b.placeholder) {
+      // Tarjeta placeholder para ronda no generada aún
+      return '<div class="bloque-siguiente" style="border-color:rgba(212,160,23,0.3);opacity:0.7;">' +
+        '<div class="siguiente-num">'+b.etiqueta+'</div>' +
+        '<div class="siguiente-nombre">'+b.nombre+'</div>' +
+        '<div class="siguiente-divisor"></div>' +
+        '<div class="siguiente-parejas-label" style="color:rgba(255,255,255,0.5);">⏳ Por definir</div>' +
+        '<div style="font-size:0.72rem;color:rgba(255,255,255,0.35);line-height:1.4;">'+b.placeholderTexto+'</div>' +
+      '</div>';
+    }
+    // Tarjeta normal
     return '<div class="bloque-siguiente">' +
       '<div class="siguiente-num">'+b.etiqueta+'</div>' +
       '<div class="siguiente-nombre">'+b.nombre+'</div>' +
       '<div class="siguiente-divisor"></div>' +
       '<div class="siguiente-parejas-label">Parejas</div>' +
       '<div class="siguiente-parejas">' +
-        b.parejas.map(function(n){return '<span class="siguiente-chip">#'+n+'</span>';}).join('') +
+        (b.parejas.length
+          ? b.parejas.map(function(n){return '<span class="siguiente-chip">#'+n+'</span>';}).join('')
+          : '<span style="color:rgba(255,255,255,0.35);font-size:0.8rem;">Por definir</span>') +
       '</div>' +
     '</div>';
   }).join('');
